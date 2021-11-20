@@ -112,6 +112,13 @@
             <span>Tables</span></a>
     </li>
 
+    <!-- Nav Item - Users -->
+    <li class="nav-item">
+        <a class="nav-link" href="users.php">
+            <i class="fas fa-fw fa-user"></i>
+            <span>Users</span></a>
+    </li>
+
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 

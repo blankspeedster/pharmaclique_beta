@@ -76,11 +76,9 @@
                                         <h1 class="h4 text-gray-900 mb-4">PharmaClique -  <?php echo date("Y"); ?></h1>
                                     </div>
                                     <form class="user" method="post" action="process_registration.php">
-<!--                                        <span class="text-danger">--><?php //if(isset($_SESSION['loginError'])){ echo $_SESSION['loginError']; } ?><!--</span>-->
                                         <div class="form-group">
-                                            <input type="email" class="form-control"
-                                                id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Enter Email Address..." value="<?php if(isset($_GET['email'])){echo $_GET['email'];} ?>" name="email">
+<!--                                            <input type="email" class="form-control"  id="exampleInputEmail" aria-describedby="emailHelp"  placeholder="Enter Email Address..." value="--><?php //if(isset($_GET['email'])){echo $_GET['email'];} ?><!--" name="email">-->
+                                            <input type="text" class="form-control"  id="exampleInputEmail" aria-describedby="emailHelp"  placeholder="Enter Email Address..." value="<?php if(isset($_GET['email'])){echo $_GET['email'];} ?>" name="email">
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control"

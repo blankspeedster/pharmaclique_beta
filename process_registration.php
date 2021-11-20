@@ -17,10 +17,17 @@
             $hashPassword = $newCheckUser['password'];
             $verify = password_verify($password, $hashPassword);
             if ($verify){
-                $_SESSION['email'] = $newCheckUser["email"];
-                $_SESSION['firstname'] = $newCheckUser["firstname"];
-                $_SESSION['lastname'] = $newCheckUser["lastname"];
-                header("location: index.php");
+                if($newCheckUser["validated"]==0){
+                    $_SESSION['loginError'] = "Account is pending validation. Please wait for a while.";
+                    header("location: login.php?email=".$email);
+                }
+                else{
+                    $_SESSION['email'] = $newCheckUser["email"];
+                    $_SESSION['firstname'] = $newCheckUser["firstname"];
+                    $_SESSION['lastname'] = $newCheckUser["lastname"];
+                    header("location: index.php");
+                }
+
             } else {
                 $_SESSION['loginError'] = "Incorrect password!";
                 header("location: login.php?email=".$email);
