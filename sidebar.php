@@ -1,38 +1,10 @@
-<style type="text/css">
-    a:link {
-        text-decoration: none;
-    }
+<?php
+    include('dbh.php');
 
-    a:visited {
-        text-decoration: none;
+    if(!isset($_SESSION['email'])){
+        header("Location: login.php");
     }
-    .dropdown-menu{
-        padding: 10px !important;
-    }
-    /*.topbar {*/
-    /*    height: 3rem !important;*/
-    /*}*/
-    .bg-gradient-primary {
-        background-color: #05445E !important;
-        background-image: none !important;
-        background-image: none !important;
-        background-size: cover !important;
-    }
-    .page-item.active .page-link {
-        z-index: 1;
-        color: #fff;
-        background-color: #75E6DA !important;
-        border-color: #0f1e5d !important;
-    }
-    .container-fluid{
-        background-color: white;
-        padding-left: 5% !important;
-        padding-right: 5% !important;
-    }
-    #content-wrapper{
-        background-color: white !important;
-    }
-</style>
+?>
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
@@ -115,7 +87,7 @@
         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Login Screens:</h6>
-                <a class="collapse-item" href="login.html">Login</a>
+                <a class="collapse-item" href="login.php">Login</a>
                 <a class="collapse-item" href="register.html">Register</a>
                 <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
                 <div class="collapse-divider"></div>

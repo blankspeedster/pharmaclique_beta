@@ -1,7 +1,16 @@
+<?php
+    require_once('process_registration.php');
+
+    if(isset($_SESSION['email'])){
+        header('location: index.php');
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+    <!-- icon-->
+    <link rel="icon" href="./img/favicon.png" sizes="16x16">
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,17 +27,13 @@
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/sb-admin-2.css" rel="stylesheet">
     <style>
         .bg-gradient-primary {
             background-color: #1B5B3A !important;
             background-image: -webkit-gradient(linear,left top,left bottom,color-stop(50%,#05445E),to(#05445E)) !important;
             background-image: linear-gradient(180deg,#05445E 10%,#05445E 100%) !important;
             background-size: cover !important;
-        }
-        .btn-primary, .btn-primary:hover{
-            background-color: #05445E;
-            border-color: #05445E;
         }
     </style>
 </head>
@@ -43,6 +48,22 @@
             <div class="col-xl-10 col-lg-12 col-md-9">
 
                 <div class="card o-hidden border-0 shadow-lg my-5">
+
+                    <!-- Alert Here -->
+                    <?php
+                    if(isset($_SESSION['loginError'])){
+                        ?>
+                        <div class="alert alert-danger alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <?php
+                            echo $_SESSION['loginError'];
+                            unset($_SESSION['loginError']);
+                            ?>
+                        </div>
+                        <?php
+                    }
+                    ?>
+                    <!-- End Alert Here -->
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
@@ -52,26 +73,27 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">PharmaClique -  <?php echo date("Y"); ?></h1>
                                     </div>
-                                    <form class="user">
+                                    <form class="user" method="post" action="process_registration.php">
+<!--                                        <span class="text-danger">--><?php //if(isset($_SESSION['loginError'])){ echo $_SESSION['loginError']; } ?><!--</span>-->
                                         <div class="form-group">
                                             <input type="email" class="form-control"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Enter Email Address...">
+                                                placeholder="Enter Email Address..." value="<?php if(isset($_GET['email'])){echo $_GET['email'];} ?>" name="email">
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control"
-                                                id="exampleInputPassword" placeholder="Password">
+                                                id="exampleInputPassword" placeholder="Password" name="password">
                                         </div>
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Remember
-                                                    Me</label>
-                                            </div>
-                                        </div>
-                                        <a href="index.php" class="btn btn-primary btn-block">
+<!--                                        <div class="form-group">-->
+<!--                                            <div class="custom-control custom-checkbox small">-->
+<!--                                                <input type="checkbox" class="custom-control-input" id="customCheck">-->
+<!--                                                <label class="custom-control-label" for="customCheck">Remember-->
+<!--                                                    Me</label>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+                                        <button type="submit" href="index.php" class="btn btn-primary btn-block" name="login">
                                             Login
-                                        </a>
+                                        </button>
                                     </form>
                                     <hr>
                                     <div class="text-center">
@@ -105,3 +127,6 @@
 </body>
 
 </html>
+<?php
+    unset($_SESSION['loginError']);
+?>
