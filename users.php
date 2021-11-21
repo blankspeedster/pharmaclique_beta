@@ -40,6 +40,19 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+                    <!-- Notification here -->
+                    <?php
+                    if(isset($_SESSION['message'])){?>
+                        <div class="alert alert-<?php echo $_SESSION['msg_type']; ?> alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <?php
+                            echo $_SESSION['message'];
+                            unset($_SESSION['message']);
+                            ?>
+                        </div>
+                    <?php } ?>
+                    <!-- End Notification -->
+
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">Users</h1>
                     <p class="mb-4"></p>
@@ -58,7 +71,7 @@
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 First Name</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <input type="text" class="form-control" name="fame" value="<?php if(isset($_GET['edit'])){ echo $edit_user['firstname'];} ?>" required>
+                                                <input type="text" class="form-control" name="fname" value="<?php if(isset($_GET['edit'])){ echo $edit_user['firstname'];} else if(isset($_GET['fname'])){echo $_GET['fname'];} ?>" required>
                                             </div>
                                         </div>
                                     </div>
@@ -71,7 +84,7 @@
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Last Name</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <input type="text" class="form-control" name="lname" value="<?php if(isset($_GET['edit'])){ echo $edit_user['lastname'];} ?>" required>
+                                                <input type="text" class="form-control" name="lname" value="<?php if(isset($_GET['edit'])){ echo $edit_user['lastname'];} else if(isset($_GET['lname'])){echo $_GET['lname'];} ?>" required>
                                             </div>
                                         </div>
                                     </div>
@@ -85,12 +98,25 @@
                                                 Email Address
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <input type="email" class="form-control" name="email_address" value="<?php if(isset($_GET['edit'])){ echo $edit_user['email'];} ?>" required>
+                                                <input type="email" class="form-control" name="email" value="<?php if(isset($_GET['edit'])){ echo $edit_user['email'];}else if(isset($_GET['email'])){echo $_GET['email'];} ?>" required>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                <!-- Email Address -->
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Phone Number
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <input type="number" maxlength="11" value="09000000000" class="form-control" name="phone_number" value="<?php if(isset($_GET['edit'])){ echo $edit_user['phone_number'];}else if(isset($_GET['phone_number'])){echo $_GET['phone_number'];} ?>" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <!-- Role -->
                                 <div class="col-xl-4 col-md-6 mb-4">
                                     <div class="row no-gutters align-items-center">
@@ -115,7 +141,7 @@
                                     </div>
                                 </div>
 
-                                <?php if(isset($_GET['edit'])) { /* do nothing*/ } else {  ?>
+                                <?php if(isset($_GET['edit'])) {} else {  ?>
                                 <!-- Password -->
                                 <div class="col-xl-4 col-md-6 mb-4">
                                     <div class="row no-gutters align-items-center">
@@ -124,7 +150,7 @@
                                                 Password
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <input type="password" class="form-control" id="password" name="password" required>
+                                                <input type="password" class="form-control" id="password" name="password" onkeyup='check();' required>
                                             </div>
                                         </div>
                                     </div>
@@ -138,7 +164,8 @@
                                                 Confirm Password
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <input type="password" class="form-control" name="confirm_password" id="confirm_password" required>
+                                                <input type="password" class="form-control" name="confirm_password" id="confirm_password" onkeyup='check();' required>
+                                                <button disabled id="password-message" class="btn btn-block"></button>
                                             </div>
                                         </div>
                                     </div>
@@ -148,12 +175,13 @@
                                 <div class="col-xl-12 col-md-6 mb-4">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <a href="users.php" id="refresh" class='float-right btn btn-danger mr-1'><i class="fas as fa-sync"></i> Clear/Refresh</a>
                                             <?php if(isset($_GET['edit'])){ ?>
+                                                <input type="text" name="user_id" value="<?php echo $_GET['edit']; ?>" style="visibility: hidden;">
                                                 <button type="submit" class="btn btn-primary float-right mr-1" name="update"><i class="far fa-save"></i> Update User</button>
                                             <?php }else{ ?>
-                                                <button type="submit" class="btn btn-primary float-right mr-1" name="edit"><i class="far fa-save"></i> Create User</button>
+                                                <button type="submit" class="btn btn-primary float-right mr-1" name="save" id="save"><i class="far fa-save"></i> Create User</button>
                                             <?php } ?>
+                                            <a href="users.php" id="refresh" class='float-right btn btn-danger mr-1'><i class="fas as fa-sync"></i> Clear/Refresh</a>
                                         </div>
                                     </div>
                                 </div>
@@ -205,6 +233,7 @@
                                             <td>
                                                 <!-- Edit-->
                                                 <a href="users.php?edit=<?php echo $user['user_id']; ?>" class="btn btn-info btn-sm"><i class="far fa-edit"></i> Edit</a>
+                                                <a href="process_users.php?validate=<?php echo $user['user_id']; ?>" class="btn btn-success btn-sm"><i class="far fa-check-square"></i> Validate</a>
                                                 <!-- Start Drop down Delete here -->
                                                 <button class="btn btn-danger btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <i class="far fa-trash-alt"></i> Delete
@@ -232,7 +261,19 @@
 <?php include("footer.php"); ?>
 
     <!-- Start scripts here -->
-
+        <script>
+            let check = function() {
+                if (document.getElementById('password').value == document.getElementById('confirm_password').value) {
+                    document.getElementById('password-message').style.color = 'green';
+                    document.getElementById('password-message').innerHTML = 'Passwords matched';
+                    document.getElementById("save").disabled = false;
+                } else {
+                    document.getElementById('password-message').style.color = 'red';
+                    document.getElementById('password-message').innerHTML = 'Passwords do not match!';
+                    document.getElementById("save").disabled = true;
+                }
+            }
+        </script>
         <!-- Bootstrap core JavaScript-->
         <script src="vendor/jquery/jquery.min.js"></script>
         <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

@@ -88,6 +88,10 @@
                                     <input type="email" class="form-control" id="exampleInputEmail"
                                            value="<?php if(isset($_GET['email'])){echo $_GET['email'];} ?>" placeholder="Email Address" name="email" required>
                                 </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control"
+                                           value="<?php if(isset($_GET['phone_number'])){echo $_GET['phone_number'];} ?>" placeholder="Phone Number" name="phone_number"  id="phone_number" required>
+                                </div>                                
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <input type="password" class="form-control" placeholder="Password" name="password" id="password" onkeyup='check();' required>

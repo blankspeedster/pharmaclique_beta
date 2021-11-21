@@ -40,6 +40,7 @@
         $fname = ucfirst($_POST['fname']);
         $lname = ucfirst($_POST['lname']);
         $email = strtolower($_POST['email']);
+        $phone_number = $_POST['phone_number'];
         $password = $_POST['password'];
 
         $password = password_hash($password, PASSWORD_DEFAULT);
@@ -48,10 +49,10 @@
         if(mysqli_num_rows($checkUser)>0){
 
             $_SESSION['registerError'] = "Email already taken. Please try another.";
-            header("location: register.php?fname=".$fname."&lname=".$lname."&email=".$email);
+            header("location: register.php?fname=".$fname."&lname=".$lname."&email=".$email."&phone_number=".$phone_number);
         }
         else{
-            $mysqli->query(" INSERT INTO users ( firstname, lastname, email, password, role) VALUES('$fname','$lname','$email','$password', '$role') ") or die ($mysqli->error());
+            $mysqli->query(" INSERT INTO users (firstname, lastname, email, password, role, phone_number) VALUES('$fname','$lname','$email','$password', '$role','$phone_number') ") or die ($mysqli->error());
 
             $_SESSION['loginError'] = "User Account Creation Successful!";
             header("location: login.php");
