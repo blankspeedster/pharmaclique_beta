@@ -7,7 +7,8 @@
     $getURI = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     $_SESSION['getURI'] = $getURI;
 
-    $users = mysqli_query($mysqli, "SELECT * FROM users u
+    $users = mysqli_query($mysqli, "SELECT *, u.id AS user_id
+    FROM users u
     JOIN role r
     ON r.id = u.role");
 ?>
@@ -42,8 +43,126 @@
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">Users</h1>
                     <p class="mb-4"></p>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Add / Edit Users</h6>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" action="process_users.php">
+                            <div class="row">
 
-                    <!-- DataTales Example -->
+                                <!-- First Name -->
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                First Name</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <input type="text" class="form-control" name="fame" value="<?php if(isset($_GET['edit'])){ echo $edit_user['firstname'];} ?>" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Last Name -->
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Last Name</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <input type="text" class="form-control" name="lname" value="<?php if(isset($_GET['edit'])){ echo $edit_user['lastname'];} ?>" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Email Address -->
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Email Address
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <input type="email" class="form-control" name="email_address" value="<?php if(isset($_GET['edit'])){ echo $edit_user['email'];} ?>" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Role -->
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Role
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php if(isset($_GET['edit'])){ ?>
+                                                    <input type="text" class="form-control" id="password" name="role" value="<?php if(isset($_GET['edit'])){echo strtoupper($edit_user['code']); } ?>" readonly>
+                                                <?php } else { ?>
+                                                <select name="role" class="form-control" required>
+                                                    <option value="" disabled selected>Role:</option>
+                                                    <option value="1">Customer</option>
+                                                    <option value="2">Rider</option>
+                                                    <option value="3">Pharmacist</option>
+                                                    <option value="4">Admin</option>
+                                                </select>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <?php if(isset($_GET['edit'])) { /* do nothing*/ } else {  ?>
+                                <!-- Password -->
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Password
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <input type="password" class="form-control" id="password" name="password" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Confirm Password
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <input type="password" class="form-control" name="confirm_password" id="confirm_password" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php } ?>
+                                <!-- Submit Form -->
+                                <div class="col-xl-12 col-md-6 mb-4">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <a href="users.php" id="refresh" class='float-right btn btn-danger mr-1'><i class="fas as fa-sync"></i> Clear/Refresh</a>
+                                            <?php if(isset($_GET['edit'])){ ?>
+                                                <button type="submit" class="btn btn-primary float-right mr-1" name="update"><i class="far fa-save"></i> Update User</button>
+                                            <?php }else{ ?>
+                                                <button type="submit" class="btn btn-primary float-right mr-1" name="edit"><i class="far fa-save"></i> Create User</button>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Users Table -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">List of Users</h6>
@@ -72,16 +191,30 @@
                                         </tr>
                                     </tfoot>
                                     <tbody>
-                                        <?php while($user = mysqli_fetch_array($users)){?>
+                                        <?php while($user = mysqli_fetch_array($users)){
+                                            $approved = boolval($user["validated"]);
+                                            ?>
                                         <tr>
                                             <td><?php echo $user["firstname"]." ".$user["lastname"]; ?></td>
                                             <td><?php echo $user["email"]; ?></td>
                                             <td><?php echo $user["phone_number"]; ?></td>
                                             <td><?php echo ucfirst($user["code"]); ?></td>
-                                            <td><?php if($user["validated"] != 0 ){
+                                            <td><?php if($approved){
                                                 ?><span class="badge bg-success text-white">Validated</span><?php
                                                 }else{?> <span class="badge bg-warning text-white">Pending</span> <?php } ?></td>
-                                            <td></td>
+                                            <td>
+                                                <!-- Edit-->
+                                                <a href="users.php?edit=<?php echo $user['user_id']; ?>" class="btn btn-info btn-sm"><i class="far fa-edit"></i> Edit</a>
+                                                <!-- Start Drop down Delete here -->
+                                                <button class="btn btn-danger btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="far fa-trash-alt"></i> Delete
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton btn-sm">
+                                                    You sure you want to delete? You cannot undo the changes<br/>
+                                                    <a href="#" class='btn btn-success btn-sm'><i class="far fa-window-close"></i> Cancel</a>
+                                                    <a href="process_users.php?delete=<?php echo $user['user_id'] ?>" class='btn btn-danger btn-sm'><i class="far fa-trash-alt"></i> Confirm Delete</a>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <?php } ?>
                                     </tbody>
