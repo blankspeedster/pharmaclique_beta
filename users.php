@@ -7,10 +7,12 @@
     $getURI = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     $_SESSION['getURI'] = $getURI;
 
+    $session_user_id = $_SESSION['user_id'];
     $users = mysqli_query($mysqli, "SELECT *, u.id AS user_id
     FROM users u
     JOIN role r
-    ON r.id = u.role");
+    ON r.id = u.role
+    WHERE u.id <> '$session_user_id' ");
 ?>
 
 <title>PharmaClique - Users</title>
