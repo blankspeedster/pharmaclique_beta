@@ -234,7 +234,9 @@
                                             <td>
                                                 <!-- Edit-->
                                                 <a href="users.php?edit=<?php echo $user['user_id']; ?>" class="btn btn-info btn-sm"><i class="far fa-edit"></i> Edit</a>
+                                                <?php if(!$approved){ ?>
                                                 <a href="process_users.php?validate=<?php echo $user['user_id']; ?>" class="btn btn-success btn-sm"><i class="far fa-check-square"></i> Validate</a>
+                                                <?php } ?>
                                                 <!-- Start Drop down Delete here -->
                                                 <button class="btn btn-danger btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="<?php if($session_user_id == $user['user_id']){echo 'display: none;';} ?>">
                                                     <i class="far fa-trash-alt"></i> Delete
