@@ -4,6 +4,9 @@ include('dbh.php');
 if (!isset($_SESSION['email'])) {
     header("Location: login.php");
 }
+
+$role = $_SESSION['role'];
+//4 is admin
 ?>
 <style>
     nav ul {
@@ -123,12 +126,13 @@ if (!isset($_SESSION['email'])) {
         </li> -->
 
         <!-- Nav Item - Users -->
+        <?php if($role == "4"){ ?>
         <li class="nav-item">
             <a class="nav-link" href="users.php">
                 <i class="fas fa-fw fa-user"></i>
                 <span>Users</span></a>
         </li>
-
+        <?php } ?>
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
 

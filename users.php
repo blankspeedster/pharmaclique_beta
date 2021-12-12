@@ -178,11 +178,11 @@
                                         <div class="col mr-2">
                                             <?php if(isset($_GET['edit'])){ ?>
                                                 <input type="text" name="user_id" value="<?php echo $_GET['edit']; ?>" style="visibility: hidden;">
-                                                <button type="submit" class="btn btn-primary float-right mr-1" name="update"><i class="far fa-save"></i> Update User</button>
+                                                <button type="submit" class="btn btn-primary float-right m-1" name="update"><i class="far fa-save"></i> Update User</button>
                                             <?php }else{ ?>
-                                                <button type="submit" class="btn btn-primary float-right mr-1" name="save" id="save"><i class="far fa-save"></i> Create User</button>
+                                                <button type="submit" class="btn btn-primary float-right m-1" name="save" id="save"><i class="far fa-save"></i> Create User</button>
                                             <?php } ?>
-                                            <a href="users.php" id="refresh" class='float-right btn btn-danger mr-1'><i class="fas as fa-sync"></i> Clear/Refresh</a>
+                                            <a href="users.php" id="refresh" class="float-right btn btn-danger m-1"><i class="fas as fa-sync"></i> Clear/Refresh</a>
                                         </div>
                                     </div>
                                 </div>
@@ -233,15 +233,15 @@
                                                 }else{?> <span class="badge bg-warning text-white">Pending</span> <?php } ?></td>
                                             <td>
                                                 <!-- Edit-->
-                                                <a href="users.php?edit=<?php echo $user['user_id']; ?>" class="btn btn-info btn-sm"><i class="far fa-edit"></i> Edit</a>
+                                                <a href="users.php?edit=<?php echo $user['user_id']; ?>" class="btn btn-info btn-sm mb-1"><i class="far fa-edit"></i> Edit</a>
                                                 <?php if(!$approved){ ?>
-                                                <a href="process_users.php?validate=<?php echo $user['user_id']; ?>" class="btn btn-success btn-sm"><i class="far fa-check-square"></i> Validate</a>
+                                                <a href="process_users.php?validate=<?php echo $user['user_id']; ?>" class="btn btn-success btn-sm mb-1"><i class="far fa-check-square"></i> Validate</a>
                                                 <?php } ?>
                                                 <!-- Start Drop down Delete here -->
-                                                <button class="btn btn-danger btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="<?php if($session_user_id == $user['user_id']){echo 'display: none;';} ?>">
+                                                <button class="btn btn-danger btn-secondary dropdown-toggle btn-sm mb-1" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="<?php if($session_user_id == $user['user_id']){echo 'display: none;';} ?>">
                                                     <i class="far fa-trash-alt"></i> Delete
                                                 </button>
-                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton btn-sm">
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton btn-sm mb-1">
                                                     You sure you want to delete? You cannot undo the changes<br/>
                                                     <a href="#" class='btn btn-success btn-sm'><i class="far fa-window-close"></i> Cancel</a>
                                                     <a href="process_users.php?delete=<?php echo $user['user_id'] ?>" class='btn btn-danger btn-sm'><i class="far fa-trash-alt"></i> Confirm Delete</a>
