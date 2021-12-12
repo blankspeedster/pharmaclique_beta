@@ -247,7 +247,7 @@
                             </div>
 
                             <!-- Color System -->
-                            <div class="row">
+                            <div class="row" style="display: none;">
                                 <div class="col-lg-6 mb-4">
                                     <div class="card bg-primary text-white shadow">
                                         <div class="card-body">
@@ -319,7 +319,7 @@
                         <div class="col-lg-6 mb-4">
 
                             <!-- Illustrations -->
-                            <div class="card shadow mb-4">
+                            <div class="card shadow mb-4" style="display: none;">
                                 <div class="card-header py-3">
                                     <h6 class="m-0 font-weight-bold text-primary">Illustrations</h6>
                                 </div>
@@ -340,14 +340,11 @@
                             <!-- Approach -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Development Approach</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">About PharmaClique</h6>
                                 </div>
                                 <div class="card-body">
-                                    <p>SB Admin 2 makes extensive use of Bootstrap 4 utility classes in order to reduce
-                                        CSS bloat and poor page performance. Custom CSS classes are used to create
-                                        custom components and custom utility classes.</p>
-                                    <p class="mb-0">Before working with this theme, you should become familiar with the
-                                        Bootstrap framework, especially the utility classes.</p>
+                                    <p>The pharmacy consultation is one of the most important parts of dispensing medication. It provides the pharmacist with a chance to provide education and counseling to the patient on how to use their medications properly.</p>
+                                    <p class="mb-0">This is an opportunity for pharmacists not only to dispense medication and consult about it, but also to establish rapport with patients so that they will come back for future needs.</p>
                                 </div>
                             </div>
 
