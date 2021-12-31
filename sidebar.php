@@ -125,13 +125,22 @@ $role = $_SESSION['role'];
                 <span>Tables</span></a>
         </li> -->
 
+        <!-- Nav Item - Pharmacy -->
+        <?php if ($role == "3") { ?>
+            <li class="nav-item">
+                <a class="nav-link" href="pharmacy.php">
+                <i class="fas fa-clinic-medical"></i>
+                    <span>Pharmacy</span></a>
+            </li>
+        <?php } ?>
+
         <!-- Nav Item - Users -->
-        <?php if($role == "4"){ ?>
-        <li class="nav-item">
-            <a class="nav-link" href="users.php">
-                <i class="fas fa-fw fa-user"></i>
-                <span>Users</span></a>
-        </li>
+        <?php if ($role == "4") { ?>
+            <li class="nav-item">
+                <a class="nav-link" href="users.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Users</span></a>
+            </li>
         <?php } ?>
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">

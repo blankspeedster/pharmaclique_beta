@@ -14,10 +14,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'PharmaClique',
       home: Scaffold(
-        body: WebView(
-          initialUrl: "http://pharmaclique.acms.org.ph",
-          javascriptMode: JavascriptMode.unrestricted,
-        ),
+        body: SafeArea(
+          child: WebView(
+            initialUrl: "http://pharmaclique.acms.org.ph",
+            javascriptMode: JavascriptMode.unrestricted,
+          ),
+        )
       ),
     );
   }
