@@ -1,14 +1,16 @@
 <?php
-require_once("process_pharmacy.php");
-include("head.php");
+    require_once("process_pharmacy.php");
+    include("head.php");
 
-$user_id = $_SESSION['user_id'];
-$checkStore = $mysqli->query("SELECT * FROM pharmacy_store WHERE user_id='$user_id' ");
-$storeExist = false;
-if (mysqli_num_rows($checkStore) > 0) {
-    $storeExist = true;
-    $store = $checkStore->fetch_array();
-}
+    $user_id = $_SESSION['user_id'];
+    $checkStore = $mysqli->query("SELECT * FROM pharmacy_store WHERE user_id='$user_id' ");
+    $storeExist = false;
+    $storeId = 0;
+    if (mysqli_num_rows($checkStore) > 0) {
+        $storeExist = true;
+        $store = $checkStore->fetch_array();
+        $storeId = $store['id'];
+    }
 ?>
 <title>PharmaClique - Pharmacy</title>
 
@@ -56,12 +58,12 @@ if (mysqli_num_rows($checkStore) > 0) {
                                 <!-- Collapsable Card Example -->
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Accordion -->
-                                    <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                                    <a href="#collapseStore" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseStore">
                                         <h6 class="m-0 font-weight-bold text-primary">Storename</h6>
                                     </a>
                                     <!-- Card Content - Collapse -->
                                     <!-- <div class="collapse show" id="collapseCardExample"> -->
-                                    <div class="collapse <?php if (!$storeExist) { echo "show"; } ?>" id="collapseCardExample">
+                                    <div class="collapse <?php if (!$storeExist) { echo "show"; } ?>" id="collapseStore">
                                         <div class="card-body">
                                             <form method="post" action="process_pharmacy.php">
                                                 <div class="row">
@@ -106,9 +108,15 @@ if (mysqli_num_rows($checkStore) > 0) {
 
                                                     <div class="col-xl-12 col-md-12 mb-4" style="">
                                                         <?php if (!$storeExist) { ?>
-                                                            <button type="submit" style="float: right;" class="btn btn-primary btn-sm" name="save_storename">
+                                                            <button type="submit" style="float: right;" class="btn btn-primary btn-sm m-1" :disabled="!editStoreName" name="save_storename">
                                                                 <i class="far fa-save"></i> Save Store Information
                                                             </button>
+                                                            <a v-if="!editStoreName" style="float: right;" class="btn btn-success btn-sm m-1" @click="editStoreName = true">
+                                                                <i class="far fa-edit"></i> Edit
+                                                            </a>
+                                                            <a v-else style="float: right;" class="btn btn-warning btn-sm m-1" @click="editStoreName = false">
+                                                                <i class="far fa-window-close"></i> Cancel
+                                                            </a>
                                                         <?php } else { ?>
                                                             <input type="text" name="store_id" value="<?php echo $store['id']; ?>" style="visibility: hidden;">
                                                             <button type="submit" style="float: right;" class="btn btn-info btn-sm m-1" name="update_storename" :disabled="!editStoreName">
@@ -131,21 +139,92 @@ if (mysqli_num_rows($checkStore) > 0) {
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-6">
-                                <!-- Default Card Example -->
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        Default Card Example
-                                    </div>
-                                    <div class="card-body">
-                                        This card uses Bootstrap's default styling with no utility classes added. Global
-                                        styles are the only things modifying the look and feel of this default card example.
+
+                            <!-- Collapsable Card Example -->
+                            <div class="col-lg-12">
+                                <div class="card shadow mb-4">
+                                    <!-- Card Header - Accordion -->
+                                    <a href="#collapseAddProduct" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseAddProduct">
+                                        <h6 class="m-0 font-weight-bold text-primary">Add Product</h6>
+                                    </a>
+                                    <!-- Card Content - Collapse -->
+                                    <div class="collapse show" id="collapseAddProduct">
+                                        <div class="card-body">
+                                            <form @submit.prevent="postProduct" >
+                                                <div class="row">
+                                                    <!-- Product Photo -->
+                                                    <div class="col-xl-6 col-md-6 mb-4">
+                                                        <div class="row no-gutters align-items-center">
+                                                            <div class="col mr-2">
+                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                                    Product Photo
+                                                                </div>
+                                                                <div class="mb-0 font-weight-bold text-gray-800">
+                                                                    <input type="file" id="picture" ref="picture" accept=".jpg,.png,.jpeg" required/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Product Name -->
+                                                    <div class="col-xl-6 col-md-6 mb-4">
+                                                        <div class="row no-gutters align-items-center">
+                                                            <div class="col mr-2">
+                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                                    Product Name</div>
+                                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                    <input type="text" class="form-control" v-model="name" required>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Product Descripton -->
+                                                    <div class="col-xl-6 col-md-6 mb-4">
+                                                        <div class="row no-gutters align-items-center">
+                                                            <div class="col mr-2">
+                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                                    Product Descripton</div>
+                                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                    <input type="text" class="form-control" v-model="description" required>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Product Stock -->
+                                                    <div class="col-xl-6 col-md-6 mb-4">
+                                                        <div class="row no-gutters align-items-center">
+                                                            <div class="col mr-2">
+                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                                    Product Stock</div>
+                                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                    <input type="number" class="form-control" v-model="stock" required>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Submit Product -->
+                                                    <div class="col-xl-12 col-md-12 col-sm-12 text-end">
+                                                        <button style="float: right;" type="submit" class="btn btn-primary btn-sm m-1">
+                                                            <i class="far fa-save"></i> Save Product Information
+                                                        </button>
+                                                        <button style="float: right;" class="btn btn-info btn-sm m-1" @click="updateProduct">
+                                                        <i class="far fa-save"></i> Update Store Information
+                                                        </button>                                                        
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
 
+                            <div class="col-lg-6">
                                 <!-- Basic Card Example -->
                                 <div class="card shadow mb-4">
-                                    <div class="card-header py-3">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                         <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
                                     </div>
                                     <div class="card-body">
@@ -229,10 +308,51 @@ if (mysqli_num_rows($checkStore) > 0) {
                     data() {
                         return {
                             editStoreName: false,
+                            store_name: "",
+
+                            //Product
+                            name: null,
+                            description: null,
+                            category: 1,
+                            stock: null,
+
                         }
                     },
                     methods: {
+                        //Post Product
+                        async postProduct(){
+                            var pictureFile = document.querySelector("#picture");
+                            console.log(pictureFile.files[0]);
+                            const form = new FormData();
+                            form.append("picture", pictureFile.files[0]);
+                            form.append("name", this.name);
+                            form.append("description", this.description);
+                            form.append("category", this.category);
+                            form.append("stock", this.stock);
 
+                            const options = {
+                            method: "POST",
+                            url: "process_pharmacy.php?createProduct="+<?php echo $storeId; ?>,
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                            },
+                                data: form
+                            };
+
+                            await axios.request(options).then((response)=>{
+                                this.name = null;
+                                this.description = null;
+                                this.stock = null;
+                                document.querySelector("#picture").value = "";
+                            }).catch((error)=>{
+                                console.error(error);
+                            });                            
+                        },
+
+                        //Update Product
+                        async updateProduct(){
+                            
+                        }
                     },
                     mounted() {
                         console.log('vue sample here!');
