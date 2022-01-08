@@ -47,6 +47,7 @@ if (isset($_GET['createProduct'])) {
             );
         } else {
             $randomName = rand(1000, 100000000000) . "-" . $pictureName;
+            $randomName = strtolower($randomName);
             $uploadName = $uploadDir . strtolower($randomName);
             $uploadName = preg_replace('/\s+/', '-', $uploadName);
 
