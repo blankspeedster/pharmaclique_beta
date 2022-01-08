@@ -86,3 +86,26 @@ if (isset($_GET['createProduct'])) {
 
 
 }
+
+//Get Products
+if (isset($_GET['getProducts'])) {
+    $store_id = $_GET['getProducts'];
+    $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE store_id = '$store_id' ORDER BY updated_at DESC");
+    $products = array();
+    while ($product = mysqli_fetch_assoc($store_products)) {
+        $products[] = $product;
+    }
+    echo json_encode($products);
+}
+
+//Delete Product
+if(isset($_GET['deleteProduct'])){
+    $data = json_decode(file_get_contents('php://input'), true);
+    $productId = $data['productId'];
+    $mysqli->query("DELETE FROM pharmacy_products WHERE id = '$productId' ") or die($mysqli->error);
+
+    $jsonEncode = array('response' => 'Product has been deleted!');
+    echo json_encode($jsonEncode);
+}
+
+?>
