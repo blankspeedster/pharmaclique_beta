@@ -2,7 +2,7 @@
 include('dbh.php');
 
 if (!isset($_SESSION['email'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");
 }
 
 $role = $_SESSION['role'];

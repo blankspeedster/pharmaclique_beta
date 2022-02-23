@@ -1,5 +1,5 @@
 <?php
-    require_once('process_registration.php');
+    require_once('../process_registration.php');
 
     if(isset($_SESSION['email'])){
         header('location: index.php');
