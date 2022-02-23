@@ -124,7 +124,6 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
 
                                                     <div class="col-xl-12 col-md-12 mb-4" style="">
                                                         <?php if (!$storeExist) { ?>
@@ -226,48 +225,6 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                         </div>
                                                     </div>
 
-
-                                                    <!-- Product Price -->
-                                                    <div class="col-xl-6 col-md-6 mb-4">
-                                                        <div class="row no-gutters align-items-center">
-                                                            <div class="col mr-2">
-                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                                    Product Price</div>
-                                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <input type="number" class="form-control" v-model="price" required>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>                           
-                                                    
-                                                    <!-- Product Weight -->
-                                                    <div class="col-xl-6 col-md-6 mb-4">
-                                                        <div class="row no-gutters align-items-center">
-                                                            <div class="col mr-2">
-                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                                    Product Weight - in mg</div>
-                                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <input type="number" class="form-control" v-model="weight" required>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>     
-
-                                                    <!-- Product Brand -->
-                                                    <div class="col-xl-6 col-md-6 mb-4">
-                                                        <div class="row no-gutters align-items-center">
-                                                            <div class="col mr-2">
-                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                                    Brand</div>
-                                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <input type="number" class="form-control" v-model="brand" required>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>     
-                                                    
-
-
                                                     <!-- Submit Product -->
                                                     <div class="col-xl-12 col-md-12 col-sm-12 text-end">
                                                         <button v-if="!isEditProduct" style="float: right;" type="submit" class="btn btn-primary btn-sm m-1" :disabled="isSaving">
@@ -301,27 +258,23 @@ if (mysqli_num_rows($checkStore) > 0) {
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Brand</th>
                                             <th>Product Code</th>
                                             <th>Product Name</th>
                                             <th>Product Description</th>
                                             <th>Price</th>
                                             <th>Stock</th>
-                                            <th>Weight</th>
                                             <th>Photo Link</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="p in products">
-                                            <td>{{p.id}}</td>
-                                            <td>{{p.product_brand}}</td>
+                                            <td>Tiger Nixon</td>
                                             <td>{{p.product_code}}</td>
                                             <td>{{p.product_name}}</td>
                                             <td>{{p.product_description}}</td>
-                                            <td>{{p.product_price}}</td>
                                             <td>{{p.product_stock}}</td>
-                                            <td>{{p.product_weight}}</td>
+                                            <td>{{p.product_stock}}</td>
                                             <td><a :href="'./assets/images/'+p.product_url" target="_blank">Link</a></td>
                                             <td>
                                             <div class="dropdown no-arrow">
@@ -491,9 +444,6 @@ if (mysqli_num_rows($checkStore) > 0) {
                         description: null,
                         category: 1,
                         stock: null,
-                        price: 0,
-                        weight: 0,
-                        brand: null,
                         isEditProduct: false,
 
                         //Product list
@@ -524,9 +474,6 @@ if (mysqli_num_rows($checkStore) > 0) {
                         form.append("description", this.description);
                         form.append("category", this.category);
                         form.append("stock", this.stock);
-                        form.append("price", this.price);
-                        form.append("weight", this.weight);
-                        form.append("brand", this.brand);
 
                         const options = {
                             method: "POST",
@@ -543,9 +490,6 @@ if (mysqli_num_rows($checkStore) > 0) {
                             this.stock = null;
                             document.querySelector("#picture").value = "";
                             this.showNotification = true;
-                            this.brand = "";
-                            this.weight = 0;
-                            this.price = 0;
                             this.messageNotification = "Uploading or product succesful!";
                             this.getProducts();
 
@@ -631,6 +575,121 @@ if (mysqli_num_rows($checkStore) > 0) {
                 }
             });
         </script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            .card-list-products {
+                width: 90%;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                grid-gap: 4em
+            }
+
+            .card-products,
+            .card-body-products,
+            .card-footer-products {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card-products {
+                border-radius: 18px;
+                background: #fff;
+                box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.1);
+                /* overflow     : hidden; */
+                cursor: pointer;
+                transition: transform 0.4s;
+            }
+
+            .card-products:hover {
+                /* transform : scale(1.01); */
+                /* box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.1); */
+            }
+
+            .card-image-products {
+                display: block;
+                position: relative;
+                height: 180px;
+                max-width: 100%;
+            }
+
+            .card-image-products img {
+                max-height: 100%;
+                width: 100%;
+                background-size: cover !important;
+            }
+
+            .card-body-products {
+                padding: 5px 5px;
+            }
+
+            .card-body-products .date {
+                font-weight: bolder;
+            }
+
+            .card-body-products h2 {
+                margin: 2px auto 12px;
+            }
+
+            .card-body-products p {
+                color: gray;
+                line-height: 22px;
+                text-align: center;
+            }
+
+            .card-footer-products {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+
+            .card-footer-products .info-products {
+                font-size: 0.9em;
+                padding: 10px;
+                color: #fff;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .card-footer-products .info-products:last-child {
+                border: none;
+            }
+
+            .card-footer-products .info-products .type {
+                text-transform: uppercase;
+                margin-top: 2px;
+                font-size: 0.8em;
+            }
+
+            .card-products:nth-child(1) .card-footer {
+                background: #ff0c71;
+            }
+
+            .card-products:nth-child(1) .date {
+                color: #ff0c71;
+            }
+
+            .card-products:nth-child(2) .card-footer {
+                background: #ff510c;
+            }
+
+            .card-products:nth-child(2) .date {
+                color: #ff510c;
+            }
+
+            .card-products:nth-child(3) .card-footer {
+                background: #03b43e;
+            }
+
+            .card-products:nth-child(3) .date {
+                color: #03b43e;
+            }
+        </style>
 </body>
 
 </html>

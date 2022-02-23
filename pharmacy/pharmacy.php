@@ -260,7 +260,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                                     Brand</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <input type="number" class="form-control" v-model="brand" required>
+                                                                    <input type="text" class="form-control" v-model="brand" required>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -322,7 +322,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                                             <td>{{p.product_price}}</td>
                                             <td>{{p.product_stock}}</td>
                                             <td>{{p.product_weight}}</td>
-                                            <td><a :href="'./assets/images/'+p.product_url" target="_blank">Link</a></td>
+                                            <td><a :href="'../assets/images/'+p.product_url" target="_blank">Link</a></td>
                                             <td>
                                             <div class="dropdown no-arrow">
                                                 <a class="dropdown-toggle mr-2" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">
@@ -462,21 +462,21 @@ if (mysqli_num_rows($checkStore) > 0) {
         <!-- Start scripts here -->
 
         <!-- Bootstrap core JavaScript-->
-        <script src="vendor/jquery/jquery.min.js"></script>
-        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="../vendor/jquery/jquery.min.js"></script>
+        <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
         <!-- Core plugin JavaScript-->
-        <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+        <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
         <!-- Custom scripts for all pages-->
-        <script src="js/sb-admin-2.min.js"></script>
+        <script src="../js/sb-admin-2.min.js"></script>
 
         <!-- Page level plugins -->
-        <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-        <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+        <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
+        <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
         <!-- Page level custom scripts -->
-        <script src="js/demo/datatables-demo.js"></script>
+        <script src="../js/demo/datatables-demo.js"></script>
 
         <script>
             new Vue({
@@ -498,7 +498,7 @@ if (mysqli_num_rows($checkStore) > 0) {
 
                         //Product list
                         products: [],
-
+                        product_id: null,
                         //Notification
                         showNotification: false,
                         messageNotification: null,
@@ -546,7 +546,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                             this.brand = "";
                             this.weight = 0;
                             this.price = 0;
-                            this.messageNotification = "Uploading or product succesful!";
+                            this.messageNotification = "Uploading of product succesful!";
                             this.getProducts();
 
                         }).catch((error) => {
@@ -559,12 +559,65 @@ if (mysqli_num_rows($checkStore) > 0) {
                         this.saveBtnProduct = "Save Product Information";
                     },
 
+                   //Update Product
+                   async updateProduct() {
+                        this.isSaving = true;
+                        this.saveBtnProduct = "Saving...";
+                        this.showNotification = true;
+                        this.messageNotification = "Uploading Product...";
+                        var pictureFile = document.querySelector("#picture");
+                        console.log(pictureFile.files[0]);
+                        const form = new FormData();
+                        form.append("picture", pictureFile.files[0]);
+                        form.append("name", this.name);
+                        form.append("description", this.description);
+                        form.append("category", this.category);
+                        form.append("stock", this.stock);
+                        form.append("price", this.price);
+                        form.append("weight", this.weight);
+                        form.append("brand", this.brand);
+
+                        const options = {
+                            method: "POST",
+                            url: "process_pharmacy.php?updateProduct=" + this.product_id,
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                            },
+                            data: form
+                        };
+
+                        await axios.request(options).then((response) => {
+                            this.name = null;
+                            this.description = null;
+                            this.stock = null;
+                            document.querySelector("#picture").value = "";
+                            this.showNotification = true;
+                            this.brand = "";
+                            this.weight = 0;
+                            this.price = 0;
+                            this.messageNotification = "Updating of product succesful!";
+                            this.getProducts();
+
+                        }).catch((error) => {
+                            console.error(error);
+                            this.showNotification = true;
+                            this.messageNotification = "There is an error uploading the product. Please try again.";
+                        });
+
+                        this.isSaving = false;
+                        this.saveBtnProduct = "Save Product Information";                        
+                    },
+
                     // Edit Product
                     editProduct(product) {
                         this.isEditProduct = true;
                         this.name = product.product_name;
                         this.description = product.product_description;
                         this.stock = product.product_stock;
+                        this.brand = product.product_brand;
+                        this.weight = product.product_weight;
+                        this.price = product.product_price;
+                        this.product_id = product.id;
                     },
 
                     //Cancel Edit Product
@@ -620,10 +673,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                             });
                     },
 
-                    //Update Product
-                    async updateProduct() {
 
-                    }
                 },
                 async created() {
                     //Get Products
