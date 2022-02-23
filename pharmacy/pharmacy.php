@@ -171,7 +171,8 @@ if (mysqli_num_rows($checkStore) > 0) {
                                     <!-- Card Content - Collapse -->
                                     <div class="collapse show" id="collapseAddProduct">
                                         <div class="card-body">
-                                            <form @submit.prevent="postProduct">
+                                            <!-- <form @submit.prevent="postProduct"> -->
+                                            <form>
                                                 <div class="row">
                                                     <!-- Product Photo -->
                                                     <div class="col-xl-6 col-md-6 mb-4">
@@ -270,7 +271,7 @@ if (mysqli_num_rows($checkStore) > 0) {
 
                                                     <!-- Submit Product -->
                                                     <div class="col-xl-12 col-md-12 col-sm-12 text-end">
-                                                        <button v-if="!isEditProduct" style="float: right;" type="submit" class="btn btn-primary btn-sm m-1" :disabled="isSaving">
+                                                        <button @click="postProduct" v-if="!isEditProduct" style="float: right;" type="submit" class="btn btn-primary btn-sm m-1" :disabled="isSaving">
                                                             <i class="far fa-save"></i> {{saveBtnProduct}}
                                                         </button>
                                                         <span v-else>
@@ -561,8 +562,6 @@ if (mysqli_num_rows($checkStore) > 0) {
 
                    //Update Product
                    async updateProduct() {
-                        this.isSaving = true;
-                        this.saveBtnProduct = "Saving...";
                         this.showNotification = true;
                         this.messageNotification = "Uploading Product...";
                         var pictureFile = document.querySelector("#picture");
@@ -603,9 +602,8 @@ if (mysqli_num_rows($checkStore) > 0) {
                             this.showNotification = true;
                             this.messageNotification = "There is an error uploading the product. Please try again.";
                         });
-
-                        this.isSaving = false;
-                        this.saveBtnProduct = "Save Product Information";                        
+                        this.isEditProduct = false;
+                        
                     },
 
                     // Edit Product

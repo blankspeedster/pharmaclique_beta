@@ -29,7 +29,7 @@ if (isset($_POST['update_storename'])) {
     header("location: pharmacy.php");
 }
 
-//Post Product
+//create Product
 if (isset($_GET['createProduct'])) {
     $uploadDir = "../assets/images/";
     $data = json_decode(file_get_contents('php://input'), true);
@@ -87,14 +87,12 @@ if (isset($_GET['createProduct'])) {
 
     $mysqli->query(" INSERT INTO pharmacy_products (store_id, product_code, product_name, product_description, product_url, product_stock, product_category_id, product_price, product_weight, product_brand) VALUES('$store_id','$product_code','$product_name','$product_description','$product_url','$product_stock','$product_category_id', '$product_price', '$product_weight', '$product_brand') ") or die($mysqli->error);
 
-    $response[] = array("response"=>"Product has been saved!");
+    $response[] = array("response"=>"Product has been saved!", "product:" =>"Product created!");
 
     echo json_encode($response);
-
-
 }
 
-//Post Product
+//Update Product
 if (isset($_GET['updateProduct'])) {
     $uploadDir = "../assets/images/";
     $data = json_decode(file_get_contents('php://input'), true);
