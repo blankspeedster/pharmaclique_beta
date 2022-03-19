@@ -166,8 +166,6 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <!-- </div> -->
-
 
                                                     <div class="col-xl-12 col-md-12 mb-4 mt-4" style="">
                                                         <?php if (!$storeExist) { ?>
@@ -333,7 +331,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                             this.lat = e.target.getLatLng().lat;
                             this.long = e.target.getLatLng().lng;
                             }).addTo(map)
-                            .bindPopup('Your Location', {
+                            .bindPopup("Your Store\'s Location", {
                                 autoPan: false
                             })
                             .openPopup();

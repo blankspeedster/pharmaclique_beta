@@ -6,11 +6,7 @@ if (!isset($_SESSION['email'])) {
 }
 
 if($_SESSION['role'] == 3){
-    header("Location: ./pharmacy/index.php");
-}
-
-if($_SESSION['role'] == 2){
-    header("Location: ./users/index.php");
+    header("Location: ../pharmacy/index.php");
 }
 
 $role = $_SESSION['role'];
@@ -153,6 +149,13 @@ $role = $_SESSION['role'];
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
+        <?php if ($role == "4") { ?>
+            <li class="nav-item">
+                <a class="nav-link" href="users.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Users</span></a>
+            </li>
+        <?php } ?>
 
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">
