@@ -124,7 +124,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
 
                                                     <div class="col-xl-12 col-md-12 mb-4" style="">
                                                         <?php if (!$storeExist) { ?>
@@ -161,7 +161,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                         <div class="row">
 
                             <!-- Add Propducts - Collapsable -->
-                            <div class="col-lg-12" id="addEditProduct">
+                            <div class="col-lg-12" id="addEditProduct" style="display: <?php if(!$storeExist){echo "none";} ?>;">
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Accordion -->
                                     <a href="#collapseAddProduct" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseAddProduct">
@@ -239,8 +239,8 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>                           
-                                                    
+                                                    </div>
+
                                                     <!-- Product Weight -->
                                                     <div class="col-xl-6 col-md-6 mb-4">
                                                         <div class="row no-gutters align-items-center">
@@ -252,7 +252,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>     
+                                                    </div>
 
                                                     <!-- Product Brand -->
                                                     <div class="col-xl-6 col-md-6 mb-4">
@@ -265,8 +265,8 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>     
-                                                    
+                                                    </div>
+
 
 
                                                     <!-- Submit Product -->
@@ -298,53 +298,53 @@ if (mysqli_num_rows($checkStore) > 0) {
                                     <h6 class="m-0 font-weight-bold text-primary">List of Products</h6>
                                 </div>
                                 <div class="card-body">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Brand</th>
-                                            <th>Product Code</th>
-                                            <th>Product Name</th>
-                                            <th>Product Description</th>
-                                            <th>Price</th>
-                                            <th>Stock</th>
-                                            <th>Weight</th>
-                                            <th>Photo Link</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="p in products">
-                                            <td>{{p.id}}</td>
-                                            <td>{{p.product_brand}}</td>
-                                            <td>{{p.product_code}}</td>
-                                            <td>{{p.product_name}}</td>
-                                            <td>{{p.product_description}}</td>
-                                            <td>{{p.product_price}}</td>
-                                            <td>{{p.product_stock}}</td>
-                                            <td>{{p.product_weight}}</td>
-                                            <td><a :href="'../assets/images/'+p.product_url" target="_blank">Link</a></td>
-                                            <td>
-                                            <div class="dropdown no-arrow">
-                                                <a class="dropdown-toggle mr-2" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">
-                                                    <i class="fas fa-ellipsis-h fa-sm fa-fw text-gray-400"></i>
-                                                </a>
-                                                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                                                    <div class="dropdown-header">Actions:</div>
-                                                    <a class="dropdown-item" href="#">Preview</a>
-                                                    <a class="dropdown-item" @click="editProduct(p)" href="#addEditProduct">Edit</a>
-                                                    <button class="dropdown-item" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Delete</button>
-                                                    <div class="dropdown-menu shadow-danger mb-1">
-                                                        <span class="dropdown-item">Confirm Deletion of post? This cannot be undone.</span>
-                                                        <a class="dropdown-item text-success" href="#">Cancel</a>
-                                                        <a class="dropdown-item text-danger" @click="deletePost(p.id)">Confirm Delete</a>
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Brand</th>
+                                                <th>Product Code</th>
+                                                <th>Product Name</th>
+                                                <th>Product Description</th>
+                                                <th>Price</th>
+                                                <th>Stock</th>
+                                                <th>Weight</th>
+                                                <th>Photo Link</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="p in products">
+                                                <td>{{p.id}}</td>
+                                                <td>{{p.product_brand}}</td>
+                                                <td>{{p.product_code}}</td>
+                                                <td>{{p.product_name}}</td>
+                                                <td>{{p.product_description}}</td>
+                                                <td>{{p.product_price}}</td>
+                                                <td>{{p.product_stock}}</td>
+                                                <td>{{p.product_weight}}</td>
+                                                <td><a :href="'../assets/images/'+p.product_url" target="_blank">Link</a></td>
+                                                <td>
+                                                    <div class="dropdown no-arrow">
+                                                        <a class="dropdown-toggle mr-2" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">
+                                                            <i class="fas fa-ellipsis-h fa-sm fa-fw text-gray-400"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                                            <div class="dropdown-header">Actions:</div>
+                                                            <a class="dropdown-item" href="#">Preview</a>
+                                                            <a class="dropdown-item" @click="editProduct(p)" href="#addEditProduct">Edit</a>
+                                                            <button class="dropdown-item" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Delete</button>
+                                                            <div class="dropdown-menu shadow-danger mb-1">
+                                                                <span class="dropdown-item">Confirm Deletion of post? This cannot be undone.</span>
+                                                                <a class="dropdown-item text-success" href="#">Cancel</a>
+                                                                <a class="dropdown-item text-danger" @click="deletePost(p.id)">Confirm Delete</a>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -560,8 +560,8 @@ if (mysqli_num_rows($checkStore) > 0) {
                         this.saveBtnProduct = "Save Product Information";
                     },
 
-                   //Update Product
-                   async updateProduct() {
+                    //Update Product
+                    async updateProduct() {
                         this.showNotification = true;
                         this.messageNotification = "Uploading Product...";
                         var pictureFile = document.querySelector("#picture");
@@ -603,7 +603,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                             this.messageNotification = "There is an error uploading the product. Please try again.";
                         });
                         this.isEditProduct = false;
-                        
+
                     },
 
                     // Edit Product
@@ -671,12 +671,12 @@ if (mysqli_num_rows($checkStore) > 0) {
                             });
                     },
 
-
                 },
                 async created() {
                     //Get Products
                     await this.getProducts();
-                }
+                },
+
             });
         </script>
 </body>

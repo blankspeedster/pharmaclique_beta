@@ -23,9 +23,17 @@
 
     <!-- Axios -->
     <script src="../js/vue/axios.min.js"></script>
-    
+
     <!-- icon-->
     <link rel="icon" href="../img/favicon.png" sizes="16x16">
+
+    <!-- LeafLet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+    <script src="https://cdn.maptiler.com/mapbox-gl-js/v1.13.2/mapbox-gl.js"></script>
+    <script src="https://cdn.maptiler.com/mapbox-gl-leaflet/latest/leaflet-mapbox-gl.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.maptiler.com/mapbox-gl-js/v1.13.2/mapbox-gl.css" />
+
     <?php
     include("dbh.php")
     ?>

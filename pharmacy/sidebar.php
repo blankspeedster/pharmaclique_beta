@@ -128,8 +128,15 @@ $role = $_SESSION['role'];
         <!-- Nav Item - Pharmacy -->
         <li class="nav-item">
             <a class="nav-link" href="pharmacy.php">
-            <i class="fas fa-clinic-medical"></i>
+                <i class="fas fa-clinic-medical"></i>
                 <span>Pharmacy</span></a>
+        </li>
+
+        <!-- Nav Item - Settings -->
+        <li class="nav-item">
+            <a class="nav-link" href="pharmacy_settings.php">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span></a>
         </li>
 
         <!-- Divider -->
