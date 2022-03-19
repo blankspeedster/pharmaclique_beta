@@ -233,12 +233,12 @@ include("head.php");
 
                             //Add Routing
                             // Code to Add Routing
-                            // L.Routing.control({
-                            //     waypoints: [
-                            //         L.latLng(userLat, userLong),
-                            //         L.latLng(15.158700522438865, 120.59249274173763) //SPCF
-                            //     ]
-                            // }).addTo(map);
+                            L.Routing.control({
+                                waypoints: [
+                                    L.latLng(userLat, userLong),
+                                    L.latLng(15.158700522438865, 120.59249274173763) //SPCF
+                                ]
+                            }).addTo(map);
                             // End Code to Routing
 
                             let pharmacys = this.pharmacys.data;

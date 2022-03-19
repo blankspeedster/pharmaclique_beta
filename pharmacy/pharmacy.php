@@ -126,7 +126,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                     </div>
 
 
-                                                    <div class="col-xl-12 col-md-12 mb-4" style="">
+                                                    <div class="col-xl-12 col-md-12 mb-4">
                                                         <?php if (!$storeExist) { ?>
                                                             <button type="submit" style="float: right;" class="btn btn-primary btn-sm m-1" :disabled="!editStoreName" name="save_storename">
                                                                 <i class="far fa-save"></i> Save Store Information

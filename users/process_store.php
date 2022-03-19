@@ -31,6 +31,24 @@ if (isset($_GET['searchProducts'])) {
     echo json_encode($products);
 }
 
+//Search Products within the store
+if (isset($_GET['searchProductsWithinStore'])) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $searchVal = $data["searchVal"];
+    $store_id = $data["store_id"];
+    if($searchVal == null || $searchVal == ""){
+        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products ");
+    }
+    else{
+        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE product_description LIKE '%$searchVal%' ");
+    }
+    $products = array();
+    while ($product = mysqli_fetch_assoc($store_products)) {
+        $products[] = $product;
+    }
+    echo json_encode($products);
+}
+
 //Add To Cart
 if (isset($_GET['addToCart'])) {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -39,7 +57,22 @@ if (isset($_GET['addToCart'])) {
     $pharmacy_id = $data["pharmacy_id"];
     $subtotal = $data["subtotal"];
 
-    $mysqli->query(" INSERT INTO cart (user_id, product_id, pharmacy_id, subtotal, updated_at) VALUES('$user_id', '$product_id', '$pharmacy_id', '$subtotal','$date') ") or die($mysqli->error);
+
+    //Check first if cart is existing currently
+    $checkProduct = $mysqli->query("SELECT * FROM cart WHERE user_id ='$user_id' AND product_id = '$product_id' ");
+    if(mysqli_num_rows($checkProduct) <= 0){
+        $mysqli->query(" INSERT INTO cart (user_id, product_id, pharmacy_id, subtotal, updated_at, price) VALUES('$user_id', '$product_id', '$pharmacy_id', '$subtotal','$date', '$subtotal') ") or die($mysqli->error);
+    }
+    else{
+        $getCount = $mysqli->query("SELECT count AS qty, price, id FROM cart WHERE user_id ='$user_id' AND product_id = '$product_id' ");
+        $currentCount = mysqli_fetch_array($getCount);
+        $newCount = $currentCount["qty"];
+        $subtotal = $currentCount["price"];
+        $newCount = $newCount + 1;
+        $cartId = $currentCount["id"];
+        $newSubTotal = $subtotal*$newCount;
+        $mysqli->query(" UPDATE cart SET count = '$newCount', subtotal = '$newSubTotal' WHERE id='$cartId' ") or die($mysqli->error);
+    }
 
 
     //Get last ID
