@@ -37,10 +37,10 @@ if (isset($_GET['searchProductsWithinStore'])) {
     $searchVal = $data["searchVal"];
     $store_id = $data["store_id"];
     if($searchVal == null || $searchVal == ""){
-        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products ");
+        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE store_id = '$store_id' ");
     }
     else{
-        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE product_description LIKE '%$searchVal%' ");
+        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE product_description LIKE '%$searchVal%' AND store_id = '$store_id' ");
     }
     $products = array();
     while ($product = mysqli_fetch_assoc($store_products)) {

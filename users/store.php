@@ -63,9 +63,6 @@ $store = mysqli_fetch_array($checkStore)
                             <h1 class="h3 mb-0 text-gray-800">Pharmacy - <?php echo $store["store_name"]; ?></h1>
                         </div>
 
-
-
-
                         <div class="row">
                             <!-- Search Medicine -->
                             <div class="col-lg-12 mb-4">
@@ -125,6 +122,12 @@ $store = mysqli_fetch_array($checkStore)
                             </div>
 
                         </div>
+
+                        <!-- if no products in pharmacy currently -->
+                        <div v-if="productsLen === 0" class="alert alert-success alert-dismissible">
+                            {{productsMessage}}
+                        </div>
+                        <!-- if no products in pharmacy currently -->
                     </div>
 
                 </div>
@@ -164,7 +167,9 @@ $store = mysqli_fetch_array($checkStore)
 
                             //Search Value
                             searchValue: null,
-                            products: null
+                            products: null,
+                            productsLen: null,
+                            productsMessage: null
                         }
                     },
                     methods: {
@@ -182,6 +187,10 @@ $store = mysqli_fetch_array($checkStore)
                                 .request(options)
                                 .then((response) => {
                                     this.products = response.data;
+                                    this.productsLen = this.products.length;
+                                    if (this.productsLen === 0) {
+                                        this.productsMessage = "This pharmacy does not have current listing for medicines / products.";
+                                    }
                                     console.log(this.products);
                                 })
                                 .catch((error) => {
@@ -207,6 +216,10 @@ $store = mysqli_fetch_array($checkStore)
                                 .request(options)
                                 .then((response) => {
                                     this.products = response.data;
+                                    this.productsLen = this.products.length;
+                                    if(this.productsLen === 0){
+                                        this.productsMessage = "Your search did not return results.";
+                                    }
                                     console.log(this.products);
                                 })
                                 .catch((error) => {
@@ -240,7 +253,7 @@ $store = mysqli_fetch_array($checkStore)
                                 .catch((error) => {
                                     console.log(error);
                                 });
-                        },                        
+                        },
 
                     },
                     async created() {

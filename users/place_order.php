@@ -62,7 +62,16 @@ include("head.php");
                                         <h6 class="m-0 font-weight-bold text-primary">Your current location</h6>
                                     </div>
                                     <div class="card-body">
-                                        <input type="text" class="form-control" v-model="completeAddress" placeholder="Please type your complete address here.">
+                                        <div class="row" class="mb-4">
+                                            <div class="col-lg-6">
+                                                Current Subtotal: <input type="text" class="form-control" v-model="subtotal" readonly>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                Delivery Charge: <input type="number" step="0.1" class="form-control" v-model="deliveryCharge" readonly>
+                                            </div>                                            
+                                        </div>
+
+                                        <input type="text" class=" mt-4 form-control" v-model="completeAddress" placeholder="Please type your complete address here.">
                                         <br>
                                         <!-- Location in map -->
                                         <div class="card" style="height: 500px !important;">
@@ -80,14 +89,17 @@ include("head.php");
                                     </div>
                                 </div>
                                 <span v-if="!orderPlacedSuccesful">
-                                    <button v-if="!placingOrder" @click="placeOrder()" style="float: right;" class="btn btn-success btn-m">{{placeOrderMessage}}</button>
-                                    <button v-else style="float: right;" class="btn btn-success btn-m" disabled>{{placeOrderMessage}}</button>
+                                    <button v-if="!placingOrder" @click="placeOrder()" style="float: right;" class="m-1 btn btn-success btn-m">{{placeOrderMessage}}</button>
+                                    <button v-else style="float: right;" class="m-1 btn btn-success btn-m" disabled>{{placeOrderMessage}}</button>
+                                    <a href="cart.php" style="float: right;" class="m-1 btn btn-danger btn-m">Cancel</a>
                                 </span>
                                 <span v-if="orderPlacedSuccesful">
+                                    <a href="orders.php">
                                     <div class="alert alert-success alert-dismissible">
                                         <!-- <a href="#" class="close" aria-label="close" @click="orderPlacedSuccesful = false">&times;</a> -->
                                         {{ messagePlaceOrder }}
                                     </div>
+                                    </a>
                                 </span>
                             </div>
 
@@ -130,7 +142,8 @@ include("head.php");
                             showNotification: false,
                             messageNotification: "",
                             completeAddress: null,
-
+                            subtotal: <?php echo $_SESSION['currentProductsSubtotal']; ?>,
+                            deliveryCharge: 49.9,
                             //address for lat and lang
                             lat: null,
                             long: null,
@@ -246,7 +259,8 @@ include("head.php");
                                 data: {
                                     lat: this.lat,
                                     long: this.long,
-                                    completeAddress: this.completeAddress
+                                    completeAddress: this.completeAddress,
+                                    deliveryCharge: this.deliveryCharge
                                 },
                             };
                             await axios

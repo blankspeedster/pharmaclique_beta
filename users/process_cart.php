@@ -73,6 +73,7 @@ if (isset($_GET['addToCart'])) {
 if(isset($_GET["getStoreInCart"])){
     $data = json_decode(file_get_contents('php://input'), true);
     $user_id = $data["user_id"];
+    
     $getStores = mysqli_query($mysqli, " SELECT * FROM cart c
     JOIN pharmacy_products pp
     ON pp.id = c.product_id
@@ -161,11 +162,18 @@ if(isset($_GET["minusQuantity"])){
 if(isset($_POST['checkout'])){
     $products = $_POST["products"];
     $currentProducts = array();
+    //Get Subtotal
+    $subtotal = 0;
     foreach ($products as $product){
+        $getsubtotal = $mysqli->query("SELECT subtotal FROM cart WHERE id ='$product' ");
+        $newSubtotal = mysqli_fetch_array($getsubtotal);
+        $subtotal = $newSubtotal["subtotal"] + $subtotal;
+        //insert array id in session products
         $currentProducts[] = $product;
     }
 
     $_SESSION['currentProducts'] = $currentProducts;
+    $_SESSION['currentProductsSubtotal'] = $subtotal;
     
     header("location: place_order.php");
 }
@@ -177,6 +185,8 @@ if(isset($_GET['placeOrder'])){
     $lat = $data["lat"];
     $long = $data["long"];
     $completeAddress = $data["completeAddress"];
+    $deliveryCharge = $data["deliveryCharge"];
+
     $checkOutProducts = $_SESSION['currentProducts'];
     $user_id = 0;
     $pharmacy_id = 0;
@@ -190,8 +200,10 @@ if(isset($_GET['placeOrder'])){
         $user_id = $cart["user_id"];
     }
 
-    $mysqli->query(" INSERT INTO transaction (pharmacy_id, user_id, transaction_date, total_amount, amount_paid, user_long, user_lat)
-    VALUES('$pharmacy_id', '$user_id', '$date', '$subTotal','$subTotal', '$long', '$lat') ") or die($mysqli->error);
+    $subTotal = $subTotal + $deliveryCharge;
+
+    $mysqli->query(" INSERT INTO transaction (pharmacy_id, user_id, transaction_date, total_amount, amount_paid, user_long, user_lat, delivery_charge)
+    VALUES('$pharmacy_id', '$user_id', '$date', '$subTotal','$subTotal', '$long', '$lat', '$deliveryCharge') ") or die($mysqli->error);
 
     //Get Transaction ID and update the status id of the cart
     $transaction_id = $mysqli->insert_id;

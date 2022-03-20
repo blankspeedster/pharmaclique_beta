@@ -9,7 +9,7 @@ if($_SESSION['role'] == 3){
     header("Location: ./pharmacy/index.php");
 }
 
-if($_SESSION['role'] == 2){
+if($_SESSION['role'] == 1){
     header("Location: ./users/index.php");
 }
 

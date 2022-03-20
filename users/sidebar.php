@@ -5,7 +5,7 @@ if (!isset($_SESSION['email'])) {
     header("Location: login.php");
 }
 
-if($_SESSION['role'] == 3){
+if ($_SESSION['role'] == 3) {
     header("Location: ../pharmacy/index.php");
 }
 
@@ -133,7 +133,7 @@ $role = $_SESSION['role'];
         <?php if ($role == "3") { ?>
             <li class="nav-item">
                 <a class="nav-link" href="pharmacy.php">
-                <i class="fas fa-clinic-medical"></i>
+                    <i class="fas fa-clinic-medical"></i>
                     <span>Pharmacy</span></a>
             </li>
         <?php } ?>
@@ -149,11 +149,17 @@ $role = $_SESSION['role'];
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
-            <li class="nav-item">
-                <a class="nav-link" href="cart.php">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Cart</span></a>
-            </li>
+        <li class="nav-item">
+            <a class="nav-link" href="cart.php">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="orders.php">
+                <i class="fas fa-book-reader"></i>
+                <span>Orders</span></a>
+        </li>
 
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">

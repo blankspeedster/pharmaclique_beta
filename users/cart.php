@@ -55,9 +55,11 @@ include("head.php");
                             <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>-->
                         </div>
                         <br>
+                        <div v-if="productsInCartLen === 0" class="alert alert-success alert-dismissible">
+                            Cart is currently empty.
+                        </div>
 
                         <!-- Content Row for checking what pharmacy to check out -->
-
                         <span v-if="!checkedPharmacy" v-for="p in productsInCart">
                             <div class="row">
                                 <div class="col-lg-12">
@@ -98,9 +100,8 @@ include("head.php");
                                 </div>
                             </div>
                         </span>
-
                         <!-- Check Out Pharmacy -->
-                        <span v-if="checkedPharmacy">
+                        <span v-if="checkedPharmacy && productsInCartLen > 0">
                             <div class="row">
                                 <div class="col-lg-12">
                                     <!-- Collapsable Card Example -->
@@ -136,7 +137,6 @@ include("head.php");
                                                                         <b> {{product.count}} </b>
                                                                         <a class="btn btn-sm btn-dark ml-1" @click="plusQuantity(product.cart_id)">+</a> pcs
                                                                     </p>
-
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -194,6 +194,7 @@ include("head.php");
                             messageNotification: "",
 
                             productsInCart: null,
+                            productsInCartLen: null,
                             checkedPharmacy: false,
                             checkedOut: false,
                             store_id: null,
@@ -220,6 +221,7 @@ include("head.php");
                                 .then((response) => {
                                     console.log(response);
                                     this.productsInCart = response.data;
+                                    this.productsInCartLen = this.productsInCart.length;
                                 })
                                 .catch((error) => {
                                     console.log(error);
@@ -245,6 +247,7 @@ include("head.php");
                                 .request(options)
                                 .then((response) => {
                                     this.productsInCart = response.data;
+                                    this.productsInCartLen = this.productsInCart.length;
                                     console.log(response);
                                     this.checkOutStoreName = response.data[0].store_name;
                                     this.checkedPharmacy = true;

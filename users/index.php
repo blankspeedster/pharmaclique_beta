@@ -57,7 +57,7 @@ include("head.php");
                         <div class="row">
 
                             <!-- Search Medicine -->
-                            <div class="col-lg-12 mb-4">
+                            <div class="col-lg-12 mb-2">
                                 <div class="card shadow mb-4">
                                     <div class="card-header">
                                         <h6 class="m-0 font-weight-bold text-primary">Search Medicine</h6>
@@ -112,8 +112,15 @@ include("head.php");
                                 </div>
 
                             </div>
+                        </div>
+                        <!-- if no products in pharmacy currently -->
+                        <div v-if="productsLen === 0" class="alert alert-success alert-dismissible">
+                            {{productsMessage}}
+                        </div>
+                        <!-- if no products in pharmacy currently -->
 
-                            <!-- Pharmacy Store -->
+                        <!-- Pharmacy Store -->
+                        <div class="row">
                             <div class="col-lg-12 mb-4">
                                 <div class="card shadow mb-4">
                                     <div class="card-header">
@@ -177,7 +184,8 @@ include("head.php");
                             //data model here
                             searchValue: null,
                             products: [],
-
+                            productsMessage: null,
+                            productsLen: null,
                             showNotification: false,
                             messageNotification: "",
                         }
@@ -308,6 +316,10 @@ include("head.php");
                                 .request(options)
                                 .then((response) => {
                                     this.products = response.data;
+                                    this.productsLen = this.products.length;
+                                    if (this.productsLen === 0) {
+                                        this.productsMessage = "Your search term did not return results";
+                                    }
                                     console.log(this.products);
                                 })
                                 .catch((error) => {
