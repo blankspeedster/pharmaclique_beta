@@ -59,7 +59,7 @@ if (isset($_GET['addToCart'])) {
 
 
     //Check first if cart is existing currently
-    $checkProduct = $mysqli->query("SELECT * FROM cart WHERE user_id ='$user_id' AND product_id = '$product_id' ");
+    $checkProduct = $mysqli->query("SELECT * FROM cart WHERE user_id ='$user_id' AND product_id = '$product_id' AND check_out <> '1' ");
     if(mysqli_num_rows($checkProduct) <= 0){
         $mysqli->query(" INSERT INTO cart (user_id, product_id, pharmacy_id, subtotal, updated_at, price) VALUES('$user_id', '$product_id', '$pharmacy_id', '$subtotal','$date', '$subtotal') ") or die($mysqli->error);
     }

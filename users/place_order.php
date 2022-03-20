@@ -6,7 +6,7 @@ $user_count = $user_count['total_count'];
 include("head.php");
 ?>
 
-<title>PharmaClique - Home</title>
+<title>PharmaClique - Place Order</title>
 <style>
     #map {
         position: absolute;
@@ -43,89 +43,32 @@ include("head.php");
 
                         <!-- Notification here -->
                         <div v-if="showNotification" class="alert alert-success alert-dismissible">
-                            <a href="#" class="close" aria-label="close" @click="showNotification = false">&times;</a>
+                            <!-- <a href="#" class="close" aria-label="close" @click="showNotification = false">&times;</a> -->
                             {{ messageNotification }}
                         </div>
                         <!-- End Notification -->
                         <!-- Page Heading -->
                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                            <h1 class="h3 mb-0 text-gray-800">Home</h1>
-                            <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>-->
+                            <!-- <h1 class="h3 mb-0 text-gray-800">Place Order</h1> -->
                         </div>
 
                         <!-- Content Row -->
                         <div class="row">
 
-                            <!-- Search Medicine -->
-                            <div class="col-lg-12 mb-4">
-                                <div class="card shadow mb-4">
-                                    <div class="card-header">
-                                        <h6 class="m-0 font-weight-bold text-primary">Search Medicine</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <form method="post" @submit.prevent="searchMedicine()">
-                                            <div class="row">
-                                                <div class="col-lg-8 mb-4">
-                                                    <input class="form-control" type="text" id="search" placeholder="Search Medicine" v-model="searchValue" />
-                                                </div>
-                                                <div class="col-lg-4 mb-4">
-                                                    <button id="searchbutton" class="btn btn-success" type="submit">Search</button>
-                                                </div>
-                                                <div class="col-lg-12 mb-4">
-                                                    <div class="products products-table">
-                                                        <span v-for="p in products">
-                                                            <div class="product">
-                                                                <div class="product-img">
-                                                                    <img :src="'../assets/images/'+p.product_url">
-
-                                                                </div>
-                                                                <div class="product-content">
-                                                                    <h3>
-                                                                        {{p.product_name}}
-                                                                        <small>{{p.product_description}}</small>
-                                                                    </h3>
-                                                                    <p class="product-text price">₱{{p.product_price}}</p>
-                                                                    <p class="product-text genre">{{p.product_brand}}</p>
-                                                                    <a @click="addToCart(p.id, p.store_id, p.product_price)" style="float: right; color: black !important;" class="btn btn-sm btn-warning">Add to cart</a>
-                                                                </div>
-                                                            </div>
-                                                        </span>
-
-                                                        <div class="product" style="display: none;">
-                                                            <div class="product-img">
-                                                                <img src="https://placeimg.com/400/650/nature">
-                                                            </div>
-                                                            <div class="product-content">
-                                                                <h3>
-                                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti maxime doloribus sint, repudiandae.
-                                                                    <small>Consectetur Adipisicing</small>
-                                                                </h3>
-                                                                <p class="product-text price">$9.99</p>
-                                                                <p class="product-text genre">DVD Rental</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-
-                            </div>
-
                             <!-- Pharmacy Store -->
                             <div class="col-lg-12 mb-4">
                                 <div class="card shadow mb-4">
                                     <div class="card-header">
-                                        <h6 class="m-0 font-weight-bold text-primary">Pharmacy Store</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">Your current location</h6>
                                     </div>
                                     <div class="card-body">
+                                        <input type="text" class="form-control" v-model="completeAddress" placeholder="Please type your complete address here.">
                                         <br>
                                         <!-- Location in map -->
                                         <div class="card" style="height: 500px !important;">
                                             <div class="card-header pb-0 bg-gradient-success">
                                                 <div class="row">
-                                                    <div class="col-lg-6 col-7">
+                                                    <div class="col-lg-12 col-12">
                                                         <h6 class="text-white">Current location</h6>
                                                     </div>
                                                 </div>
@@ -136,6 +79,16 @@ include("head.php");
                                         </div>
                                     </div>
                                 </div>
+                                <span v-if="!orderPlacedSuccesful">
+                                    <button v-if="!placingOrder" @click="placeOrder()" style="float: right;" class="btn btn-success btn-m">{{placeOrderMessage}}</button>
+                                    <button v-else style="float: right;" class="btn btn-success btn-m" disabled>{{placeOrderMessage}}</button>
+                                </span>
+                                <span v-if="orderPlacedSuccesful">
+                                    <div class="alert alert-success alert-dismissible">
+                                        <!-- <a href="#" class="close" aria-label="close" @click="orderPlacedSuccesful = false">&times;</a> -->
+                                        {{ messagePlaceOrder }}
+                                    </div>
+                                </span>
                             </div>
 
                         </div>
@@ -174,12 +127,19 @@ include("head.php");
                     el: "#vueApp",
                     data() {
                         return {
-                            //data model here
-                            searchValue: null,
-                            products: [],
-
                             showNotification: false,
                             messageNotification: "",
+                            completeAddress: null,
+
+                            //address for lat and lang
+                            lat: null,
+                            long: null,
+
+                            //UI
+                            placingOrder: false,
+                            placeOrderMessage: "Place Order",
+                            orderPlacedSuccesful: false,
+                            messagePlaceOrder: null,
                         }
                     },
                     methods: {
@@ -255,25 +215,6 @@ include("head.php");
                             }
                         },
 
-                        //Get Pharmacys
-                        async getPharmacys() {
-                            const options = {
-                                method: "GET",
-                                url: "process_index.php?getPharmacy",
-                                headers: {
-                                    Accept: "application/json",
-                                },
-                            };
-                            await axios
-                                .request(options)
-                                .then((response) => {
-                                    this.pharmacys = response;
-                                })
-                                .catch((error) => {
-                                    console.log(error);
-                                });
-                        },
-
                         //Show Error
                         showError(error) {
                             switch (error.code) {
@@ -292,61 +233,42 @@ include("head.php");
                             }
                         },
 
-                        //Search Medicine
-                        async searchMedicine() {
+                        //Place Order
+                        async placeOrder() {
+                            this.placingOrder = true;
+                            this.placeOrderMessage = "Placing Order";
                             const options = {
                                 method: "POST",
-                                url: "process_store.php?searchProducts",
+                                url: "process_cart.php?placeOrder",
                                 headers: {
                                     Accept: "application/json",
                                 },
                                 data: {
-                                    searchVal: this.searchValue,
-                                },
-                            };
-                            await axios
-                                .request(options)
-                                .then((response) => {
-                                    this.products = response.data;
-                                    console.log(this.products);
-                                })
-                                .catch((error) => {
-                                    console.log(error);
-                                });
-                        },
-
-                        //Add To Cart
-                        async addToCart(productId, storeId, subTotal) {
-                            var userId = <?php echo $_SESSION['user_id']; ?>;
-                            const options = {
-                                method: "POST",
-                                url: "process_store.php?addToCart",
-                                headers: {
-                                    Accept: "application/json",
-                                },
-                                data: {
-                                    product_id: productId,
-                                    pharmacy_id: storeId,
-                                    user_id: userId,
-                                    subtotal: subTotal
+                                    lat: this.lat,
+                                    long: this.long,
+                                    completeAddress: this.completeAddress
                                 },
                             };
                             await axios
                                 .request(options)
                                 .then((response) => {
                                     console.log(response);
-                                    this.showNotification = true;
-                                    this.messageNotification = response.data.response;
+                                    this.placingOrder = false;
+                                    this.placeOrderMessage = "Place Order";
+                                    this.orderPlacedSuccesful = true;
+                                    this.showNotification = false;
+                                    this.messagePlaceOrder = "Order Succesful. Pharmacy is currently reviewing your order. You may now this close window.";
                                 })
                                 .catch((error) => {
                                     console.log(error);
                                 });
-                        },
+                        }
+
                     },
                     async mounted() {
-                        await this.getPharmacys();
                         this.getLocation();
-                        await this.searchMedicine();
+                        this.showNotification = true;
+                        this.messageNotification = "Checked Out successfully. In order to complete your oder, please move your pin location in the map below, and add your complete address in the field.";
                     }
                 });
             </script>

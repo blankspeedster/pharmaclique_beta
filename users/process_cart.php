@@ -78,7 +78,7 @@ if(isset($_GET["getStoreInCart"])){
     ON pp.id = c.product_id
     JOIN pharmacy_store ps
     ON ps.id = c.pharmacy_id
-    WHERE c.user_id = '$user_id'
+    WHERE c.user_id = '$user_id' AND c.check_out <> '1'
     GROUP BY ps.id ");
 
     $stores = array();
@@ -90,7 +90,7 @@ if(isset($_GET["getStoreInCart"])){
         ON pp.id = c.product_id
         JOIN pharmacy_store ps
         ON ps.id = c.pharmacy_id
-        WHERE ps.id = '$store_id' ");
+        WHERE ps.id = '$store_id' AND c.check_out <> '1' ");
         while ($product = mysqli_fetch_assoc($getProducts)) {
             $products[] = $product;
         }        
@@ -110,7 +110,7 @@ if(isset($_GET["getSpecificPharmacyAndProduct"])){
     ON pp.id = c.product_id
     JOIN pharmacy_store ps
     ON ps.id = c.pharmacy_id
-    WHERE c.user_id = '$user_id' AND c.pharmacy_id = '$store_id' ");
+    WHERE c.user_id = '$user_id' AND c.pharmacy_id = '$store_id' AND c.check_out <> '1' ");
 
     $products = array();
     while ($product = mysqli_fetch_assoc($getProducts)) { 
@@ -156,4 +156,50 @@ if(isset($_GET["minusQuantity"])){
     $jsonEncode = array('response' => 'Product in your cart has been deleted!');
     echo json_encode($jsonEncode);
 }
-?>
+
+//Checkout
+if(isset($_POST['checkout'])){
+    $products = $_POST["products"];
+    $currentProducts = array();
+    foreach ($products as $product){
+        $currentProducts[] = $product;
+    }
+
+    $_SESSION['currentProducts'] = $currentProducts;
+    
+    header("location: place_order.php");
+}
+
+
+//Place Order
+if(isset($_GET['placeOrder'])){
+    $data = json_decode(file_get_contents('php://input'), true);
+    $lat = $data["lat"];
+    $long = $data["long"];
+    $completeAddress = $data["completeAddress"];
+    $checkOutProducts = $_SESSION['currentProducts'];
+    $user_id = 0;
+    $pharmacy_id = 0;
+    $subTotal = 0;
+
+    foreach ($checkOutProducts as $cart_id){
+        $checkCart = $mysqli->query("SELECT * FROM cart WHERE id = '$cart_id' ");
+        $cart = mysqli_fetch_array($checkCart);
+        $subTotal = $cart["subtotal"] + $subTotal;
+        $pharmacy_id = $cart["pharmacy_id"];
+        $user_id = $cart["user_id"];
+    }
+
+    $mysqli->query(" INSERT INTO transaction (pharmacy_id, user_id, transaction_date, total_amount, amount_paid, user_long, user_lat)
+    VALUES('$pharmacy_id', '$user_id', '$date', '$subTotal','$subTotal', '$long', '$lat') ") or die($mysqli->error);
+
+    //Get Transaction ID and update the status id of the cart
+    $transaction_id = $mysqli->insert_id;
+    foreach ($checkOutProducts as $cart_id){
+        $mysqli->query(" UPDATE cart SET transaction_id = '$transaction_id', check_out = '1' WHERE id='$cart_id' ") or die($mysqli->error);
+    }
+
+    $jsonEncode = array("response" => "Place order completed!", "status"=>"1");
+
+    echo json_encode($jsonEncode);
+}

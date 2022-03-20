@@ -50,7 +50,8 @@ include("head.php");
                         <!-- Page Heading -->
                         <div class=" align-items-center  mb-4">
                             <h1 class="h3 mb-0 text-gray-800">My Cart</h1>
-                            <h6 class="">Select Products in your cart for checkout. Note that you can only checkout for one pharmacy at a time.</h6>
+                            <h6 v-if="!checkedPharmacy">Please select store you wish to place your order. Note that you can only checkout for one pharmacy at a time.</h6>
+                            <h6 v-if="checkedPharmacy">Select Products in your cart for checkout.</h6>
                             <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>-->
                         </div>
                         <br>
@@ -112,32 +113,38 @@ include("head.php");
                                         <div class="">
                                             <div class="card-body">
                                                 <!-- {{p}} -->
-                                                Products: <br>
-                                                <span v-for="product in productsInCart">
-                                                    <div class="products products-table">
-                                                        <div class="product">
-                                                            <div class="product-img">
-                                                                <img :src="'../assets/images/'+product.product_url">
-                                                            </div>
-                                                            <div class="product-content">
-                                                                <h3>
-                                                                    {{product.product_name}}
-                                                                    <small>{{product.product_description}}</small>
-                                                                </h3>
-                                                                <p class="product-text price">SUBTOTAL: ₱{{product.subtotal}}</p>
-                                                                <p class="product-text genre">PRICE: ₱{{product.product_price}}</p>
-                                                                <p class="product-text genre">
-                                                                    QTY: <a class="btn btn-sm btn-dark mr-1" @click="minusQuantity(product.cart_id)">-</a>
-                                                                    <b> {{product.count}} </b>
-                                                                    <a class="btn btn-sm btn-dark ml-1" @click="plusQuantity(product.cart_id)">+</a> pcs
-                                                                </p>
+                                                <form method="post" action="process_cart.php">
+                                                    Products: <br>
+                                                    <span v-for="product in productsInCart">
+                                                        <div class="products products-table">
+                                                            <div class="product">
+                                                                <div class="product-img">
+                                                                    <img :src="'../assets/images/'+product.product_url">
+                                                                </div>
+                                                                <div class="product-content">
+                                                                    <label class="container">{{product.product_name}}
+                                                                        <input type="checkbox" name="products[]" :value="product.cart_id">
+                                                                        <span class="checkmark"></span>
+                                                                    </label>
+                                                                    <h3>
+                                                                        <small>{{product.product_description}}</small>
+                                                                    </h3>
+                                                                    <p class="product-text price">SUBTOTAL: ₱{{product.subtotal}}</p>
+                                                                    <p class="product-text genre">PRICE: ₱{{product.product_price}}</p>
+                                                                    <p class="product-text genre">
+                                                                        QTY: <a class="btn btn-sm btn-dark mr-1" @click="minusQuantity(product.cart_id)">-</a>
+                                                                        <b> {{product.count}} </b>
+                                                                        <a class="btn btn-sm btn-dark ml-1" @click="plusQuantity(product.cart_id)">+</a> pcs
+                                                                    </p>
 
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </span>
+                                                    </span>
+                                                    <button type="submit" name="checkout" class="btn btn-sm btn-warning mt-4 mb-2" style="float: right; color: black !important;">Checkout</button>
+                                                </form>
                                                 <br>
-                                                <a @click="checkout()" class="btn btn-sm btn-warning mt-4 mb-2" style="float: right; color: black !important;">Checkout</a>
+                                                <!-- <a @click="checkout()" class="btn btn-sm btn-warning mt-4 mb-2" style="float: right; color: black !important;">Checkout</a> -->
                                             </div>
                                         </div>
                                     </div>
@@ -248,7 +255,7 @@ include("head.php");
                         },
 
                         // Minus Quantity
-                        async minusQuantity(cart_id){
+                        async minusQuantity(cart_id) {
                             const options = {
                                 method: "POST",
                                 url: "process_cart.php?minusQuantity",
@@ -270,11 +277,11 @@ include("head.php");
                                 })
                                 .catch((error) => {
                                     console.log(error);
-                                });                            
+                                });
                         },
 
                         // Plus Quantity
-                        async plusQuantity(cart_id){
+                        async plusQuantity(cart_id) {
                             const options = {
                                 method: "POST",
                                 url: "process_cart.php?plusQuantity",
@@ -296,7 +303,7 @@ include("head.php");
                                 })
                                 .catch((error) => {
                                     console.log(error);
-                                });                            
+                                });
                         },
 
                     },
