@@ -69,29 +69,57 @@ include("head.php");
                                                         </div>
                                                     </div>
                                                 </span>
-                                                <div class="mb-2">
+                                                <div v-if="orders[0].status === '-1' " @click="getRiderInformation(orders[0].transaction_id)" class="alert alert-success alert-dismissible">
+                                                    <span v-if="riderInformation.length >=1">
+                                                        Rider Information here.
+                                                    </span>
+                                                    <span v-if="riderInformation.length === 0">
+                                                        No rider picked up the order yet. Click to update / check the status.
+                                                    </span>
+                                                </div>
+                                                <!-- If not accepted order -->
+                                                <div class="mb-2" v-if="orders[0].status != '-1' ">
                                                     <span v-if="orders[0].status === '0' " class="badge badge-warning m-1" style="float: left !important; color: black;">Status: Awaiting for your confirmation</span>
-                                                    <span v-if="orders[0].status === '-1' " class="badge badge-success m-1" style="float: left !important;">Status: On the Way</span>
+                                                    <span v-if="orders[0].status === '-1' " class="badge badge-success m-1" style="float: left !important;">Status: Waiting Rider for pickup</span>
 
-                                                    <button @click="confirmOrder(orders[0].transaction_id)" class="btn btn-sm btn-success m-1" style="float: right;">Confirm Order</button>
+                                                    <button @click="confirmOrder(orders[0].transaction_id)" class="btn btn-sm btn-success m-1" style="float: right;">Accept Order</button>
 
-                                                    <button class="btn btn-sm btn-danger m-1" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">Cancel Order</button>
+                                                    <button class="btn btn-sm btn-danger m-1" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">Reject Order</button>
                                                     <div class="dropdown-menu shadow-danger mb-1">
-                                                        <span class="dropdown-item">Confirm Cancellation? This cannot be undone.</span>
+                                                        <span class="dropdown-item">Confirm Rejection? This cannot be undone.</span>
                                                         <a class="dropdown-item text-success" href="#">Cancel</a>
-                                                        <a @click="cancelOrder(orders[0].transaction_id)" class="dropdown-item text-danger">Confirm Cancellation</a>
+                                                        <a @click="cancelOrder(orders[0].transaction_id)" class="dropdown-item text-danger">Confirm Rejection</a>
                                                     </div>
+                                                </div>
+                                                <!-- If accepted order -->
+                                                <div class="mb-2" v-if="orders[0].status === '-1' ">
+                                                    <span v-if="orders[0].status === '0' " class="badge badge-warning m-1" style="float: left !important; color: black;">Status: Awaiting for your confirmation</span>
+                                                    <span v-if="orders[0].status === '-1' " class="badge badge-success m-1" style="float: left !important;">Status: Waiting Rider for pickup</span>
 
+                                                    <button @click="pickedUpOrder(orders[0].transaction_id)" class="btn btn-sm btn-success m-1" style="float: right;">Pick Up</button>
+
+                                                    <button class="btn btn-sm btn-danger m-1" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;" disabled>Cancel Order</button>
+                                                    <div class="dropdown-menu shadow-danger mb-1">
+                                                        <span class="dropdown-item">Confirm Rejection? This cannot be undone.</span>
+                                                        <a class="dropdown-item text-success" href="#">Cancel</a>
+                                                        <a @click="cancelOrder(orders[0].transaction_id)" class="dropdown-item text-danger">Confirm Rejection</a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </span>
+                                        <!-- Notification here -->
+                                        <div v-if="currentOrders.length === 0" class="alert alert-success alert-dismissible">
+                                            No current pending orders.
+                                        </div>
+                                        <!-- End Notification -->
+
                                     </div>
                                 </div>
                             </div>
 
                         </div>
 
-                        <!-- Compelted Orders -->
+                        <!-- Completed Orders -->
                         <div class="row">
                             <!-- Compelted Orders -->
                             <div class="col-lg-12 mb-4">
@@ -105,6 +133,7 @@ include("head.php");
                                                 <div>
                                                     <label class="h5 mt-3">{{orders[0].store_name}}</label>
                                                     <label class="mt-3" style="float: right">Total: <b>₱{{orders[0].total_amount}}</b></label>
+                                                    <label class="mt-3 mr-2" style="float: right !important;"><b>Order ID: </b> {{orders[0].transaction_id}}</label>
                                                 </div>
                                                 <span v-for="o in orders">
                                                     <div class="col-lg-12 card mb-2">
@@ -119,9 +148,15 @@ include("head.php");
                                                 <div class="mb-2">
                                                     <span v-if="orders[0].status === '0' " class="badge badge-warning m-1" style="float: left !important; color: black;">Status: Awaiting for your confirmation</span>
                                                     <span v-if="orders[0].status === '1' " class="badge badge-primary m-1" style="float: left !important;">Status: Completed</span>
+                                                    <span v-if="orders[0].status === '-2' " class="badge badge-info m-1" style="float: left !important; color: black;">Status: On the way to customer.</span>
                                                 </div>
                                             </div>
                                         </span>
+                                        <!-- Notification here -->
+                                        <div v-if="completedOrders.length === 0" class="alert alert-success alert-dismissible">
+                                            No current completed orders.
+                                        </div>
+                                        <!-- End Notification -->
                                     </div>
                                 </div>
                             </div>
@@ -139,7 +174,7 @@ include("head.php");
                                         <span v-for="orders in cancelledOrders">
                                             <div class="col-lg-12 card shadow mb-4">
                                                 <div>
-                                                <label class="h6 mt-3"><b>{{orders[0].firstname}} {{orders[0].lastname}}</b></label>
+                                                    <label class="h6 mt-3"><b>{{orders[0].firstname}} {{orders[0].lastname}}</b></label>
                                                     <label class="mt-3" style="float: right">Total: <b>₱{{orders[0].total_amount}}</b></label>
                                                     <label class="mt-3 mr-2" style="float: right !important;"><b>Order ID: </b> {{orders[0].transaction_id}}</label>
                                                 </div>
@@ -154,8 +189,8 @@ include("head.php");
                                                     </div>
                                                 </span>
                                                 <div class="mb-2">
-                                                    <span v-if="orders[0].status === '0' " class="badge badge-warning m-1" style="float: left !important; color: black;">Status: Awaiting for your confirmation</span>
                                                     <span v-if="orders[0].status === '1' " class="badge badge-primary m-1" style="float: left !important;">Status: Completed</span>
+                                                    <span v-if="orders[0].status === '0' " class="badge badge-warning m-1" style="float: left !important; color: black;">Status: Awaiting for your confirmation</span>
                                                 </div>
                                             </div>
                                         </span>
@@ -204,14 +239,17 @@ include("head.php");
                             completedOrders: [],
                             cancelledOrders: [],
                             user_id: <?php echo $_SESSION['user_id']; ?>,
+
+                            //Riders
+                            riderInformation: [],
                         }
                     },
                     methods: {
                         //Get Current Orders
-                        async getCurrentOrder() {
+                        async getCurrentOrders() {
                             const options = {
                                 method: "POST",
-                                url: "process_order.php?getProducts",
+                                url: "process_order.php?getCurrentOrders",
                                 headers: {
                                     Accept: "application/json",
                                 },
@@ -231,7 +269,7 @@ include("head.php");
                         },
 
                         //Get Completed Orders
-                        async getCompletedProducts() {
+                        async getCompletedOrders() {
                             const options = {
                                 method: "POST",
                                 url: "process_order.php?getCompletedProducts",
@@ -275,7 +313,7 @@ include("head.php");
                                 .catch((error) => {
                                     console.log(error);
                                 });
-                        },                        
+                        },
 
                         //Get Completed Orders
                         async cancelOrder(order_id) {
@@ -293,17 +331,91 @@ include("head.php");
                                 .request(options)
                                 .then((response) => {
                                     console.log(response);
+                                    this.getCurrentOrders();
                                     this.getCancelledOrders();
+                                    this.showNotification = true;
+                                    this.messageNotification = "Order has been rejected.";
                                 })
                                 .catch((error) => {
                                     console.log(error);
                                 });
                         },
 
+                        //Confirm Order
+                        async confirmOrder(order_id) {
+                            const options = {
+                                method: "POST",
+                                url: "process_order.php?confirmOrder",
+                                headers: {
+                                    Accept: "application/json",
+                                },
+                                data: {
+                                    transaction_id: order_id
+                                }
+                            };
+                            await axios
+                                .request(options)
+                                .then((response) => {
+                                    console.log(response);
+                                    this.getCurrentOrders();
+                                    this.CompletedOrders();
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        },
+
+                        //Picked Up by Rider
+                        async pickedUpOrder(order_id){
+                            const options = {
+                                method: "POST",
+                                url: "process_order.php?pickedUpOrder",
+                                headers: {
+                                    Accept: "application/json",
+                                },
+                                data: {
+                                    transaction_id: order_id
+                                }
+                            };
+                            await axios
+                                .request(options)
+                                .then((response) => {
+                                    console.log(response);
+                                    this.getCurrentOrders();
+                                    this.CompletedOrders();
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        },
+                        
+                        // Get Rider Information
+                        async getRiderInformation(order_id){
+                            const options = {
+                                method: "POST",
+                                url: "process_order.php?getRiderInformation",
+                                headers: {
+                                    Accept: "application/json",
+                                },
+                                data: {
+                                    transaction_id: order_id
+                                }
+                            };
+                            await axios
+                                .request(options)
+                                .then((response) => {
+                                    console.log(response);
+                                    this.riderInformation = response.data;
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        }
+
                     },
                     async mounted() {
-                        this.getCurrentOrder();
-                        this.getCompletedProducts();
+                        this.getCurrentOrders();
+                        this.getCompletedOrders();
                         this.getCancelledOrders();
                     }
                 });

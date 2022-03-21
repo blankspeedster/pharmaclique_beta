@@ -13,6 +13,10 @@ if($_SESSION['role'] == 1){
     header("Location: ./users/index.php");
 }
 
+if($_SESSION['role'] == 2){
+    header("Location: ./rider/index.php");
+}
+
 $role = $_SESSION['role'];
 //4 is admin
 ?>

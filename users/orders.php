@@ -64,16 +64,23 @@ include("head.php");
                                                             <img :src="'../assets/images/'+o.product_url" width="100px" />
                                                             Name: <b>{{o.product_name}}</b>;
                                                             Qty: <b>{{o.count}}</b>
-                                                            Subtotal: <b>₱{{o.subtotal}}</b>
+                                                            Subtotal: <b>₱{{o.subtotal}}</b><i style="font-size: 11px;"> (Without Delivery fee of ₱{{o.delivery_charge}})</i>
                                                         </div>
                                                     </div>
                                                 </span>
                                                 <div class="mb-2">
                                                     <span v-if="orders[0].status === '0' " class="badge badge-warning m-1" style="float: left !important; color: black;">Status: Pending</span>
-                                                    <span v-if="orders[0].status === '-1' " class="badge badge-success m-1" style="float: left !important;">Status: On the Way</span>
+                                                    <span v-if="orders[0].status === '-1' " class="badge badge-info m-1" style="float: left !important;">Status: Awaiting Rider Pick Up</span>
+                                                    <span v-if="orders[0].status === '-2' " class="badge badge-info m-1" style="float: left !important; color: black;">Status: On the Way (Picked Up) from your store.</span>
                                                 </div>
                                             </div>
                                         </span>
+
+                                        <!-- Notification here -->
+                                        <div v-if="currentOrders.length === 0" class="alert alert-success alert-dismissible">
+                                            No current pending orders.
+                                        </div>
+                                        <!-- End Notification -->
                                     </div>
                                 </div>
                             </div>
@@ -101,7 +108,7 @@ include("head.php");
                                                             <img :src="'../assets/images/'+o.product_url" width="100px" />
                                                             Name: <b>{{o.product_name}}</b>;
                                                             Qty: <b>{{o.count}}</b>
-                                                            Subtotal: <b>₱{{o.subtotal}}</b>
+                                                            Subtotal: <b>₱{{o.subtotal}}</b><i style="font-size: 11px;"> (Without Delivery fee of ₱{{o.delivery_charge}})</i>
                                                         </div>
                                                     </div>
                                                 </span>
@@ -111,11 +118,58 @@ include("head.php");
                                                 </div>
                                             </div>
                                         </span>
+
+                                        <!-- Notification here -->
+                                        <div v-if="completedOrders.length === 0" class="alert alert-success alert-dismissible">
+                                            No current completed orders.
+                                        </div>
+                                        <!-- End Notification -->
                                     </div>
                                 </div>
                             </div>
-
                         </div>
+
+                        <!-- Cancelled Orders -->
+                        <div class="row">
+                            <!-- Cancelled Orders -->
+                            <div class="col-lg-12 mb-4">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header">
+                                        <h6 class="m-0 font-weight-bold text-primary">Cancelled Orders</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <span v-for="orders in cancelledOrders">
+                                            <div class="col-lg-12 card shadow mb-4">
+                                                <div>
+                                                    <label class="h5 mt-3">{{orders[0].store_name}}</label>
+                                                    <label class="mt-3" style="float: right">Total: <b>₱{{orders[0].total_amount}}</b></label>
+                                                </div>
+                                                <span v-for="o in orders">
+                                                    <div class="col-lg-12 card mb-2">
+                                                        <div class="mt-1 mb-1">
+                                                            <img :src="'../assets/images/'+o.product_url" width="100px" />
+                                                            Name: <b>{{o.product_name}}</b>;
+                                                            Qty: <b>{{o.count}}</b>
+                                                            Subtotal: <b>₱{{o.subtotal}}</b><i style="font-size: 11px;"> (Without Delivery fee of ₱{{o.delivery_charge}})</i>
+                                                        </div>
+                                                    </div>
+                                                </span>
+                                                <div class="mb-2">
+                                                    <span v-if="orders[0].status === '-3' " class="badge badge-danger m-1" style="float: left !important;">Status: Cancelled</span></div>
+                                            </div>
+                                        </span>
+
+                                        <!-- Notification here -->
+                                        <div v-if="cancelledOrders.length === 0" class="alert alert-success alert-dismissible">
+                                            No current cancelled orders.
+                                        </div>
+                                        <!-- End Notification -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
                     <!-- /.container-fluid -->
 
@@ -154,6 +208,7 @@ include("head.php");
                             messageNotification: "",
                             currentOrders: [],
                             completedOrders: [],
+                            cancelledOrders: [],
                             user_id: <?php echo $_SESSION['user_id']; ?>,
                         }
                     },
@@ -182,10 +237,10 @@ include("head.php");
                         },
 
                         //Get Completed Orders
-                        async getCompletedProducts() {
+                        async getCompletedOrders() {
                             const options = {
                                 method: "POST",
-                                url: "process_order.php?getCompletedProducts",
+                                url: "process_order.php?completedOrders",
                                 headers: {
                                     Accept: "application/json",
                                 },
@@ -204,10 +259,34 @@ include("head.php");
                                 });
                         },
 
+                        //Get Completed Orders
+                        async getCancelledOrders() {
+                            const options = {
+                                method: "POST",
+                                url: "process_order.php?getCancelledOrders",
+                                headers: {
+                                    Accept: "application/json",
+                                },
+                                data: {
+                                    user_id: this.user_id
+                                }
+                            };
+                            await axios
+                                .request(options)
+                                .then((response) => {
+                                    console.log(response);
+                                    this.cancelledOrders = response.data;
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        },
+
                     },
                     async mounted() {
                         this.getCurrentOrder();
-                        this.getCompletedProducts();
+                        this.getCompletedOrders();
+                        this.getCancelledOrders();
                     }
                 });
             </script>

@@ -4,7 +4,7 @@ $date = date_default_timezone_set('Asia/Manila');
 $date = date('Y-m-d H:i:s');
 
 //Get Current Orders
-if (isset($_GET['getProducts'])) {
+if (isset($_GET['getCurrentOrders'])) {
     $data = json_decode(file_get_contents('php://input'), true);
     $user_id = $data["user_id"];
     $orders = array();
@@ -12,7 +12,7 @@ if (isset($_GET['getProducts'])) {
     $getCurrentOrders = mysqli_query($mysqli, "SELECT *, t.id AS transactionId, ps.id as userId
     FROM transaction t
     JOIN pharmacy_store ps ON ps.id = t.pharmacy_id
-    WHERE ps.user_id = '$user_id' AND t.status = '0' ");
+    WHERE ps.user_id = '$user_id' AND (t.status = '0' OR t.status = '-1') ");
 
     while ($order = mysqli_fetch_assoc($getCurrentOrders)) {
         $products = array();
@@ -47,7 +47,7 @@ if (isset($_GET['getCompletedProducts'])) {
     $user_id = $data["user_id"];
     $orders = array();
 
-    $getCurrentOrders = mysqli_query($mysqli, "SELECT *, t.id AS transactionId FROM transaction t JOIN pharmacy_store ps ON ps.id = t.pharmacy_id WHERE t.user_id = '$user_id' AND t.status = 1 ");
+    $getCurrentOrders = mysqli_query($mysqli, "SELECT *, t.id AS transactionId FROM transaction t JOIN pharmacy_store ps ON ps.id = t.pharmacy_id WHERE ps.user_id = '$user_id' AND (t.status = '1' OR t.status = '-2')  ");
 
     while ($order = mysqli_fetch_assoc($getCurrentOrders)) {
         $products = array();
@@ -80,7 +80,7 @@ if (isset($_GET['getCancelledOrders'])) {
     $user_id = $data["user_id"];
     $orders = array();
 
-    $getCurrentOrders = mysqli_query($mysqli, "SELECT *, t.id AS transactionId FROM transaction t JOIN pharmacy_store ps ON ps.id = t.pharmacy_id WHERE t.status = '-2' ");
+    $getCurrentOrders = mysqli_query($mysqli, "SELECT *, t.id AS transactionId FROM transaction t JOIN pharmacy_store ps ON ps.id = t.pharmacy_id WHERE ps.user_id =  '$user_id' AND t.status = '-3' ");
 
     while ($order = mysqli_fetch_assoc($getCurrentOrders)) {
         $products = array();
@@ -114,9 +114,43 @@ if (isset($_GET['cancelOrder'])) {
     $data = json_decode(file_get_contents('php://input'), true);
     $transaction_id = $data["transaction_id"];
 
-    $getCurrentOrders = mysqli_query($mysqli, "UPDATE transaction SET status = '-1' WHERE id = '$transaction_id' ");
+    $getCurrentOrders = mysqli_query($mysqli, "UPDATE transaction SET status = '-3' WHERE id = '$transaction_id' ");
     $response[] = array("response"=>"Order has been cancelled.");
     echo json_encode($response);
+}
+
+//Confirm Order
+if (isset($_GET['confirmOrder'])) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $transaction_id = $data["transaction_id"];
+
+    $getCurrentOrders = mysqli_query($mysqli, "UPDATE transaction SET status = '-1' WHERE id = '$transaction_id' ");
+    $response[] = array("response"=>"Order has been confirmed. Awaiting Driver.");
+    echo json_encode($response);
+}
+
+//Picked Up Order
+if (isset($_GET['pickedUpOrder'])) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $transaction_id = $data["transaction_id"];
+
+    $getCurrentOrders = mysqli_query($mysqli, "UPDATE transaction SET status = '-2' WHERE id = '$transaction_id' ");
+    $response[] = array("response"=>"Order has been pickedup by the rider.");
+    echo json_encode($response);
+}
+
+//Get Rider Information
+if (isset($_GET['getRiderInformation'])) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $transaction_id = $data["transaction_id"];
+    $riderInformation = array();
+    
+    $getAcceptedRiders = mysqli_query($mysqli, "SELECT * FROM rider_transaction rt WHERE rt.transaction_id = '$transaction_id' ");
+
+    while ($rider = mysqli_fetch_assoc($getAcceptedRiders)) {
+        $$riderInformation[] = $rider;
+    }       
+    echo json_encode($riderInformation);
 }
 
 ?>
