@@ -6,12 +6,7 @@ $user_id = $_SESSION['user_id'];
 $getCurrentBooking =  $mysqli->query("SELECT * FROM rider_transaction WHERE delivered = '0' ") or die($mysqli->error);
 if(mysqli_num_rows($getCurrentBooking) >= 1){
     // header("location: rides.php");
-?>
-<script>
-    // window.location.href = "./rides.php";
-</script>
-<?php
-}
+    }
 ?>
 
 <title>PharmaClique - Rider Home</title>
