@@ -5,11 +5,10 @@ include("head.php");
 $user_id = $_SESSION['user_id'];
 $getCurrentBooking =  $mysqli->query("SELECT * FROM rider_transaction WHERE delivered = '0' ") or die($mysqli->error);
 if(mysqli_num_rows($getCurrentBooking) >= 1){
-    header("location: rides.php", true, 301);
-    exit();
+    // header("location: rides.php");
 ?>
 <script>
-
+    window.location.href = "./rides.php";
 </script>
 <?php
 }
