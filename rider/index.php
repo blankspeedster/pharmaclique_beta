@@ -139,8 +139,8 @@ if(mysqli_num_rows($getCurrentBooking) >= 1){
         <script src="../vendor/chart.js/Chart.min.js"></script>
 
         <!-- Page level custom scripts -->
-        <script src="../js/demo/chart-area-demo.js"></script>
-        <script src="../js/demo/chart-pie-demo.js"></script>
+        <!-- <script src="../js/demo/chart-area-demo.js"></script> -->
+        <!-- <script src="../js/demo/chart-pie-demo.js"></script> -->
 
         <!-- End scripts here -->
         <script>
@@ -214,8 +214,6 @@ if(mysqli_num_rows($getCurrentBooking) >= 1){
                         //     ]
                         // }).addTo(map);
                         // End Code to Routing
-
-                        let pharmacys = this.pharmacys.data;
                     },
 
                     //Get Transaction accepted by the pharmacy
@@ -244,7 +242,7 @@ if(mysqli_num_rows($getCurrentBooking) >= 1){
                     async loopTransaction(){
                         setInterval(() => {
                             this.getTransaction();
-                        }, 5000);
+                        }, 25000);
                     },
 
                     //Accept Transaction

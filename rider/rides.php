@@ -229,10 +229,14 @@ $booking_id = $booking["id"];
                             attribution: "\u003ca href=\"https://www.maptiler.com/copyright/\" target=\"_blank\"\u003e\u0026copy; MapTiler\u003c/a\u003e \u003ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003e\u0026copy; OpenStreetMap contributors\u003c/a\u003e",
                             style: 'https://api.maptiler.com/maps/osm-standard/style.json?key=gcypTzmAMjrlMg46MJG3#5.9/16.04327/120.29239'
                         }).addTo(map);
+                        navigator.geolocation.getCurrentPosition(this.renderRider, this.showError);
+                        this.loopGetRider();
+                    },
 
+                    loopGetRider(){
                         setInterval(() => {
                             navigator.geolocation.getCurrentPosition(this.renderRider, this.showError)
-                        }, 5000);
+                        }, 25000);
                     },
 
                     async renderRider(position) {
