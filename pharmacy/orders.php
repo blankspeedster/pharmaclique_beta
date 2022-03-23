@@ -71,7 +71,7 @@ include("head.php");
                                                 </span>
                                                 <div v-if="orders[0].status === '-1' " @click="getRiderInformation(orders[0].transaction_id)" class="alert alert-success alert-dismissible">
                                                     <span v-if="riderInformation.length >=1">
-                                                        Rider Information here.
+                                                        <b>Rider: </b>{{riderInformation[0].firstname}} {{riderInformation[0].lastname}}
                                                     </span>
                                                     <span v-if="riderInformation.length === 0">
                                                         No rider picked up the order yet. Click to update / check the status.

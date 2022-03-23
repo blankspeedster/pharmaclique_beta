@@ -73,7 +73,7 @@ $booking_id = $booking["id"];
                                                     <b>Total Amount to be paid: </b> ₱{{b.total_amount - b.delivery_charge}} <br><br>
                                                     <b>Products:</b><br>
                                                     <span v-for="product in b.products">
-                                                        {{product.product_name}} x {{product.count}}
+                                                        {{product.product_name}} x {{product.count}};<br>
                                                     </span>
                                                 </div>
                                         </span>
@@ -88,7 +88,7 @@ $booking_id = $booking["id"];
                         <div class="col-lg-12 mb-4">
                             <div class="card shadow mb-4">
                                 <div class="card-header">
-                                    <h6 class="m-0 font-weight-bold text-primary">Map</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Map - {{mapMessage}}</h6>
                                 </div>
                                 <div class="card-body">
                                     <br>
@@ -139,6 +139,7 @@ $booking_id = $booking["id"];
 
         <!-- End scripts here -->
         <script>
+            var map, rider, destination;
             new Vue({
                 el: "#vueApp",
                 data() {
@@ -155,6 +156,10 @@ $booking_id = $booking["id"];
                         //Pharmacy Location
                         pharmaLat: null,
                         pharmaLong: null,
+                        customerLat: null,
+                        customerLong: null,
+                        status: null,
+                        mapMessage: null,
                     }
                 },
                 methods: {
@@ -178,10 +183,23 @@ $booking_id = $booking["id"];
                                 this.currentBooking = response.data;
                                 this.pharmaLat = response.data[0].pharmacyLat;
                                 this.pharmaLong = response.data[0].pharmacyLong;
+                                this.status = response.data[0].status;
+                                this.customerLat = response.data[0].user_lat;
+                                this.customerLong = response.data[0].user_long;
+
+                                //Set Message
+                                if (this.status === "-1") {
+                                    this.mapMessage = "On the way to the Pharmacy";
+                                } else if (this.status === "-2") {
+                                    this.mapMessage = "On the way to the Customer";
+                                }
+
                             })
                             .catch((error) => {
                                 console.log(error);
                             });
+
+                        // await this.renderRider();
                     },
 
                     //Purely GeoLocationn Stuff here
@@ -206,11 +224,31 @@ $booking_id = $booking["id"];
                         if (container != null) {
                             container._leaflet_id = null;
                         }
-                        var map = L.map('map').setView([userLat, userLong], 13);
+                        map = L.map('map').setView([userLat, userLong], 13);
                         var gl = L.mapboxGL({
                             attribution: "\u003ca href=\"https://www.maptiler.com/copyright/\" target=\"_blank\"\u003e\u0026copy; MapTiler\u003c/a\u003e \u003ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003e\u0026copy; OpenStreetMap contributors\u003c/a\u003e",
                             style: 'https://api.maptiler.com/maps/osm-standard/style.json?key=gcypTzmAMjrlMg46MJG3#5.9/16.04327/120.29239'
                         }).addTo(map);
+
+                        setInterval(() => {
+                            navigator.geolocation.getCurrentPosition(this.renderRider, this.showError)
+                        }, 5000);
+                    },
+
+                    async renderRider(position) {
+                        this.lat = position.coords.latitude;
+                        this.long = position.coords.longitude;
+
+                        var userLat = this.lat;
+                        var userLong = this.long;
+
+                        if (rider) {
+                            map.removeLayer(rider)
+                        }
+
+                        if (destination) {
+                            map.removeControl(destination)
+                        }
 
                         var riderIcon = L.icon({
                             iconUrl: '../assets/images/rider.png',
@@ -219,15 +257,10 @@ $booking_id = $booking["id"];
                         });
 
                         // Current Position
-                        L.marker([userLat, userLong], {
+                        rider = L.marker([userLat, userLong], {
                                 draggable: true,
                                 clickable: true,
                                 icon: riderIcon,
-                            }).on('dragend', (e) => {
-                                e.target.getLatLng().lat;
-                                e.target.getLatLng().lng;
-                                this.lat = e.target.getLatLng().lat;
-                                this.long = e.target.getLatLng().lng;
                             }).addTo(map)
                             .bindPopup('You are here', {
                                 autoPan: false
@@ -236,13 +269,29 @@ $booking_id = $booking["id"];
 
                         //Add Routing
                         // Code to Add Routing
-                        L.Routing.control({
-                            waypoints: [
-                                L.latLng(userLat, userLong),
-                                L.latLng(this.pharmaLat, this.pharmaLong)
-                            ]
-                        }).addTo(map);
+                        //If Status is -1 (For Pick up)
+                        if (this.status === "-1") {
+                            destination = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(userLat, userLong),
+                                    L.latLng(this.pharmaLat, this.pharmaLong)
+                                ]
+                            }).addTo(map);
+                        } else if (this.status === "-2") {
+                            destination = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(userLat, userLong),
+                                    L.latLng(this.customerLat, this.customerLong)
+                                ]
+                            }).addTo(map);
+                        }
                         // End Code to Routing
+                        await this.getCurrentBooking();
+                    },
+
+                    //Function for delay
+                    delay(time) {
+                        return new Promise(resolve => setTimeout(resolve, time));
                     },
 
                     //Show Error

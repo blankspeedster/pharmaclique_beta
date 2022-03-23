@@ -143,14 +143,16 @@ if (isset($_GET['pickedUpOrder'])) {
 if (isset($_GET['getRiderInformation'])) {
     $data = json_decode(file_get_contents('php://input'), true);
     $transaction_id = $data["transaction_id"];
-    $riderInformation = array();
+    $riderInfo = array();
     
-    $getAcceptedRiders = mysqli_query($mysqli, "SELECT * FROM rider_transaction rt WHERE rt.transaction_id = '$transaction_id' ");
+    $getAcceptedRiders = mysqli_query($mysqli, "SELECT * FROM rider_transaction rt
+    JOIN users u ON u.id = rt.rider_id
+    WHERE rt.transaction_id = '$transaction_id' ");
+    
+    $rider = mysqli_fetch_assoc($getAcceptedRiders);
+    $riderInfo[] = $rider;
 
-    while ($rider = mysqli_fetch_assoc($getAcceptedRiders)) {
-        $$riderInformation[] = $rider;
-    }       
-    echo json_encode($riderInformation);
+    echo json_encode($riderInfo);
 }
 
 ?>

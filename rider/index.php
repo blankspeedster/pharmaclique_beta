@@ -236,6 +236,15 @@ if(mysqli_num_rows($getCurrentBooking) >= 1){
                             .catch((error) => {
                                 console.log(error);
                             });
+                        
+                        this.loopTransaction();
+                    },
+
+                    //Loop Transaction
+                    async loopTransaction(){
+                        setInterval(() => {
+                            this.getTransaction();
+                        }, 5000);
                     },
 
                     //Accept Transaction
@@ -287,9 +296,9 @@ if(mysqli_num_rows($getCurrentBooking) >= 1){
                         }
                     },
                 },
-                mounted() {
-                    this.getLocation();
-                    this.getTransaction();
+                async mounted() {
+                    await this.getLocation();
+                    await this.getTransaction();
                 }
             });
         </script>
