@@ -6,7 +6,7 @@ if (mysqli_num_rows($getCurrentBooking) <= 0) {
     // header("location: rides.php");
     ?>
     <script>
-        window.location.href = "./rides.php";
+        // window.location.href = "./rides.php";
     </script>
 <?php 
     }
