@@ -236,9 +236,9 @@ $user_id = $_SESSION['user_id'];
 
                     //Loop Transaction
                     async loopTransaction(){
-                        setInterval(() => {
-                            this.getTransaction();
-                        }, 25000);
+                        // setInterval(() => {
+                        //     this.getTransaction();
+                        // }, 25000);
                     },
 
                     //Accept Transaction
