@@ -1,5 +1,5 @@
 <?php
-require_once("../process_index.php");
+require_once("dbh.php");
 include("head.php");
 
 $user_id = $_SESSION['user_id'];
