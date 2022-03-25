@@ -3,7 +3,7 @@ require_once("process_rider.php");
 include("head.php");
 $getCurrentBooking =  $mysqli->query("SELECT * FROM rider_transaction WHERE delivered = '0' ") or die($mysqli->error);
 if (mysqli_num_rows($getCurrentBooking) <= 0) {
-    header("location: rides.php");
+    header("location: index.php");
     }
 $booking = mysqli_fetch_array($getCurrentBooking);
 $booking_id = $booking["id"];
