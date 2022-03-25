@@ -105,6 +105,7 @@ $booking_id = $booking["id"];
                                         </div>
                                     </div>
                                 </div>
+                                <a @click="updateRiderLocationClick()" class="btn btn-info m-2"> Update location</a>
                             </div>
                         </div>
                     </div>
@@ -138,7 +139,7 @@ $booking_id = $booking["id"];
 
         <!-- End scripts here -->
         <script>
-            var map, rider, destination;
+            var map, rider, destination, customer, customerCircle;
             new Vue({
                 el: "#vueApp",
                 data() {
@@ -198,7 +199,7 @@ $booking_id = $booking["id"];
                                 console.log(error);
                             });
 
-                        // await this.renderRider();
+                            // this.loopGetRider();
                     },
 
                     //Purely GeoLocationn Stuff here
@@ -223,27 +224,39 @@ $booking_id = $booking["id"];
                         if (container != null) {
                             container._leaflet_id = null;
                         }
-                        map = L.map('map').setView([userLat, userLong], 13);
+                        map = L.map('map', {
+                                center: [9.0820, 8.6753],
+                                zoom: 8
+                            }).setView([userLat, userLong], 13);
                         var gl = L.mapboxGL({
                             attribution: "\u003ca href=\"https://www.maptiler.com/copyright/\" target=\"_blank\"\u003e\u0026copy; MapTiler\u003c/a\u003e \u003ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003e\u0026copy; OpenStreetMap contributors\u003c/a\u003e",
                             style: 'https://api.maptiler.com/maps/osm-standard/style.json?key=gcypTzmAMjrlMg46MJG3#5.9/16.04327/120.29239'
                         }).addTo(map);
                         navigator.geolocation.getCurrentPosition(this.renderRider, this.showError);
-                        this.loopGetRider();
+                        // this.loopGetRider();
                     },
 
+                    //Loop Get Rider Location
                     loopGetRider(){
-                        // setInterval(() => {
-                        //     navigator.geolocation.getCurrentPosition(this.renderRider, this.showError)
-                        // }, 25000);
+                        let newTime = 20000;
+                        setInterval(() => {
+                            navigator.geolocation.getCurrentPosition(this.renderRider, this.showError)
+                        }, newTime);
+                        // this.delay(newTime).then(() => navigator.geolocation.getCurrentPosition(this.renderRider, this.showError));
+                        console.log("renderRider");
                     },
 
+                    //Force Update Location
+                    updateRiderLocationClick(){
+                        navigator.geolocation.getCurrentPosition(this.clickRenderRider, this.showError);
+                        console.log("updateRiderLocation");
+                    },
+
+                    //Render Rider
                     async renderRider(position) {
                         this.lat = position.coords.latitude;
                         this.long = position.coords.longitude;
-
-                        var userLat = this.lat;
-                        var userLong = this.long;
+                        let accuracy = position.coords.accuracy;
 
                         if (rider) {
                             map.removeLayer(rider)
@@ -253,6 +266,11 @@ $booking_id = $booking["id"];
                             map.removeControl(destination)
                         }
 
+                        if (customerCircle) {
+                            map.removeControl(customerCircle)
+                        }
+
+
                         var riderIcon = L.icon({
                             iconUrl: '../assets/images/rider.png',
                             iconSize: [50, 50],
@@ -260,8 +278,7 @@ $booking_id = $booking["id"];
                         });
 
                         // Current Position
-                        rider = L.marker([userLat, userLong], {
-                                draggable: true,
+                        rider = L.marker([this.lat, this.long], {
                                 clickable: true,
                                 icon: riderIcon,
                             }).addTo(map)
@@ -276,20 +293,42 @@ $booking_id = $booking["id"];
                         if (this.status === "-1") {
                             destination = L.Routing.control({
                                 waypoints: [
-                                    L.latLng(userLat, userLong),
+                                    L.latLng(this.lat, this.long),
                                     L.latLng(this.pharmaLat, this.pharmaLong)
                                 ]
                             }).addTo(map);
+                            L.marker([this.pharmaLat, this.pharmaLong], {
+                                clickable: true,
+                            }).addTo(map)
+                            .bindPopup('Descination: Pharmacy', {
+                                autoPan: true
+                            })
+                            .openPopup();                            
+                            // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
                         } else if (this.status === "-2") {
                             destination = L.Routing.control({
                                 waypoints: [
-                                    L.latLng(userLat, userLong),
+                                    L.latLng(this.lat, this.long),
                                     L.latLng(this.customerLat, this.customerLong)
                                 ]
                             }).addTo(map);
+                            L.marker([this.customerLat, this.customerLong], {
+                                clickable: true,
+                            }).addTo(map)
+                            .bindPopup('Descination: Customer', {
+                                autoPan: false
+                            })
+                            .openPopup();   
+                            // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
                         }
+
                         // End Code to Routing
-                        await this.getCurrentBooking();
+                        this.getCurrentBooking();
+                    },
+
+                    //Render Rider on Click
+                    async clickRenderRider(position) {
+
                     },
 
                     //Function for delay
@@ -319,6 +358,7 @@ $booking_id = $booking["id"];
                 async mounted() {
                     await this.getCurrentBooking();
                     await this.getLocation();
+                    this.loopGetRider();
                 }
             });
         </script>
