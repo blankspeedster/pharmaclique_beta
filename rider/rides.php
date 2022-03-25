@@ -328,7 +328,76 @@ $booking_id = $booking["id"];
 
                     //Render Rider on Click
                     async clickRenderRider(position) {
+                        this.lat = position.coords.latitude;
+                        this.long = position.coords.longitude;
+                        let accuracy = position.coords.accuracy;
 
+                        if (rider) {
+                            map.removeLayer(rider)
+                        }
+
+                        if (destination) {
+                            map.removeControl(destination)
+                        }
+
+                        if (customerCircle) {
+                            map.removeControl(customerCircle)
+                        }
+
+
+                        var riderIcon = L.icon({
+                            iconUrl: '../assets/images/rider.png',
+                            iconSize: [50, 50],
+                            iconAnchor: [25, 25]
+                        });
+
+                        // Current Position
+                        rider = L.marker([this.lat, this.long], {
+                                clickable: true,
+                                icon: riderIcon,
+                            }).addTo(map)
+                            .bindPopup('You are here', {
+                                autoPan: false
+                            })
+                            .openPopup();
+
+                        //Add Routing
+                        // Code to Add Routing
+                        //If Status is -1 (For Pick up)
+                        if (this.status === "-1") {
+                            destination = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(this.lat, this.long),
+                                    L.latLng(this.pharmaLat, this.pharmaLong)
+                                ]
+                            }).addTo(map);
+                            L.marker([this.pharmaLat, this.pharmaLong], {
+                                clickable: true,
+                            }).addTo(map)
+                            .bindPopup('Descination: Pharmacy', {
+                                autoPan: true
+                            })
+                            .openPopup();                            
+                            // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
+                        } else if (this.status === "-2") {
+                            destination = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(this.lat, this.long),
+                                    L.latLng(this.customerLat, this.customerLong)
+                                ]
+                            }).addTo(map);
+                            L.marker([this.customerLat, this.customerLong], {
+                                clickable: true,
+                            }).addTo(map)
+                            .bindPopup('Descination: Customer', {
+                                autoPan: false
+                            })
+                            .openPopup();   
+                            // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
+                        }
+
+                        // End Code to Routing
+                        this.getCurrentBooking();
                     },
 
                     //Function for delay
