@@ -3,7 +3,7 @@ require_once("dbh.php");
 include("head.php");
 $getCurrentBooking =  $mysqli->query("SELECT * FROM rider_transaction WHERE delivered = '0' ") or die($mysqli->error);
 if (mysqli_num_rows($getCurrentBooking) >= 1) {
-    header("location: rides.php");
+    // header("location: rides.php");
 }
 $user_id = $_SESSION['user_id'];
 ?>

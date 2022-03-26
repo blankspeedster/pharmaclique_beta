@@ -53,9 +53,17 @@ $role = $_SESSION['role'];
         <!-- Nav Item - Pharmacy -->
         <li class="nav-item">
             <a class="nav-link" href="rides.php">
-            <i class="fas fa-biking"></i>
+                <i class="fas fa-biking"></i>
                 <span>Rides</span></a>
         </li>
+
+        <!-- Nav Item - Pharmacy -->
+        <li class="nav-item">
+            <a class="nav-link" href="rider_sample.php">
+                <i class="fas fa-biking"></i>
+                <span>Rider Sample</span></a>
+        </li>
+
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
