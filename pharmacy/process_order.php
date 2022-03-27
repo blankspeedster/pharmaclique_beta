@@ -124,7 +124,21 @@ if (isset($_GET['confirmOrder'])) {
     $data = json_decode(file_get_contents('php://input'), true);
     $transaction_id = $data["transaction_id"];
 
-    $getCurrentOrders = mysqli_query($mysqli, "UPDATE transaction SET status = '-1' WHERE id = '$transaction_id' ");
+    mysqli_query($mysqli, "UPDATE transaction SET status = '-1' WHERE id = '$transaction_id' ");
+    
+    //Less the product stock here
+    $getCartInfo = mysqli_query($mysqli, "SELECT * FROM cart WHERE transaction_id = '$transaction_id' ");
+    while($cart = mysqli_fetch_array($getCartInfo)){
+        $cartQty = $cart["count"];
+        $productId = $cart["product_id"];
+        $products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE id = '$productId' ");
+        while($product = mysqli_fetch_array($products)){
+            $productStock = $product["product_stock"];
+            $newQty = $productStock - $cartQty;
+            mysqli_query($mysqli, "UPDATE pharmacy_products SET product_stock = '$newQty' WHERE id = '$productId' ");
+        }
+    }
+
     $response[] = array("response"=>"Order has been confirmed. Awaiting Driver.");
     echo json_encode($response);
 }
@@ -134,7 +148,7 @@ if (isset($_GET['pickedUpOrder'])) {
     $data = json_decode(file_get_contents('php://input'), true);
     $transaction_id = $data["transaction_id"];
 
-    $getCurrentOrders = mysqli_query($mysqli, "UPDATE transaction SET status = '-2' WHERE id = '$transaction_id' ");
+    mysqli_query($mysqli, "UPDATE transaction SET status = '-2' WHERE id = '$transaction_id' ");
     $response[] = array("response"=>"Order has been pickedup by the rider.");
     echo json_encode($response);
 }

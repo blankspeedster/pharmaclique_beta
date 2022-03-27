@@ -358,7 +358,7 @@ include("head.php");
                                 .then((response) => {
                                     console.log(response);
                                     this.getCurrentOrders();
-                                    this.CompletedOrders();
+                                    this.getCompletedOrders();
                                 })
                                 .catch((error) => {
                                     console.log(error);
@@ -382,7 +382,7 @@ include("head.php");
                                 .then((response) => {
                                     console.log(response);
                                     this.getCurrentOrders();
-                                    this.CompletedOrders();
+                                    this.getCompletedOrders();
                                 })
                                 .catch((error) => {
                                     console.log(error);
