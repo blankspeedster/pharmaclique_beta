@@ -2,27 +2,7 @@
 include('dbh.php');
 
 if (!isset($_SESSION['email'])) {
-    header("Location: login.php");
-}
-
-//Pharmacy
-if($_SESSION['role'] == 3){
-    header("Location: ./pharmacy/index.php");
-}
-
-//User
-if($_SESSION['role'] == 1){
-    header("Location: ./users/index.php");
-}
-
-//Rider
-if($_SESSION['role'] == 2){
-    header("Location: ./rider/index.php");
-}
-
-//Doctor
-if($_SESSION['role'] == 5){
-    header("Location: ./doctor/index.php");
+    header("Location: ../login.php");
 }
 
 $role = $_SESSION['role'];
@@ -146,22 +126,25 @@ $role = $_SESSION['role'];
         </li> -->
 
         <!-- Nav Item - Pharmacy -->
-        <?php if ($role == "3") { ?>
-            <li class="nav-item">
-                <a class="nav-link" href="pharmacy.php">
+        <li class="nav-item">
+            <a class="nav-link" href="pharmacy.php">
                 <i class="fas fa-clinic-medical"></i>
-                    <span>Pharmacy</span></a>
-            </li>
-        <?php } ?>
+                <span>Pharmacy</span></a>
+        </li>
 
-        <!-- Nav Item - Users -->
-        <?php if ($role == "4") { ?>
-            <li class="nav-item">
-                <a class="nav-link" href="users.php">
-                    <i class="fas fa-fw fa-user"></i>
-                    <span>Users</span></a>
-            </li>
-        <?php } ?>
+        <!-- Nav Item - Orders -->
+        <li class="nav-item">
+            <a class="nav-link" href="orders.php">
+                <i class="fas fa-book-reader"></i>
+                <span>Orders</span></a>
+        </li>
+
+        <!-- Nav Item - Settings -->
+        <li class="nav-item">
+            <a class="nav-link" href="pharmacy_settings.php">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span></a>
+        </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">

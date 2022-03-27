@@ -151,6 +151,7 @@ $session_user_id = $_SESSION['user_id'];
                                                             <option value="2">Rider</option>
                                                             <option value="3">Pharmacist</option>
                                                             <option value="4">Admin</option>
+                                                            <option value="5">Doctor</option>
                                                         </select>
                                                     <?php } ?>
                                                 </div>
