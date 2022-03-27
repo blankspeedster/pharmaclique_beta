@@ -73,6 +73,16 @@ include("head.php");
                                                     <span v-if="orders[0].status === '-1' " class="badge badge-info m-1" style="float: left !important;">Status: Awaiting Rider Pick Up</span>
                                                     <span v-if="orders[0].status === '-2' " class="badge badge-info m-1" style="float: left !important; color: black;">Status: On the Way (Picked Up) from your store.</span>
                                                 </div>
+
+                                                <!-- If Status is On the way for pick up -->
+                                                <div class="mb-2" v-if="orders[0].status === '-2' ">
+                                                <button class="btn btn-sm btn-danger m-1" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">Receive</button>
+                                                    <div class="dropdown-menu shadow-danger mb-1">
+                                                        <span class="dropdown-item">Confirm Received Order? This cannot be undone.</span>
+                                                        <a class="dropdown-item text-danger" href="#">Cancel</a>
+                                                        <a @click="receiveOrder(orders[0].transactionId)" class="dropdown-item text-success">Confirm Received Order</a>
+                                                    </div>                                                    
+                                                </div>
                                             </div>
                                         </span>
 
@@ -87,7 +97,7 @@ include("head.php");
 
                         </div>
 
-                        <!-- Compelted Orders -->
+                        <!-- Completed Orders -->
                         <div class="row">
                             <!-- Compelted Orders -->
                             <div class="col-lg-12 mb-4">
@@ -192,11 +202,11 @@ include("head.php");
             <script src="../js/sb-admin-2.min.js"></script>
 
             <!-- Page level plugins -->
-            <script src="../vendor/chart.js/Chart.min.js"></script>
+            <!-- <script src="../vendor/chart.js/Chart.min.js"></script> -->
 
             <!-- Page level custom scripts -->
-            <script src="../js/demo/chart-area-demo.js"></script>
-            <script src="../js/demo/chart-pie-demo.js"></script>
+            <!-- <script src="../js/demo/chart-area-demo.js"></script> -->
+            <!-- <script src="../js/demo/chart-pie-demo.js"></script> -->
 
             <!-- End scripts here -->
             <script>
@@ -253,6 +263,30 @@ include("head.php");
                                 .then((response) => {
                                     console.log(response);
                                     this.completedOrders = response.data;
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        },
+
+                        // Receive Order
+                        async receiveOrder(transactionId){
+                            console.log(transactionId);
+                            const options = {
+                                method: "POST",
+                                url: "process_order.php?receiveOrder",
+                                headers: {
+                                    Accept: "application/json",
+                                },
+                                data: {
+                                    transaction_id: transactionId
+                                }
+                            };
+                            await axios
+                                .request(options)
+                                .then((response) => {
+                                    console.log(response);
+
                                 })
                                 .catch((error) => {
                                     console.log(error);

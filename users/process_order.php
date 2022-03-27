@@ -14,7 +14,7 @@ if (isset($_GET['getProducts'])) {
     while ($order = mysqli_fetch_assoc($getCurrentOrders)) {
         $products = array();
         $transaction_id = $order["transactionId"];
-        $getProducts = mysqli_query($mysqli, " SELECT *, c.user_id as customer_id FROM cart c
+        $getProducts = mysqli_query($mysqli, " SELECT *, c.user_id as customer_id, t.id AS transactionId FROM cart c
         JOIN pharmacy_products pp
         ON pp.id = c.product_id
         JOIN pharmacy_store ps
@@ -69,6 +69,7 @@ if (isset($_GET['completedOrders'])) {
     echo json_encode($orders);
 }
 
+// Get Cancelled Orders
 if(isset($_GET["getCancelledOrders"])){
     $data = json_decode(file_get_contents('php://input'), true);
     $user_id = $data["user_id"];
@@ -99,6 +100,19 @@ if(isset($_GET["getCancelledOrders"])){
     // }
 
     echo json_encode($orders);
+}
+
+// Receive Order
+if(isset($_GET["receiveOrder"])){
+    $data = json_decode(file_get_contents('php://input'), true);
+    $transaction_id = $data["transaction_id"];
+
+
+    mysqli_query($mysqli, " UPDATE rider_transaction SET delivered = '1' WHERE transaction_id = '$transaction_id' ");
+    mysqli_query($mysqli, " UPDATE transaction SET status = '1' WHERE id = '$transaction_id' ");
+
+    $jsonEncode = array('response' => 'Order has been received.');
+    echo json_encode($jsonEncode);
 }
 
 ?>
