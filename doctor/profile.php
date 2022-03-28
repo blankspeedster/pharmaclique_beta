@@ -6,12 +6,13 @@ $user_id = $_SESSION['user_id'];
 
 $checkUser = $mysqli->query("SELECT * FROM doctor_profile WHERE doctor_id='$user_id' ");
 $userExist = false;
-$storeId = 0;
+$profile_id = 0;
 if (mysqli_num_rows($checkUser) > 0) {
     $userExist = true;
     $user = $checkUser->fetch_array();
     $profile_id = $user['id'];
     $hourly_rate = $user['hourly_rate'];
+    $profile_url = $user['profile_image'];
     $specialization = $user['specialization'];
 
 }
@@ -204,6 +205,56 @@ $phone_number = $user["phone_number"];
                             </div>
                         </div>
 
+                        <div class="row" style="display: <?php if(!$userExist){ echo "none"; } ?>">
+                            <div class="col-lg-12">
+                                <!-- Collapsable Card Example -->
+                                <div class="card shadow mb-4">
+                                    <!-- Card Header - Accordion -->
+                                    <a href="#collapseStore" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseStore">
+                                        <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
+                                    </a>
+                                    <div class="collapse show" id="collapseStore">
+                                        <div class="card-body">
+                                            <form method="post" @submit.prevent="uploadProfilePicture()">
+                                                <div class="row">
+                                                    <!-- Profle Picture -->
+                                                    <div class="col-xl-6 col-md-12 mb-4">
+                                                        <div class="row no-gutters align-items-center">
+                                                            <div class="col mr-2">
+                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                                    Upload Display Picture
+                                                                    </div>
+                                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                    <input class="form-control" type="file" id="picture" ref="picture" accept=".jpg,.png,.jpeg" required>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xl-6 col-md-12 mb-4">
+                                                        <div class="row no-gutters align-items-center">
+                                                            <div class="col mr-2">
+                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                                    Display Picture</div>
+                                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                    <img src="../img/<?php echo $profile_url; ?>" style="max-height:100%; max-width: 100%;">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xl-12 col-md-12 mb-4 mt-4">
+                                                            <button type="submit" style="float: right;" class="btn btn-info btn-sm m-1" :disabled="isUploading" >
+                                                                <i class="far fa-save"></i> {{uploadingMessage}}
+                                                            </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Do not delete -->
                         <div class="row">
                             <!-- Add Propducts - Collapsable -->
@@ -261,10 +312,41 @@ $phone_number = $user["phone_number"];
                     return {
                         showNotification: false,
                         editUserProfile: false,
+                        messageNotification: null,
+                        isUploading: false,
+                        uploadingMessage: "Upload Profile Picture"
                     }
                 },
                 methods: {
+                    async uploadProfilePicture(){
+                        this.isUploading = true;
+                        this.uploadingMessage = "Uploading...";
+                        var pictureFile = document.querySelector("#picture");
+                        console.log(pictureFile.files[0]);
+                        const form = new FormData();
+                        form.append("picture", pictureFile.files[0]);
 
+                        const options = {
+                            method: "POST",
+                            url: "process_profile.php?uploadProfilePicture=" + <?php echo $profile_id; ?>,
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                            },
+                            data: form
+                        };
+
+                        await axios.request(options).then((response) => {
+                            this.showNotification = true;
+                            this.messageNotification = "Profile update successful!";
+                            this.isUploading = false;
+                        this.uploadingMessage = "Upload Profile Picture";
+                            console.log(response);
+                        }).catch((error) => {
+                            this.showNotification = true;
+                            this.messageNotification = "There is an error processing your request.";
+                            console.error(error);
+                        });
+                    },
 
                 },
                 async created() {},

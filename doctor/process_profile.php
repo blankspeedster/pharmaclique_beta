@@ -8,7 +8,7 @@ if (isset($_POST['save_doctror_profile'])) {
     $email = $mysqli->real_escape_string($_POST['email']);
     $phone_number = $mysqli->real_escape_string($_POST['phone_number']);
     $hourly_rate = $mysqli->real_escape_string($_POST['hourly_rate']);
-    
+
     $doctor_id = $mysqli->real_escape_string($_POST['user_id']);
 
     $hourly_rate = $mysqli->real_escape_string($_POST['hourly_rate']);
@@ -30,7 +30,7 @@ if (isset($_POST['update_doctror_profile'])) {
     $email = $mysqli->real_escape_string($_POST['email']);
     $phone_number = $mysqli->real_escape_string($_POST['phone_number']);
     $hourly_rate = $mysqli->real_escape_string($_POST['hourly_rate']);
-    
+
     $doctor_id = $mysqli->real_escape_string($_POST['user_id']);
     $profile_id = $mysqli->real_escape_string($_POST['profile_id']);
 
@@ -45,4 +45,56 @@ if (isset($_POST['update_doctror_profile'])) {
     header("location: profile.php");
 }
 
-?>
+
+//Update Profile Picture
+if (isset($_GET['uploadProfilePicture'])) {
+    $uploadDir = "../img/";
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    //Upload image
+    if ($_FILES['picture']) {
+        $pictureName = $_FILES["picture"]["name"];
+        $pictureName = preg_replace('/\s+/', '', $pictureName);
+        $pictureTmpName = $_FILES["picture"]["tmp_name"];
+        $pictureTmpName = preg_replace('/\s+/', '', $pictureTmpName);
+
+        $error = $_FILES["picture"]["error"];
+        if ($error > 0) {
+            $response = array(
+                "status" => "error",
+                "error" => true,
+                "message" => "Error uploading the file!"
+            );
+        } else {
+            $randomName = rand(1000, 100000000000) . "-" . $pictureName;
+            $randomName = strtolower($randomName);
+            $uploadName = $uploadDir . strtolower($randomName);
+            $uploadName = preg_replace('/\s+/', '-', $uploadName);
+
+            if (move_uploaded_file($pictureTmpName, $uploadName)) {
+
+                $response = array(
+                    "status" => "success",
+                    "error" => false,
+                    "message" => "File uploaded successfully",
+                    "url" => $uploadName
+                );
+            } else {
+                $response = array(
+                    "status" => "error",
+                    "error" => true,
+                    "message" => "Error uploading the file!"
+                );
+            }
+        }
+    }
+
+    $profile_url = $randomName;
+    $profile_id = $_GET["uploadProfilePicture"];
+
+    $mysqli->query("UPDATE doctor_profile SET profile_image = '$profile_url' WHERE id = '$profile_id' ") or die($mysqli->error);
+
+    $response[] = array("response" => "Display Picture has been saved!");
+
+    echo json_encode($response);
+}
