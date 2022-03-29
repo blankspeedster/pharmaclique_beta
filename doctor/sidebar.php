@@ -53,6 +53,13 @@ $role = $_SESSION['role'];
 
         <!-- Nav Item - Profile -->
         <li class="nav-item">
+            <a class="nav-link" href="booking.php">
+            <i class="fas fa-calendar-check"></i>
+                <span>Bookings</span></a>
+        </li>
+
+        <!-- Nav Item - Profile -->
+        <li class="nav-item">
             <a class="nav-link" href="profile.php">
             <i class="fas fa-address-card"></i>
                 <span>Profile</span></a>
