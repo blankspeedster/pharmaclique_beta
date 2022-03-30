@@ -88,13 +88,17 @@ $user_id = $_SESSION['user_id'];
                                                             <span v-if="b.booking_status === '1'" class="badge badge-success badge-counter">Approved</span>
                                                             <div class="mb-2">
                                                                 <!-- Cancel Booking -->
-                                                                <button class="btn btn-sm btn-danger m-1" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">Cancel Booking</button>
+                                                                <button class="btn btn-sm btn-danger m-1" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">
+                                                                    <i class="fas fa-ban"></i> Cancel Booking
+                                                                </button>
                                                                 <div class="dropdown-menu shadow-danger mb-1">
                                                                     <span class="dropdown-item">Do you really wish to cancel this booking?</span>
-                                                                    <a class="dropdown-item text-info" href="#">Cancel</a>
+                                                                    <a class="dropdown-item text-danger" href="#">Cancel</a>
                                                                     <a class="dropdown-item text-success" @click="cancelBooking(b.booking_id)">Confirm Cancellation</a>
                                                                 </div>
-                                                                <a class="btn btn-sm btn-info m-1" style="float: right;" :href="'booking.php?id='+b.booking_id">Go to Booking</a>
+                                                                <a class="btn btn-sm btn-info m-1" style="float: right;" :href="'booking.php?id='+b.booking_id">
+                                                                    <i class="fas fa-arrow-right"></i> Go to Booking
+                                                                </a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -105,7 +109,7 @@ $user_id = $_SESSION['user_id'];
                                 </div>
                             </div>
                         </div>
-                        
+
 
                         <!-- List of cancelled bookings -->
                         <div class="row">

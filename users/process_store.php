@@ -80,7 +80,7 @@ if (isset($_GET['addToCart'])) {
     // OR
     // $last_id = mysqli_insert_id($mysqli);
 
-    $jsonEncode = array('response' => 'Product has been added to basket! You may check your cart to modify the qty.');
+    $jsonEncode = array('response' => 'Product has been added to basket! You may check your cart to modify the quantity.');
     echo json_encode($jsonEncode);
 }
 ?>

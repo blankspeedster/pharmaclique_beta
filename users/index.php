@@ -69,7 +69,9 @@ include("head.php");
                                                     <input class="form-control" type="text" id="search" placeholder="Search Medicine" style="width: 100%;" v-model="searchValue" />
                                                 </div>
                                                 <div class="col-lg-4 mb-4">
-                                                    <button id="searchbutton" class="btn btn-success" type="submit" style="width: 100%;">Search</button>
+                                                    <button id="searchbutton" class="btn btn-success" type="submit" style="width: 100%;">
+                                                    <i class="fas fa-search"></i> Search
+                                                </button>
                                                 </div>
                                                 <div class="col-lg-12 mb-4">
                                                     <div class="products products-table">

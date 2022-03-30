@@ -89,7 +89,9 @@ $phone_number = $user["phone_number"];
                                                     <input class="form-control" type="text" id="search" style="width: 100% ;" placeholder="Search by Specialization" v-model="searchVal" />
                                             </div>
                                             <div class="col-lg-2 mb-4">
-                                                <button id="searchbutton" class="btn btn-success" style="width: 100% ;" type="submit" @click="searchDoctors()">Search</button>
+                                                <button id="searchbutton" class="btn btn-success" style="width: 100% ;" type="submit" @click="searchDoctors()">
+                                                    <i class="fas fa-search"></i> Search
+                                                </button>
                                                 </form>
                                             </div>
 
@@ -108,7 +110,9 @@ $phone_number = $user["phone_number"];
                                                             <div style="height: 400px; text-align: center;">
                                                                 <img :src="'../img/'+d.profile_image" style="max-height: 100%; max-width: 100%; border-radius: 10px;">
                                                             </div>
-                                                            <button @click="attemptToBookDoctor(d.doctor_id, d.firstname, d.lastname)" type="submit" style="float: right;" class="btn btn-primary btn-sm m-1" name="save_doctror_profile">Book</button>
+                                                            <button @click="attemptToBookDoctor(d.doctor_id, d.firstname, d.lastname)" type="submit" style="float: right;" class="btn btn-primary btn-sm m-1" name="save_doctror_profile">
+                                                                <i class="fas fa-pencil-alt"></i> Book
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -123,7 +127,7 @@ $phone_number = $user["phone_number"];
                             </div>
                         </div>
 
-                        <div class="row" style=" " v-if="attemptBook">
+                        <div class="row" v-if="attemptBook">
                             <div class="col-lg-12">
                                 <!-- Collapsable Card Example -->
                                 <div class="card shadow mb-4">
@@ -165,7 +169,7 @@ $phone_number = $user["phone_number"];
                                                 </div>
 
                                                 <div class="col-xl-12 col-md-12 mb-4 mt-4">
-                                                    <button type="submit" style="float: right;" class="btn btn-info btn-sm m-1" :disabled="isUploading" @click="checkBooking()">
+                                                    <button type="submit" style="float: right;" class="btn btn-primary btn-sm m-1" :disabled="isUploading" @click="checkBooking()">
                                                         <i class="far fa-save"></i> {{bookingMessage}}
                                                     </button>
                                                     <a type="submit" style="float: right;" class="btn btn-danger btn-sm m-1" @click="attemptBook = false">
