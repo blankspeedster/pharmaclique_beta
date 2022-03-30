@@ -40,9 +40,10 @@
 
     <!-- Product Specific -->
     <link rel="stylesheet" href="../css/products.css" />
+
     <!-- icon-->
     <link rel="icon" href="../img/favicon.png" sizes="16x16">
-    <?php
-    include("dbh.php")
-    ?>
+
+    <!-- Custom styles for this page -->
+    <!-- <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"> -->
 </head>

@@ -71,91 +71,116 @@ $phone_number = $user["phone_number"];
 
                         <!-- Page Heading -->
                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                            <h1 class="h3 mb-0 text-gray-800">Bookings</h1>
+                            <h1 class="h3 mb-0 text-gray-800">Book an appointment</h1>
                         </div>
-                        <!-- List of bookings -->
-                        <div class="row">
+
+                        <div class="row" v-if="!attemptBook">
                             <div class="col-lg-12">
                                 <!-- Collapsable Card Example -->
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Accordion -->
                                     <a href="#collapseStore" class="d-block card-header py-3" data-toggle="" role="button" aria-expanded="true" aria-controls="collapseStore">
-                                        <h6 class="m-0 font-weight-bold text-primary">List of Bookings</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">List of Doctors</h6>
                                     </a>
                                     <div class="card-body">
                                         <div class="row">
-                                            <div v-if="bookings.length === 0" class="col-xl-12 alert alert-warning">
-                                                No bookings found currently associated with your account.
+                                            <div class="col-lg-10 mb-4">
+                                                <form @submit.prevent="searchDoctors()">
+                                                    <input class="form-control" type="text" id="search" style="width: 100% ;" placeholder="Search by Specialization" v-model="searchVal" />
                                             </div>
-                                            <div v-else class="col-xl-12 col-md-6 mb-4" v-for="b in bookings">
+                                            <div class="col-lg-2 mb-4">
+                                                <button id="searchbutton" class="btn btn-success" style="width: 100% ;" type="submit" @click="searchDoctors()">Search</button>
+                                                </form>
+                                            </div>
+
+                                            <div v-if="doctors.length === 0" class="col-xl-12 alert alert-warning">
+                                                No doctors found in that specialization
+                                            </div>
+                                            <div v-else class="col-xl-6 col-md-6 mb-4" v-for="d in doctors">
                                                 <div class="card shadow row no-gutters align-items-center p-4">
                                                     <div class="col mr-2">
-                                                        <div class="text font-weight-bold text-primary mb-1">
-                                                            <a :href="'booking.php?id='+b.booking_id">
-                                                                Booking ID: 00000{{b.booking_id}}<br>
-                                                                Doctor: {{b.firstname}} {{b.lastname}}
-                                                            </a>
+                                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                            Specialization: {{d.specialization}}
                                                         </div>
-                                                        <div class="text font-weight-bold text-primary mb-1">
-                                                            Date: {{b.booking_date}}<br>
-                                                            Time: {{b.boking_date_time_from}} - {{b.boking_date_time_to}}
-                                                        </div>
-                                                        <div class="text-xs font-weight-bold text-primary mb-1">
-                                                            <span v-if="b.booking_status === '0'" class="badge badge-warning badge-counter">Awaiting Doctor's Approval</span>
-                                                            <span v-if="b.booking_status === '1'" class="badge badge-success badge-counter">Approved</span>
-                                                            <div class="mb-2">
-                                                                <!-- Cancel Booking -->
-                                                                <button class="btn btn-sm btn-danger m-1" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">Cancel Booking</button>
-                                                                <div class="dropdown-menu shadow-danger mb-1">
-                                                                    <span class="dropdown-item">Do you really wish to cancel this booking?</span>
-                                                                    <a class="dropdown-item text-info" href="#">Cancel</a>
-                                                                    <a class="dropdown-item text-success" @click="cancelBooking(b.booking_id)">Confirm Cancellation</a>
-                                                                </div>
-                                                                <a class="btn btn-sm btn-info m-1" style="float: right;" :href="'booking.php?id='+b.booking_id">Go to Booking</a>
+                                                        <div class="mb-0 font-weight-bold text-gray-800">
+                                                            Name: {{d.firstname}} {{d.lastname}}<br>
+                                                            Hourly Rate: ₱{{d.hourly_rate}}
+                                                            <div style="height: 400px; text-align: center;">
+                                                                <img :src="'../img/'+d.profile_image" style="max-height: 100%; max-width: 100%; border-radius: 10px;">
                                                             </div>
+                                                            <button @click="attemptToBookDoctor(d.doctor_id, d.firstname, d.lastname)" type="submit" style="float: right;" class="btn btn-primary btn-sm m-1" name="save_doctror_profile">Book</button>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+
+                                            <div class="col-xl-12 col-md-12 mb-4 mt-4">
+
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
 
-                        <!-- List of cancelled bookings -->
-                        <div class="row">
+                        <div class="row" style=" " v-if="attemptBook">
                             <div class="col-lg-12">
                                 <!-- Collapsable Card Example -->
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Accordion -->
-                                    <a href="#collapseStore" class="d-block card-header py-3" data-toggle="" role="button" aria-expanded="true" aria-controls="collapseStore">
-                                        <h6 class="m-0 font-weight-bold text-primary">List of Cancelled Bookings</h6>
+                                    <a href="#collapseStore" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseStore">
+                                        <h6 class="m-0 font-weight-bold text-primary">Booking with: {{doctorFullName}}</h6>
                                     </a>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div v-if="cancelledBookings.length === 0" class="col-xl-12 alert alert-warning">
-                                                No cancelled bookings found currently associated with your account.
-                                            </div>
-                                            <div v-else class="col-xl-12 col-md-6 mb-4" v-for="b in cancelledBookings">
-                                                <div class="card shadow row no-gutters align-items-center p-4" style="background-color: rgb(156 156 159);">
-                                                    <div class="col mr-2">
-                                                        <div class="text font-weight-bold mb-1" style="color: black;">
-                                                            Doctor: {{b.firstname}} {{b.lastname}}
-                                                        </div>
-                                                        <div class="text font-weight-bold mb-1" style="color: black;">
-                                                            Date: {{b.booking_date}}
-                                                        </div>
-                                                        <div class="text font-weight-bold mb-1" style="color: black;">
-                                                            Time: {{b.boking_date_time_from}} - {{b.boking_date_time_to}}
+                                    <div class="collapse show" id="collapseStore">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-xl-12 col-md-12 mb-4">
+                                                    You may check the doctor's schedule by following this <a :href="'doctor_schedule.php?id='+doctorId">link</a>
+                                                </div>
+                                                <!-- Profle Picture -->
+                                                <div class="col-xl-6 col-md-12 mb-4">
+                                                    <div class="row no-gutters align-items-center">
+                                                        <div class="col mr-2">
+                                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                                Select Date
+                                                            </div>
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                <input class="form-control" type="date" v-model="date" required>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-xl-6 col-md-12 mb-4">
+                                                    <div class="row no-gutters align-items-center">
+                                                        <div class="col mr-2">
+                                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                                Select Time From</div>
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                <input class="form-control" type="time" v-model="timeFrom" required>
+                                                                <span class="text-xs font-weight-bold text-primary text-uppercase mb-1">Select Time To</span>
+                                                                <input class="form-control" type="time" v-model="timeTo" required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xl-12 col-md-12 mb-4 mt-4">
+                                                    <button type="submit" style="float: right;" class="btn btn-info btn-sm m-1" :disabled="isUploading" @click="checkBooking()">
+                                                        <i class="far fa-save"></i> {{bookingMessage}}
+                                                    </button>
+                                                    <a type="submit" style="float: right;" class="btn btn-danger btn-sm m-1" @click="attemptBook = false">
+                                                        <i class="fas fa-ban"></i> Cancel
+                                                    </a>
+                                                </div>
                                             </div>
+
+                                            <!-- Notification here -->
+                                            <div v-if="showNotificationBooking" :class="'alert alert-dismissible  alert-'+colorScheme">
+                                                <a href="#" class="close" aria-label="close" @click="showNotificationBooking = false">&times;</a>
+                                                {{ messageNotification }}
+                                            </div>
+                                            <!-- End Notification -->
                                         </div>
-
-
                                     </div>
                                 </div>
                             </div>
@@ -212,101 +237,116 @@ $phone_number = $user["phone_number"];
         <script src="../js/demo/datatables-demo.js"></script>
 
         <script>
-            $(document).ready(function() {
-                $('#bookingsTable').DataTable({});
-            });
             new Vue({
                 el: "#vueApp",
                 data() {
                     return {
                         showNotification: false,
+                        showNotificationBooking: false,
                         messageNotification: null,
                         editUserProfile: false,
                         userId: <?php echo $user_id; ?>,
 
                         //Doctors
-                        bookings: [],
-                        cancelledBookings: [],
+                        doctors: [],
+                        searchVal: null,
+                        isUploading: false,
+                        bookingMessage: "Book this time",
+                        attemptBook: false,
+
+                        doctorId: null,
+                        doctorFullName: null,
+                        date: "2022-03-30",
+                        timeFrom: "13:00",
+                        timeTo: "14:00",
 
                         //UI
                         colorScheme: "success",
                     }
                 },
                 methods: {
-                    //Get confirmed bookings
-                    async getBookings() {
+                    //Get Doctors on load
+                    async getDoctors() {
                         const options = {
                             method: "POST",
-                            url: "process_booking.php?getBookings",
+                            url: "process_booking.php?getDoctors",
                             headers: {
                                 Accept: "application/json",
                             },
-                            data: {
-                                user_id: this.userId
-                            }
                         };
                         await axios
                             .request(options)
                             .then((response) => {
                                 console.log(response);
-                                this.bookings = response.data;
+                                this.doctors = response.data;
                             })
                             .catch((error) => {
                                 console.log(error);
                             });
                     },
 
-                    //Cancel Booking
-                    async cancelBooking(booking_id) {
+                    //Search Doctors
+                    async searchDoctors() {
                         const options = {
                             method: "POST",
-                            url: "process_booking.php?cancelBooking",
+                            url: "process_booking.php?searchDoctors=" + this.searchVal,
                             headers: {
                                 Accept: "application/json",
                             },
-                            data: {
-                                booking_id: booking_id
-                            }
                         };
                         await axios
                             .request(options)
                             .then((response) => {
                                 console.log(response);
-                                this.getCancelledbookings();
-                                this.getBookings();
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                            });
-                    },
-                    //Get cancelled bookings
-                    async getCancelledbookings() {
-                        const options = {
-                            method: "POST",
-                            url: "process_booking.php?getCancelledbookings",
-                            headers: {
-                                Accept: "application/json",
-                            },
-                            data: {
-                                user_id: this.userId
-                            }
-                        };
-                        await axios
-                            .request(options)
-                            .then((response) => {
-                                console.log(response);
-                                this.cancelledBookings = response.data;
+                                this.doctors = response.data;
                             })
                             .catch((error) => {
                                 console.log(error);
                             });
                     },
 
+                    //Attempt to book doctor
+                    attemptToBookDoctor(id, firstname, lastname) {
+                        this.attemptBook = true;
+                        this.doctorId = id;
+                        this.doctorFullName = firstname + " " + lastname;
+                        console.log(this.doctorId);
+                    },
 
+                    //Check Booking
+                    async checkBooking() {
+                        console.log(this.date);
+                        console.log(this.timeFrom);
+                        console.log(this.timeTo);
+                        const options = {
+                            method: "POST",
+                            url: "process_booking.php?attemptBooking=",
+                            headers: {
+                                Accept: "application/json",
+                            },
+                            data: {
+                                user_id: this.userId,
+                                doctor_id: this.doctorId,
+                                date: this.date,
+                                timeFrom: this.timeFrom,
+                                timeTo: this.timeTo
+                            }
+                        };
+                        await axios
+                            .request(options)
+                            .then((response) => {
+                                console.log(response);
+                                this.colorScheme = response.data.colorScheme;
+                                this.showNotificationBooking = true;
+                                this.messageNotification = response.data.message;
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    }
                 },
                 async created() {
-                    await this.getBookings();
-                    await this.getCancelledbookings();
+                    await this.getDoctors();
                 },
             });
         </script>

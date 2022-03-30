@@ -236,7 +236,7 @@ $phone_number = $user["phone_number"];
                                                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                                     Display Picture</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <img src="../img/<?php echo $profile_url; ?>" style="max-height:100%; max-width: 100%;">
+                                                                    <img src="../img/<?php echo $profile_url; ?>" style="max-height:100%; max-width: 100%; border-radius: 10px;">
                                                                 </div>
                                                             </div>
                                                         </div>

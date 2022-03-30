@@ -1,7 +1,7 @@
 <?php
 include("dbh.php");
-$date = date_default_timezone_set('Asia/Manila');
-$date = date('Y-m-d H:i:s');
+$updated_at = date_default_timezone_set('Asia/Manila');
+$updated_at = date('Y-m-d H:i:s');
 
 //Get Doctors
 if (isset($_GET['getDoctors'])) {
@@ -24,73 +24,89 @@ if (isset($_GET['searchDoctors'])) {
     echo json_encode($doctors);
 }
 
-//Get Products
-if (isset($_GET['searchProducts'])) {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $searchVal = $data["searchVal"];
-    if($searchVal == null || $searchVal == ""){
-        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products LIMIT 20 ");
-    }
-    else{
-        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE product_description LIKE '%$searchVal%' ");
-    }
-    $products = array();
-    while ($product = mysqli_fetch_assoc($store_products)) {
-        $products[] = $product;
-    }
-    echo json_encode($products);
-}
-
-//Search Products within the store
-if (isset($_GET['searchProductsWithinStore'])) {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $searchVal = $data["searchVal"];
-    $store_id = $data["store_id"];
-    if($searchVal == null || $searchVal == ""){
-        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE store_id = '$store_id' ");
-    }
-    else{
-        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE product_description LIKE '%$searchVal%' AND store_id = '$store_id' ");
-    }
-    $products = array();
-    while ($product = mysqli_fetch_assoc($store_products)) {
-        $products[] = $product;
-    }
-    echo json_encode($products);
-}
-
-//Add To Cart
-if (isset($_GET['addToCart'])) {
+//Attempt Booking
+if (isset($_GET['attemptBooking'])) {
     $data = json_decode(file_get_contents('php://input'), true);
     $user_id = $data["user_id"];
-    $product_id = $data["product_id"];
-    $pharmacy_id = $data["pharmacy_id"];
-    $subtotal = $data["subtotal"];
+    $doctor_id = $data["doctor_id"];
+    $date = $data["date"];
+    $timeFrom = $data["timeFrom"];
+    $timeTo = $data["timeTo"];
 
+    $timeFrom = $date." ".$timeFrom;
+    $timeTo = $date." ".$timeTo;
 
-    //Check first if cart is existing currently
-    $checkProduct = $mysqli->query("SELECT * FROM cart WHERE user_id ='$user_id' AND product_id = '$product_id' AND check_out <> '1' ");
-    if(mysqli_num_rows($checkProduct) <= 0){
-        $mysqli->query(" INSERT INTO cart (user_id, product_id, pharmacy_id, subtotal, updated_at, price) VALUES('$user_id', '$product_id', '$pharmacy_id', '$subtotal','$date', '$subtotal') ") or die($mysqli->error);
+    // $getBookings = mysqli_query($mysqli, "SELECT * FROM doctor_bookings WHERE doctor_id = '$doctor_id'
+    // AND (date_time_from <= '$timeFrom' AND '$timeFrom' >=  date_time_from)
+    // AND (date_time_to <= '$timeTo' AND '$timeTo' >=  date_time_to) AND status <> -1");
+
+    $getBookings = mysqli_query($mysqli, "SELECT * FROM doctor_bookings WHERE doctor_id = '$doctor_id'
+    AND ((date_time_from <= '$timeFrom' AND '$timeFrom' >=  date_time_from) AND (date_time_from >= '$timeFrom' AND '$timeFrom' <=  date_time_from))
+    AND ((date_time_to <= '$timeTo' AND '$timeTo' >=  date_time_to) AND (date_time_to >= '$timeTo' AND '$timeTo' <=  date_time_to))
+    AND status <> -1");
+    
+    if(mysqli_num_rows($getBookings) > 0){
+        $response = array("response"=> "0",
+        "message" =>"There is already a patient during this time, or your time clashed with other patients.",
+        "colorScheme"=>"danger");
     }
     else{
-        $getCount = $mysqli->query("SELECT count AS qty, price, id FROM cart WHERE user_id ='$user_id' AND product_id = '$product_id' ");
-        $currentCount = mysqli_fetch_array($getCount);
-        $newCount = $currentCount["qty"];
-        $subtotal = $currentCount["price"];
-        $newCount = $newCount + 1;
-        $cartId = $currentCount["id"];
-        $newSubTotal = $subtotal*$newCount;
-        $mysqli->query(" UPDATE cart SET count = '$newCount', subtotal = '$newSubTotal' WHERE id='$cartId' ") or die($mysqli->error);
+        mysqli_query($mysqli, " INSERT INTO doctor_bookings (doctor_id, patient_id, date_time_from, date_time_to, updated_at) VALUES('$doctor_id', '$user_id', '$timeFrom', '$timeTo', '$updated_at')");
+        $response = array("response"=> "1",
+        "message"=>"Booking an appopintment is succesful!",
+        "colorScheme"=>"success");
     }
 
-
-    //Get last ID
-    $last_id = $mysqli->insert_id;
-    // OR
-    // $last_id = mysqli_insert_id($mysqli);
-
-    $jsonEncode = array('response' => 'Product has been added to basket! You may check your cart to modify the qty.');
-    echo json_encode($jsonEncode);
+    echo json_encode($response);
 }
+
+//Get Bookings not cancelled
+if (isset($_GET['getBookings'])) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $user_id = $data["user_id"];
+    $getBookings = mysqli_query($mysqli, "SELECT *, DATE_FORMAT(db.date_time_from, '%Y-%m-%d') AS booking_date,
+    TIME_FORMAT(db.date_time_from, '%H:%i') AS boking_date_time_from,
+    TIME_FORMAT(db.date_time_to, '%H:%i') AS boking_date_time_to,
+    db.status AS booking_status,
+    db.id as booking_id 
+    FROM doctor_bookings db
+    JOIN users u ON u.id = db.doctor_id
+    WHERE db.patient_id = '$user_id' AND db.status <> '-1' ");
+    $bookings = array();
+    while ($booking = mysqli_fetch_assoc($getBookings)) {
+        $bookings[] = $booking;
+    }
+    echo json_encode($bookings);
+}
+
+//Get Cancelled Bookings
+if (isset($_GET['getCancelledbookings'])) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $user_id = $data["user_id"];
+    $getBookings = mysqli_query($mysqli, "SELECT *, DATE_FORMAT(db.date_time_from, '%Y-%m-%d') AS booking_date,
+    TIME_FORMAT(db.date_time_from, '%H:%i') AS boking_date_time_from,
+    TIME_FORMAT(db.date_time_to, '%H:%i') AS boking_date_time_to,
+    db.status AS booking_status 
+    FROM doctor_bookings db
+    JOIN users u ON u.id = db.doctor_id
+    WHERE db.patient_id = '$user_id' AND db.status = '-1' ");
+    $bookings = array();
+    while ($booking = mysqli_fetch_assoc($getBookings)) {
+        $bookings[] = $booking;
+    }
+    echo json_encode($bookings);
+}
+
+//Cancel booking
+if (isset($_GET['cancelBooking'])) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $booking_id = $data["booking_id"];
+
+    mysqli_query($mysqli, " UPDATE doctor_bookings SET status = '-1' WHERE id = '$booking_id' ");
+
+    $response = array();
+    $response = array("response"=> "Booking has been cancelled.");
+    echo json_encode($response);
+}
+
 ?>

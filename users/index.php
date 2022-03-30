@@ -66,10 +66,10 @@ include("head.php");
                                         <form method="post" @submit.prevent="searchMedicine()">
                                             <div class="row">
                                                 <div class="col-lg-8 mb-4">
-                                                    <input class="form-control" type="text" id="search" placeholder="Search Medicine" v-model="searchValue" />
+                                                    <input class="form-control" type="text" id="search" placeholder="Search Medicine" style="width: 100%;" v-model="searchValue" />
                                                 </div>
                                                 <div class="col-lg-4 mb-4">
-                                                    <button id="searchbutton" class="btn btn-success" type="submit">Search</button>
+                                                    <button id="searchbutton" class="btn btn-success" type="submit" style="width: 100%;">Search</button>
                                                 </div>
                                                 <div class="col-lg-12 mb-4">
                                                     <div class="products products-table">
@@ -146,6 +146,7 @@ include("head.php");
                             </div>
                         </div>
 
+                        
                     </div>
                     <!-- /.container-fluid -->
 

@@ -12,6 +12,7 @@ if ($_SESSION['role'] == 3) {
 $role = $_SESSION['role'];
 //4 is admin
 ?>
+
 <style>
     nav ul {
         position: sticky !important;
@@ -24,6 +25,7 @@ $role = $_SESSION['role'];
         white-space: normal !important;
     }
 </style>
+
 <nav>
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -88,10 +90,16 @@ $role = $_SESSION['role'];
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="booking.php">
+            <a class="nav-link" href="book_an_appointment.php">
+            <i class="fas fa-calendar-check"></i>
+                <span>Book an appointment</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="bookings.php">
             <i class="fas fa-calendar-check"></i>
                 <span>Bookings</span></a>
-        </li>
+        </li>        
         
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">

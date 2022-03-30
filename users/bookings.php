@@ -4,23 +4,6 @@ include("head.php");
 
 $user_id = $_SESSION['user_id'];
 
-$checkUser = $mysqli->query("SELECT * FROM doctor_profile WHERE doctor_id='$user_id' ");
-$userExist = false;
-$profile_id = 0;
-if (mysqli_num_rows($checkUser) > 0) {
-    $userExist = true;
-    $user = $checkUser->fetch_array();
-    $profile_id = $user['id'];
-    $hourly_rate = $user['hourly_rate'];
-    $profile_url = $user['profile_image'];
-    $specialization = $user['specialization'];
-}
-$checkUser = $mysqli->query("SELECT * FROM users WHERE id='$user_id' ");
-$user = $checkUser->fetch_array();
-$first_name = $user["firstname"];
-$last_name = $user["lastname"];
-$email = $user["email"];
-$phone_number = $user["phone_number"];
 ?>
 <title>PharmaClique - Doctor Booking</title>
 
