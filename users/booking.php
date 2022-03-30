@@ -100,7 +100,7 @@ $phone_number = $user["phone_number"];
                                                 <div class="card shadow row no-gutters align-items-center p-4">
                                                     <div class="col mr-2">
                                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                            {{d.specialization}}
+                                                            Specialization: {{d.specialization}}
                                                         </div>
                                                         <div class="mb-0 font-weight-bold text-gray-800">
                                                             Name: {{d.firstname}} {{d.lastname}}<br>
