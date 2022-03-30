@@ -74,7 +74,7 @@ $phone_number = $user["phone_number"];
                             <h1 class="h3 mb-0 text-gray-800">Bookings</h1>
                         </div>
 
-                        <div class="row">
+                        <div class="row" v-if="!attemptBook">
                             <div class="col-lg-12">
                                 <!-- Collapsable Card Example -->
                                 <div class="card shadow mb-4">
@@ -105,8 +105,10 @@ $phone_number = $user["phone_number"];
                                                         <div class="mb-0 font-weight-bold text-gray-800">
                                                             Name: {{d.firstname}} {{d.lastname}}<br>
                                                             Hourly Rate: ₱{{d.hourly_rate}}
-                                                            <img :src="'../img/'+d.profile_image" style="max-height:100%; max-width: 100%;">
-                                                            <button type="submit" style="float: right;" class="btn btn-primary btn-sm m-1" name="save_doctror_profile">Book</button>
+                                                            <div style="height: 400px; text-align: center;">
+                                                            <img :src="'../img/'+d.profile_image" style="max-height: 100%; max-width: 100%; border-radius: 10px;">
+                                                            </div>
+                                                            <button @click="attemptToBookDoctor(d.doctor_id, d.firstname, d.lastname)" type="submit" style="float: right;" class="btn btn-primary btn-sm m-1" name="save_doctror_profile">Book</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -121,29 +123,30 @@ $phone_number = $user["phone_number"];
                             </div>
                         </div>
 
-                        <div class="row" style="display: <?php if (!$userExist) {
-                                                                echo "none";
-                                                            } ?>">
+                        <div class="row" style=" " v-if="attemptBook">
                             <div class="col-lg-12">
                                 <!-- Collapsable Card Example -->
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Accordion -->
                                     <a href="#collapseStore" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseStore">
-                                        <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">Booking with: {{doctorFullName}}</h6>
                                     </a>
                                     <div class="collapse show" id="collapseStore">
                                         <div class="card-body">
-                                            <form method="post" @submit.prevent="uploadProfilePicture()">
+                                            <!-- <form method="post" @submit.prevent="uploadProfilePicture()"> -->
                                                 <div class="row">
+                                                <div class="col-xl-12 col-md-12 mb-4">
+                                                    You may check the doctor's schedule by following this <a :href="'doctor_schedule.php?id='+doctorId">link</a>
+                                                </div>
                                                     <!-- Profle Picture -->
                                                     <div class="col-xl-6 col-md-12 mb-4">
                                                         <div class="row no-gutters align-items-center">
                                                             <div class="col mr-2">
                                                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                                    Upload Display Picture
+                                                                    Select Date
                                                                 </div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <input class="form-control" type="file" id="picture" ref="picture" accept=".jpg,.png,.jpeg" required>
+                                                                    <input class="form-control" type="date" v-model="date" required>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -152,21 +155,23 @@ $phone_number = $user["phone_number"];
                                                         <div class="row no-gutters align-items-center">
                                                             <div class="col mr-2">
                                                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                                    Display Picture</div>
+                                                                    Select Time From</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <img src="../img/<?php echo $profile_url; ?>" style="max-height:100%; max-width: 100%;">
+                                                                    <input class="form-control" type="time" v-model="timeFrom" required>
+                                                                    <span class="text-xs font-weight-bold text-primary text-uppercase mb-1">Select Time To</span>
+                                                                    <input class="form-control" type="time" v-model="timeTo" required>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     <div class="col-xl-12 col-md-12 mb-4 mt-4">
-                                                        <button type="submit" style="float: right;" class="btn btn-info btn-sm m-1" :disabled="isUploading">
-                                                            <i class="far fa-save"></i> {{uploadingMessage}}
+                                                        <button type="submit" style="float: right;" class="btn btn-info btn-sm m-1" :disabled="isUploading" @click="checkBooking()">
+                                                            <i class="far fa-save"></i> {{bookingMessage}}
                                                         </button>
                                                     </div>
                                                 </div>
-                                            </form>
+                                            <!-- </form> -->
                                         </div>
                                     </div>
                                 </div>
@@ -236,7 +241,13 @@ $phone_number = $user["phone_number"];
                         doctors: [],
                         searchVal: null,
                         isUploading: false,
-                        uploadingMessage: "Upload Profile Picture"
+                        bookingMessage: "Book this time",
+                        attemptBook: false,
+                        doctorId: null,
+                        doctorFullName: null,
+                        date: null,
+                        timeFrom: null,
+                        timeTo: null,
                     }
                 },
                 methods: {
@@ -278,6 +289,21 @@ $phone_number = $user["phone_number"];
                             .catch((error) => {
                                 console.log(error);
                             });
+                    },
+
+                    //Attempt to book doctor
+                    attemptToBookDoctor(id, firstname, lastname){
+                        this.attemptBook = true;
+                        this.doctorId = id;
+                        this.doctorFullName = firstname + " " + lastname;
+                        console.log(this.doctorId);
+                    },
+
+                    //Check Booking
+                    checkBooking(){
+                        console.log(this.date);
+                        console.log(this.timeFrom);
+                        console.log(this.timeTo);
                     }
                 },
                 async created() {
