@@ -21,7 +21,7 @@ $role = $_SESSION['role'];
     }
 </style>
 <nav>
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
@@ -58,11 +58,11 @@ $role = $_SESSION['role'];
         </li>
 
         <!-- Nav Item - Pharmacy -->
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             <a class="nav-link" href="rider_sample.php">
                 <i class="fas fa-biking"></i>
                 <span>Rider Sample</span></a>
-        </li>
+        </li> -->
 
 
         <!-- Divider -->

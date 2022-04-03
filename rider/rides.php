@@ -33,17 +33,17 @@ $booking_id = $booking["id"];
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->
-            <div id="vueApp">
+            <!-- <div id="vueApp"> -->
 
-                <div id="content">
+            <div id="content">
 
-                    <!-- Topbar -->
-                    <?php include("topbar.php"); ?>
-                    <!-- End of Topbar -->
+                <!-- Topbar -->
+                <?php include("topbar.php"); ?>
+                <!-- End of Topbar -->
 
-                    <!-- Begin Page Content -->
-                    <div class="container-fluid">
-
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <div id="vueApp">
                         <!-- Notification here -->
                         <div v-if="showNotification" class="alert alert-success alert-dismissible">
                             <!-- <a href="#" class="close" aria-label="close" @click="showNotification = false">&times;</a> -->
@@ -109,10 +109,12 @@ $booking_id = $booking["id"];
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- /.container-fluid -->
 
+                </div>
             </div>
+            <!-- /.container-fluid -->
+
+            <!-- </div> -->
         </div>
         <!-- End of Main Content -->
 
@@ -140,297 +142,309 @@ $booking_id = $booking["id"];
         <!-- End scripts here -->
         <script>
             var map, rider, destination, customer, customerCircle;
-                new Vue({
-                    el: "#vueApp",
-                    data() {
-                        return {
-                            showNotification: false,
-                            messageNotification: "",
-                            currentBooking: null,
-                            booking_id: <?php echo $booking_id; ?>,
-                            user_id: <?php echo $_SESSION['user_id']; ?>,
+            new Vue({
+                el: "#vueApp",
+                data() {
+                    return {
+                        showNotification: false,
+                        messageNotification: "",
+                        currentBooking: null,
+                        booking_id: <?php echo $booking_id; ?>,
+                        user_id: <?php echo $_SESSION['user_id']; ?>,
 
-                            lat: null,
-                            long: null,
+                        lat: null,
+                        long: null,
 
-                            //Pharmacy Location
-                            pharmaLat: null,
-                            pharmaLong: null,
-                            customerLat: null,
-                            customerLong: null,
-                            status: null,
-                            mapMessage: null,
+                        //Pharmacy Location
+                        pharmaLat: null,
+                        pharmaLong: null,
+                        customerLat: null,
+                        customerLong: null,
+                        status: null,
+                        mapMessage: null,
+                    }
+                },
+                methods: {
+                    //Get Current Orders
+                    async getCurrentBooking() {
+                        const options = {
+                            method: "POST",
+                            url: "process_rider.php?getCurrentBooking",
+                            headers: {
+                                Accept: "application/json",
+                            },
+                            data: {
+                                user_id: this.user_id,
+                                booking_id: this.booking_id,
+                            }
+                        };
+                        await axios
+                            .request(options)
+                            .then((response) => {
+                                console.log(response);
+                                this.currentBooking = response.data;
+                                this.pharmaLat = response.data[0].pharmacyLat;
+                                this.pharmaLong = response.data[0].pharmacyLong;
+                                this.status = response.data[0].status;
+                                this.customerLat = response.data[0].user_lat;
+                                this.customerLong = response.data[0].user_long;
+
+                                //Set Message
+                                if (this.status === "-1") {
+                                    this.mapMessage = "On the way to the Pharmacy";
+                                } else if (this.status === "-2") {
+                                    this.mapMessage = "On the way to the Customer";
+                                }
+
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+
+                        // this.loopGetRider();
+                    },
+
+                    //Purely GeoLocationn Stuff here
+                    //Get Geo Location
+                    getLocation() {
+                        if (navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(this.showPosition, this.showError);
+                        } else {
+                            this.long = "Geolocation is not supported by this browser.";
                         }
                     },
-                    methods: {
-                        //Get Current Orders
-                        async getCurrentBooking() {
-                            const options = {
-                                method: "POST",
-                                url: "process_rider.php?getCurrentBooking",
-                                headers: {
-                                    Accept: "application/json",
-                                },
-                                data: {
-                                    user_id: this.user_id,
-                                    booking_id: this.booking_id,
-                                }
-                            };
-                            await axios
-                                .request(options)
-                                .then((response) => {
-                                    console.log(response);
-                                    this.currentBooking = response.data;
-                                    this.pharmaLat = response.data[0].pharmacyLat;
-                                    this.pharmaLong = response.data[0].pharmacyLong;
-                                    this.status = response.data[0].status;
-                                    this.customerLat = response.data[0].user_lat;
-                                    this.customerLong = response.data[0].user_long;
 
-                                    //Set Message
-                                    if (this.status === "-1") {
-                                        this.mapMessage = "On the way to the Pharmacy";
-                                    } else if (this.status === "-2") {
-                                        this.mapMessage = "On the way to the Customer";
-                                    }
+                    async showPosition(position) {
+                        this.lat = position.coords.latitude;
+                        this.long = position.coords.longitude;
 
-                                })
-                                .catch((error) => {
-                                    console.log(error);
-                                });
+                        var userLat = this.lat;
+                        var userLong = this.long;
 
-                            // this.loopGetRider();
-                        },
-
-                        //Purely GeoLocationn Stuff here
-                        //Get Geo Location
-                        getLocation() {
-                            if (navigator.geolocation) {
-                                navigator.geolocation.getCurrentPosition(this.showPosition, this.showError);
-                            } else {
-                                this.long = "Geolocation is not supported by this browser.";
-                            }
-                        },
-
-                        async showPosition(position) {
-                            this.lat = position.coords.latitude;
-                            this.long = position.coords.longitude;
-
-                            var userLat = this.lat;
-                            var userLong = this.long;
-
-                            //Show Markers
-                            var container = L.DomUtil.get('map');
-                            if (container != null) {
-                                container._leaflet_id = null;
-                            }
-                            map = L.map('map', {
-                                center: [9.0820, 8.6753],
-                                zoom: 8
-                            }).setView([userLat, userLong], 13);
-                            var gl = L.mapboxGL({
-                                attribution: "\u003ca href=\"https://www.maptiler.com/copyright/\" target=\"_blank\"\u003e\u0026copy; MapTiler\u003c/a\u003e \u003ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003e\u0026copy; OpenStreetMap contributors\u003c/a\u003e",
-                                style: 'https://api.maptiler.com/maps/osm-standard/style.json?key=gcypTzmAMjrlMg46MJG3#5.9/16.04327/120.29239'
-                            }).addTo(map);
-                            navigator.geolocation.getCurrentPosition(this.renderRider, this.showError);
-                            // this.loopGetRider();
-                        },
-
-                        //Loop Get Rider Location
-                        loopGetRider() {
-                            let newTime = 30000;
-                            setInterval(() => {
-                                navigator.geolocation.getCurrentPosition(this.renderRider, this.showError)
-                            }, newTime);
-                            // this.delay(newTime).then(() => navigator.geolocation.getCurrentPosition(this.renderRider, this.showError));
-                            console.log("renderRider");
-                        },
-
-                        //Force Update Location
-                        updateRiderLocationClick() {
-                            navigator.geolocation.getCurrentPosition(this.clickRenderRider, this.showError);
-                            console.log("updateRiderLocation");
-                        },
-
-                        //Render Rider
-                        async renderRider(position) {
-                            this.lat = position.coords.latitude;
-                            this.long = position.coords.longitude;
-                            let accuracy = position.coords.accuracy;
-
-                            if (rider) {
-                                map.removeLayer(rider)
-                            }
-
-                            if (destination) {
-                                map.removeControl(destination)
-                            }
-
-                            if (customerCircle) {
-                                map.removeControl(customerCircle)
-                            }
-
-
-                            var riderIcon = L.icon({
-                                iconUrl: '../assets/images/rider.png',
-                                iconSize: [50, 50],
-                                iconAnchor: [25, 25]
-                            });
-
-                            // Current Position
-                            rider = L.marker([this.lat, this.long], {
-                                    clickable: true,
-                                    icon: riderIcon,
-                                }).addTo(map)
-                                .bindPopup('You are here', {
-                                    autoPan: false
-                                })
-                                .openPopup();
-
-                            //Add Routing
-                            // Code to Add Routing
-                            //If Status is -1 (For Pick up)
-                            if (this.status === "-1") {
-                                destination = L.Routing.control({
-                                    waypoints: [
-                                        L.latLng(this.lat, this.long),
-                                        L.latLng(this.pharmaLat, this.pharmaLong)
-                                    ],createMarker: function() { return null; },
-                                }).addTo(map);
-                                L.marker([this.pharmaLat, this.pharmaLong], {
-                                        clickable: true,
-                                    }).addTo(map)
-                                    .bindPopup('Descination: Pharmacy', {
-                                        autoPan: true
-                                    })
-                                    .openPopup();
-                                // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
-                            } else if (this.status === "-2") {
-                                destination = L.Routing.control({
-                                    waypoints: [
-                                        L.latLng(this.lat, this.long),
-                                        L.latLng(this.customerLat, this.customerLong)
-                                    ],createMarker: function() { return null; },
-                                }).addTo(map);
-                                L.marker([this.customerLat, this.customerLong], {
-                                        clickable: true,
-                                    }).addTo(map)
-                                    .bindPopup('Descination: Customer', {
-                                        autoPan: false
-                                    })
-                                    .openPopup();
-                                // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
-                            }
-
-                            // End Code to Routing
-                            this.getCurrentBooking();
-                        },
-
-                        //Render Rider on Click
-                        async clickRenderRider(position) {
-
-                            this.lat = position.coords.latitude;
-                            this.long = position.coords.longitude;
-                            let accuracy = position.coords.accuracy;
-
-                            if (rider) {
-                                map.removeLayer(rider)
-                            }
-
-                            if (destination) {
-                                map.removeControl(destination)
-                            }
-
-                            if (customerCircle) {
-                                map.removeControl(customerCircle)
-                            }
-
-
-                            var riderIcon = L.icon({
-                                iconUrl: '../assets/images/rider.png',
-                                iconSize: [50, 50],
-                                iconAnchor: [25, 25]
-                            });
-
-                            // Current Position
-                            rider = L.marker([this.lat, this.long], {
-                                    clickable: true,
-                                    icon: riderIcon,
-                                }).addTo(map)
-                                .bindPopup('You are here', {
-                                    autoPan: false
-                                })
-                                .openPopup();
-
-                            //Add Routing
-                            // Code to Add Routing
-                            //If Status is -1 (For Pick up)
-                            if (this.status === "-1") {
-                                destination = L.Routing.control({
-                                    waypoints: [
-                                        L.latLng(this.lat, this.long),
-                                        L.latLng(this.pharmaLat, this.pharmaLong)
-                                    ],createMarker: function() { return null; },
-                                }).addTo(map);
-                                L.marker([this.pharmaLat, this.pharmaLong], {
-                                        clickable: true,
-                                    }).addTo(map)
-                                    .bindPopup('Descination: Pharmacy', {
-                                        autoPan: true
-                                    })
-                                    .openPopup();
-                                // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
-                            } else if (this.status === "-2") {
-                                destination = L.Routing.control({
-                                    waypoints: [
-                                        L.latLng(this.lat, this.long),
-                                        L.latLng(this.customerLat, this.customerLong)
-                                    ],createMarker: function() { return null; },
-                                }).addTo(map);
-                                L.marker([this.customerLat, this.customerLong], {
-                                        clickable: true,
-                                    }).addTo(map)
-                                    .bindPopup('Descination: Customer', {
-                                        autoPan: false
-                                    })
-                                    .openPopup();
-                                // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
-                            }
-
-                            // End Code to Routing
-                            this.getCurrentBooking();
-                        },
-
-                        //Function for delay
-                        delay(time) {
-                            return new Promise(resolve => setTimeout(resolve, time));
-                        },
-
-                        //Show Error
-                        showError(error) {
-                            switch (error.code) {
-                                case error.PERMISSION_DENIED:
-                                    this.long = "User denied the request for Geolocation."
-                                    break;
-                                case error.POSITION_UNAVAILABLE:
-                                    this.long = "Location information is unavailable."
-                                    break;
-                                case error.TIMEOUT:
-                                    this.long = "The request to get user location timed out."
-                                    break;
-                                case error.UNKNOWN_ERROR:
-                                    this.long = "An unknown error occurred."
-                                    break;
-                            }
-                        },
-
+                        //Show Markers
+                        var container = L.DomUtil.get('map');
+                        if (container != null) {
+                            container._leaflet_id = null;
+                        }
+                        map = L.map('map', {
+                            center: [9.0820, 8.6753],
+                            zoom: 8
+                        }).setView([userLat, userLong], 13);
+                        var gl = L.mapboxGL({
+                            attribution: "\u003ca href=\"https://www.maptiler.com/copyright/\" target=\"_blank\"\u003e\u0026copy; MapTiler\u003c/a\u003e \u003ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003e\u0026copy; OpenStreetMap contributors\u003c/a\u003e",
+                            style: 'https://api.maptiler.com/maps/osm-standard/style.json?key=gcypTzmAMjrlMg46MJG3#5.9/16.04327/120.29239'
+                        }).addTo(map);
+                        navigator.geolocation.getCurrentPosition(this.renderRider, this.showError);
+                        // this.loopGetRider();
                     },
-                    async mounted() {
-                        await this.getCurrentBooking();
-                        await this.getLocation();
-                        this.loopGetRider();
-                    }
-                });
+
+                    //Loop Get Rider Location
+                    loopGetRider() {
+                        let newTime = 30000;
+                        setInterval(() => {
+                            navigator.geolocation.getCurrentPosition(this.renderRider, this.showError)
+                        }, newTime);
+                        // this.delay(newTime).then(() => navigator.geolocation.getCurrentPosition(this.renderRider, this.showError));
+                        console.log("renderRider");
+                    },
+
+                    //Force Update Location
+                    updateRiderLocationClick() {
+                        navigator.geolocation.getCurrentPosition(this.clickRenderRider, this.showError);
+                        console.log("updateRiderLocation");
+                    },
+
+                    //Render Rider
+                    async renderRider(position) {
+                        this.lat = position.coords.latitude;
+                        this.long = position.coords.longitude;
+                        let accuracy = position.coords.accuracy;
+
+                        if (rider) {
+                            map.removeLayer(rider)
+                        }
+
+                        if (destination) {
+                            map.removeControl(destination)
+                        }
+
+                        if (customerCircle) {
+                            map.removeControl(customerCircle)
+                        }
+
+
+                        var riderIcon = L.icon({
+                            iconUrl: '../assets/images/rider.png',
+                            iconSize: [50, 50],
+                            iconAnchor: [25, 25]
+                        });
+
+                        // Current Position
+                        rider = L.marker([this.lat, this.long], {
+                                clickable: true,
+                                icon: riderIcon,
+                            }).addTo(map)
+                            .bindPopup('You are here', {
+                                autoPan: false
+                            })
+                            .openPopup();
+
+                        //Add Routing
+                        // Code to Add Routing
+                        //If Status is -1 (For Pick up)
+                        if (this.status === "-1") {
+                            destination = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(this.lat, this.long),
+                                    L.latLng(this.pharmaLat, this.pharmaLong)
+                                ],
+                                createMarker: function() {
+                                    return null;
+                                },
+                            }).addTo(map);
+                            L.marker([this.pharmaLat, this.pharmaLong], {
+                                    clickable: true,
+                                }).addTo(map)
+                                .bindPopup('Descination: Pharmacy', {
+                                    autoPan: true
+                                })
+                                .openPopup();
+                            // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
+                        } else if (this.status === "-2") {
+                            destination = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(this.lat, this.long),
+                                    L.latLng(this.customerLat, this.customerLong)
+                                ],
+                                createMarker: function() {
+                                    return null;
+                                },
+                            }).addTo(map);
+                            L.marker([this.customerLat, this.customerLong], {
+                                    clickable: true,
+                                }).addTo(map)
+                                .bindPopup('Descination: Customer', {
+                                    autoPan: false
+                                })
+                                .openPopup();
+                            // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
+                        }
+
+                        // End Code to Routing
+                        this.getCurrentBooking();
+                    },
+
+                    //Render Rider on Click
+                    async clickRenderRider(position) {
+
+                        this.lat = position.coords.latitude;
+                        this.long = position.coords.longitude;
+                        let accuracy = position.coords.accuracy;
+
+                        if (rider) {
+                            map.removeLayer(rider)
+                        }
+
+                        if (destination) {
+                            map.removeControl(destination)
+                        }
+
+                        if (customerCircle) {
+                            map.removeControl(customerCircle)
+                        }
+
+
+                        var riderIcon = L.icon({
+                            iconUrl: '../assets/images/rider.png',
+                            iconSize: [50, 50],
+                            iconAnchor: [25, 25]
+                        });
+
+                        // Current Position
+                        rider = L.marker([this.lat, this.long], {
+                                clickable: true,
+                                icon: riderIcon,
+                            }).addTo(map)
+                            .bindPopup('You are here', {
+                                autoPan: false
+                            })
+                            .openPopup();
+
+                        //Add Routing
+                        // Code to Add Routing
+                        //If Status is -1 (For Pick up)
+                        if (this.status === "-1") {
+                            destination = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(this.lat, this.long),
+                                    L.latLng(this.pharmaLat, this.pharmaLong)
+                                ],
+                                createMarker: function() {
+                                    return null;
+                                },
+                            }).addTo(map);
+                            L.marker([this.pharmaLat, this.pharmaLong], {
+                                    clickable: true,
+                                }).addTo(map)
+                                .bindPopup('Descination: Pharmacy', {
+                                    autoPan: true
+                                })
+                                .openPopup();
+                            // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
+                        } else if (this.status === "-2") {
+                            destination = L.Routing.control({
+                                waypoints: [
+                                    L.latLng(this.lat, this.long),
+                                    L.latLng(this.customerLat, this.customerLong)
+                                ],
+                                createMarker: function() {
+                                    return null;
+                                },
+                            }).addTo(map);
+                            L.marker([this.customerLat, this.customerLong], {
+                                    clickable: true,
+                                }).addTo(map)
+                                .bindPopup('Descination: Customer', {
+                                    autoPan: false
+                                })
+                                .openPopup();
+                            // customerCircle = L.circle([this.customerLat, this.customerLong], { radius: 2000 }).addTo(map);
+                        }
+
+                        // End Code to Routing
+                        this.getCurrentBooking();
+                    },
+
+                    //Function for delay
+                    delay(time) {
+                        return new Promise(resolve => setTimeout(resolve, time));
+                    },
+
+                    //Show Error
+                    showError(error) {
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                this.long = "User denied the request for Geolocation."
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                this.long = "Location information is unavailable."
+                                break;
+                            case error.TIMEOUT:
+                                this.long = "The request to get user location timed out."
+                                break;
+                            case error.UNKNOWN_ERROR:
+                                this.long = "An unknown error occurred."
+                                break;
+                        }
+                    },
+
+                },
+                async mounted() {
+                    await this.getCurrentBooking();
+                    await this.getLocation();
+                    this.loopGetRider();
+                }
+            });
         </script>
 </body>
 

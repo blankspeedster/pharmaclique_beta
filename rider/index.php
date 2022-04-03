@@ -32,16 +32,16 @@ $user_id = $_SESSION['user_id'];
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->
-            <div id="vueApp">
-                <div id="content">
+            <!-- <div id="vueApp"> -->
+            <div id="content">
 
-                    <!-- Topbar -->
-                    <?php include("topbar.php"); ?>
-                    <!-- End of Topbar -->
+                <!-- Topbar -->
+                <?php include("topbar.php"); ?>
+                <!-- End of Topbar -->
 
-                    <!-- Begin Page Content -->
-                    <div class="container-fluid">
-
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <div id="vueApp">
                         <!-- Page Heading -->
                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
                             <h1 class="h3 mb-0 text-gray-800">Home</h1>
@@ -50,9 +50,9 @@ $user_id = $_SESSION['user_id'];
 
                         <!-- Notification here -->
                         <a href="rides.php">
-                        <div v-if="showNotification" class="alert alert-success alert-dismissible">
-                            {{ messageNotification }}
-                        </div>
+                            <div v-if="showNotification" class="alert alert-success alert-dismissible">
+                                {{ messageNotification }}
+                            </div>
                         </a>
                         <!-- End Notification -->
 
@@ -85,7 +85,7 @@ $user_id = $_SESSION['user_id'];
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Pharmacy Store -->
                     <div class="row">
                         <div class="col-lg-12 mb-4">
@@ -114,9 +114,11 @@ $user_id = $_SESSION['user_id'];
                     </div>
 
                 </div>
-                <!-- /.container-fluid -->
 
             </div>
+            <!-- /.container-fluid -->
+
+            <!-- </div> -->
         </div>
         <!-- End of Main Content -->
 
@@ -233,12 +235,12 @@ $user_id = $_SESSION['user_id'];
                             .catch((error) => {
                                 console.log(error);
                             });
-                        
+
                         this.loopTransaction();
                     },
 
                     //Loop Transaction
-                    async loopTransaction(){
+                    async loopTransaction() {
                         // setInterval(() => {
                         //     this.getTransaction();
                         // }, 25000);
@@ -304,7 +306,7 @@ $user_id = $_SESSION['user_id'];
 </html>
 <?php
 $getCurrentBooking =  $mysqli->query("SELECT * FROM rider_transaction WHERE delivered = '0' ") or die($mysqli->error);
-if(mysqli_num_rows($getCurrentBooking) >= 1){
+if (mysqli_num_rows($getCurrentBooking) >= 1) {
     header("location: rides.php");
 }
 ?>
