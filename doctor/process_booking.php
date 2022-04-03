@@ -71,7 +71,7 @@ if (isset($_GET['getBookings'])) {
     db.id as booking_id 
     FROM doctor_bookings db
     JOIN users u ON u.id = db.doctor_id
-    WHERE db.patient_id = '$user_id' AND db.status <> '-1' ");
+    WHERE db.doctor_id = '$user_id' AND db.status <> '-1' ");
     $bookings = array();
     while ($booking = mysqli_fetch_assoc($getBookings)) {
         $bookings[] = $booking;
@@ -89,7 +89,7 @@ if (isset($_GET['getCancelledbookings'])) {
     db.status AS booking_status 
     FROM doctor_bookings db
     JOIN users u ON u.id = db.doctor_id
-    WHERE db.patient_id = '$user_id' AND db.status = '-1' ");
+    WHERE db.doctor_id = '$user_id' AND db.status = '-1' ");
     $bookings = array();
     while ($booking = mysqli_fetch_assoc($getBookings)) {
         $bookings[] = $booking;
@@ -188,7 +188,7 @@ if(isset($_GET['sendMessage'])){
     $booking_id = $data["booking_id"];
     $chat_message = $data["chat_message"];
 
-    $mysqli->query("INSERT INTO doctor_booking_threads (doctor_booking_id, user, user_message, updated_at) VALUES ('$booking_id', 'user', '$chat_message', '$updated_at' )") or die($mysqli->error);
+    $mysqli->query("INSERT INTO doctor_booking_threads (doctor_booking_id, user, user_message, updated_at) VALUES ('$booking_id', 'doctor', '$chat_message', '$updated_at' )") or die($mysqli->error);
 }
 
 // Send Message

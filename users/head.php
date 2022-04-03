@@ -41,6 +41,10 @@
     <!-- Product Specific -->
     <link rel="stylesheet" href="../css/products.css" />
 
+    <!-- Chats Specific -->
+    <link rel="stylesheet" href="../css/chats.css" />
+
+
     <!-- icon-->
     <link rel="icon" href="../img/favicon.png" sizes="16x16">
 

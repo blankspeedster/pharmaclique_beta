@@ -67,22 +67,36 @@ if (isset($_GET["id"])) {
                                     </a>
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-xl-12 alert alert-warning">
-                                                No bookings found currently associated with your account.
-                                            </div>
-                                            <div class="col-xl-12 col-md-6 mb-4">
+                                            <div class="col-xl-12 col-md-12 mb-4">
                                                 <div class="card shadow row no-gutters align-items-center p-4">
                                                     <div class="col mr-2">
-                                                        <div class="text font-weight-bold text-primary mb-1">
-                                                            Sample
-                                                        </div>
-                                                        <div class="text font-weight-bold text-primary mb-1">
-                                                            asdf
-                                                        </div>
-                                                        <div class="text-xs font-weight-bold text-primary mb-1">
-                                                            <div class="mb-2">
-                                                                <a class="btn btn-sm btn-info m-1" style="float: right;">Go to Booking</a>
+                                                        <div v-for="c in chats">
+
+                                                            <div v-if="c.user === 'doctor' " class="containerChat">
+                                                                <label class="text-xs font-weight-bold text-uppercase">Dr. <?php echo $bookingInfo["firstname"] . " " . $bookingInfo["lastname"]; ?></h6></label>
+                                                                <p>{{c.user_message}}</p>
+                                                                <span class="text-xs">{{c.updated_at}}</span>
                                                             </div>
+
+                                                            <div v-if="c.user === 'user' " class="containerChat darker">
+                                                                <label class="text-xs font-weight-bold text-uppercase float-right">You</label><br>
+                                                                <label class="float-right">{{c.user_message}}</label><br><br>
+                                                                <span class="text-xs float-right">{{c.updated_at}}</span>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="text-xs font-weight-bold text-primary mb-1">
+                                                            <form @submit.prevent="sendMessage()">
+                                                                <div class="mb-2">
+                                                                    <textarea v-model="chatMessage" class="form-control" placeholder="Send message to doctor." style="min-height: 100px;" required></textarea>
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <button class="btn btn-sm btn-info m-1" style="float: right;">
+                                                                        <i class="fas fa-paper-plane"></i> Send Message
+                                                                    </button>
+                                                                </div>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -100,23 +114,23 @@ if (isset($_GET["id"])) {
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Accordion -->
                                     <a href="#collapseStore" class="d-block card-header py-3" role="button" aria-expanded="true" aria-controls="collapseStore">
-                                        <h6 class="m-0 font-weight-bold text-primary">Receipt foor this transaction (Upload / View Display Picture)</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">Receipt for this transaction (Upload / View Display Picture)</h6>
                                     </a>
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-xl-12 col-md-6 mb-4">
+                                            <div class="col-xl-12 col-md-12 mb-4">
                                                 <form @submit.prevent="uploadReceiptPicture()">
                                                     <div class="card shadow row no-gutters align-items-center p-4">
                                                         <div class="col mr-2">
                                                             <div class="h5 mb-0 font-weight-bold text-gray-800 mb-4">
                                                                 <input class="form-control" type="file" id="picture" ref="picture" accept=".jpg,.png,.jpeg" required>
                                                             </div>
-                                                            <div class="h5 mb-0 font-weight-bold text-gray-800 text-center" >
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800 text-center">
                                                                 <img :src="'../img/'+bookings.receipt_url" style="max-height:100%; min-width: 80%; max-width: 80%; border-radius: 10px;">
                                                             </div>
                                                             <div class="text-xs font-weight-bold text-primary mb-1">
                                                                 <div class="mb-2">
-                                                                    <button type="submit" class="btn btn-sm btn-primary m-1" style="float: right;" :disabled="isUploading">{{uploadingMessage}}</button>
+                                                                    <button type="submit" class="btn btn-sm btn-primary m-1" style="float: right;" :disabled="isUploading"><i class="far fa-save"></i> {{uploadingMessage}}</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -197,6 +211,8 @@ if (isset($_GET["id"])) {
                         bookings: {
                             receipt_url: "receipt.png",
                         },
+                        chatMessage: null,
+                        chats: null,
                         //UI
                         colorScheme: "success",
                     }
@@ -206,7 +222,7 @@ if (isset($_GET["id"])) {
                     async getBookingInformation() {
                         const options = {
                             method: "POST",
-                            url: "process_booking.php?getBookingInformation=" + this.searchVal,
+                            url: "process_booking.php?getBookingInformation",
                             headers: {
                                 Accept: "application/json",
                             },
@@ -255,9 +271,60 @@ if (isset($_GET["id"])) {
                             console.error(error);
                         });
                         this.getBookingInformation();
+                    },
+
+                    // Get Chats
+                    async getChats() {
+                        const options = {
+                            method: "POST",
+                            url: "process_booking.php?getChats",
+                            headers: {
+                                Accept: "application/json",
+                            },
+                            data: {
+                                booking_id: this.booking_id
+                            }
+                        };
+                        await axios
+                            .request(options)
+                            .then((response) => {
+                                console.log(response);
+                                this.chats = response.data;
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    },
+
+                    // Send message
+                    async sendMessage() {
+                        const options = {
+                            method: "POST",
+                            url: "process_booking.php?sendMessage",
+                            headers: {
+                                Accept: "application/json",
+                            },
+                            data: {
+                                chat_message: this.chatMessage,
+                                booking_id: this.booking_id,
+                                user_id: this.userId
+                            }
+                        };
+                        await axios
+                            .request(options)
+                            .then((response) => {
+                                console.log(response);
+                                this.chatMessage = null;
+                                this.getChats();
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
                     }
+
                 },
                 async created() {
+                    this.getChats();
                     this.getBookingInformation();
                 },
             });
