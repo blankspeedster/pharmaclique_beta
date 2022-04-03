@@ -1,8 +1,21 @@
 <?php
 require_once("process_index.php");
+$user_counts = $mysqli->query("SELECT COUNT(id) AS total_count FROM users") or die($mysqli->error());
+$user_count = $user_counts->fetch_array();
+$user_count = $user_count['total_count'];
 include("head.php");
 ?>
+
 <title>PharmaClique - Cart</title>
+<style>
+    #map {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+</style>
 
 <body id="page-top">
 
@@ -17,22 +30,23 @@ include("head.php");
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->
-            <div id="content">
+            <div id="vueApp">
 
-                <!-- Topbar -->
-                <?php include("topbar.php"); ?>
-                <!-- End of Topbar -->
+                <div id="content">
 
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-                    <div id="vueApp">
+                    <!-- Topbar -->
+                    <?php include("topbar.php"); ?>
+                    <!-- End of Topbar -->
+
+                    <!-- Begin Page Content -->
+                    <div class="container-fluid">
 
                         <!-- Notification here -->
                         <div v-if="showNotification" class="alert alert-success alert-dismissible">
                             <a href="#" class="close" aria-label="close" @click="showNotification = false">&times;</a>
                             {{ messageNotification }}
                         </div>
-
+                        <!-- End Notification -->
                         <!-- Page Heading -->
                         <div class=" align-items-center  mb-4">
                             <h1 class="h3 mb-0 text-gray-800">My Cart</h1>
@@ -86,7 +100,6 @@ include("head.php");
                                 </div>
                             </div>
                         </span>
-
                         <!-- Check Out Pharmacy -->
                         <span v-if="checkedPharmacy && productsInCartLen > 0">
                             <div class="row">
@@ -139,191 +152,169 @@ include("head.php");
                             </div>
                         </span>
 
-                        <!-- Do not delete -->
-                        <div class="row">
-                            <!-- Add Propducts - Collapsable -->
-                            <div class="col-lg-12" id="addEditProduct" style="display: none;">
-                                <div class="card shadow mb-4">
-                                    <!-- Card Header - Accordion -->
-                                    <!-- Card Content - Collapse -->
-                                    <div class="collapse show" id="collapseAddProduct">
-                                        <div class="card-body">
-                                            <!-- <form @submit.prevent="postProduct"> -->
-                                            <form>
-                                                <div class="row">
-
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
+                    <!-- /.container-fluid -->
+
                 </div>
-
             </div>
-            <!-- /.container-fluid -->
+            <!-- End of Main Content -->
 
-        </div>
-        <!-- End of Main Content -->
+            <?php include("footer.php"); ?>
 
-        <?php include("footer.php"); ?>
-        <!-- Start scripts here -->
+            <!-- Start scripts here -->
 
-        <!-- Bootstrap core JavaScript-->
-        <script src="../vendor/jquery/jquery.min.js"></script>
-        <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+            <!-- Bootstrap core JavaScript-->
+            <script src="../vendor/jquery/jquery.min.js"></script>
+            <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-        <!-- Core plugin JavaScript-->
-        <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+            <!-- Core plugin JavaScript-->
+            <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
-        <!-- Custom scripts for all pages-->
-        <script src="../js/sb-admin-2.min.js"></script>
+            <!-- Custom scripts for all pages-->
+            <script src="../js/sb-admin-2.min.js"></script>
 
-        <!-- Page level plugins -->
-        <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-        <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+            <!-- Page level plugins -->
+            <script src="../vendor/chart.js/Chart.min.js"></script>
 
-        <!-- Page level custom scripts -->
-        <script src="../js/demo/datatables-demo.js"></script>
+            <!-- Page level custom scripts -->
+            <script src="../js/demo/chart-area-demo.js"></script>
+            <script src="../js/demo/chart-pie-demo.js"></script>
 
+            <!-- End scripts here -->
+            <script>
+                new Vue({
+                    el: "#vueApp",
+                    data() {
+                        return {
+                            //data model here
+                            searchValue: null,
+                            products: [],
 
-        <!-- End scripts here -->
-        <script>
-            new Vue({
-                el: "#vueApp",
-                data() {
-                    return {
-                        //data model here
-                        searchValue: null,
-                        products: [],
+                            showNotification: false,
+                            messageNotification: "",
 
-                        showNotification: false,
-                        messageNotification: "",
+                            productsInCart: null,
+                            productsInCartLen: null,
+                            checkedPharmacy: false,
+                            checkedOut: false,
+                            store_id: null,
+                            checkOutStoreName: null,
+                        }
+                    },
+                    methods: {
 
-                        productsInCart: null,
-                        productsInCartLen: null,
-                        checkedPharmacy: false,
-                        checkedOut: false,
-                        store_id: null,
-                        checkOutStoreName: null,
+                        //Get Stores in Cart
+                        async getStoreInCart() {
+                            var userId = <?php echo $_SESSION['user_id']; ?>;
+                            const options = {
+                                method: "POST",
+                                url: "process_cart.php?getStoreInCart",
+                                headers: {
+                                    Accept: "application/json",
+                                },
+                                data: {
+                                    user_id: userId,
+                                },
+                            };
+                            await axios
+                                .request(options)
+                                .then((response) => {
+                                    console.log(response);
+                                    this.productsInCart = response.data;
+                                    this.productsInCartLen = this.productsInCart.length;
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        },
+
+                        //Select Pharmacy
+                        async selectPharmacy(store_id) {
+                            var userId = <?php echo $_SESSION['user_id']; ?>;
+                            this.store_id = store_id;
+                            const options = {
+                                method: "POST",
+                                url: "process_cart.php?getSpecificPharmacyAndProduct",
+                                headers: {
+                                    Accept: "application/json",
+                                },
+                                data: {
+                                    store_id: this.store_id,
+                                    user_id: userId,
+                                },
+                            };
+                            await axios
+                                .request(options)
+                                .then((response) => {
+                                    this.productsInCart = response.data;
+                                    this.productsInCartLen = this.productsInCart.length;
+                                    console.log(response);
+                                    this.checkOutStoreName = response.data[0].store_name;
+                                    this.checkedPharmacy = true;
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        },
+
+                        // Minus Quantity
+                        async minusQuantity(cart_id) {
+                            const options = {
+                                method: "POST",
+                                url: "process_cart.php?minusQuantity",
+                                headers: {
+                                    Accept: "application/json",
+                                },
+                                data: {
+                                    cart_id: cart_id,
+                                },
+                            };
+                            await axios
+                                .request(options)
+                                .then((response) => {
+                                    console.log(response);
+                                    this.checkedPharmacy = true;
+                                    this.showNotification = true;
+                                    this.messageNotification = response.data.response;
+                                    this.selectPharmacy(this.store_id);
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        },
+
+                        // Plus Quantity
+                        async plusQuantity(cart_id) {
+                            const options = {
+                                method: "POST",
+                                url: "process_cart.php?plusQuantity",
+                                headers: {
+                                    Accept: "application/json",
+                                },
+                                data: {
+                                    cart_id: cart_id,
+                                },
+                            };
+                            await axios
+                                .request(options)
+                                .then((response) => {
+                                    console.log(response);
+                                    this.showNotification = true;
+                                    this.messageNotification = response.data.response;
+                                    this.checkedPharmacy = true;
+                                    this.selectPharmacy(this.store_id);
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        },
+
+                    },
+                    async created() {
+                        await this.getStoreInCart();
                     }
-                },
-                methods: {
-
-                    //Get Stores in Cart
-                    async getStoreInCart() {
-                        var userId = <?php echo $_SESSION['user_id']; ?>;
-                        const options = {
-                            method: "POST",
-                            url: "process_cart.php?getStoreInCart",
-                            headers: {
-                                Accept: "application/json",
-                            },
-                            data: {
-                                user_id: userId,
-                            },
-                        };
-                        await axios
-                            .request(options)
-                            .then((response) => {
-                                console.log(response);
-                                this.productsInCart = response.data;
-                                this.productsInCartLen = this.productsInCart.length;
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                            });
-                    },
-
-                    //Select Pharmacy
-                    async selectPharmacy(store_id) {
-                        var userId = <?php echo $_SESSION['user_id']; ?>;
-                        this.store_id = store_id;
-                        const options = {
-                            method: "POST",
-                            url: "process_cart.php?getSpecificPharmacyAndProduct",
-                            headers: {
-                                Accept: "application/json",
-                            },
-                            data: {
-                                store_id: this.store_id,
-                                user_id: userId,
-                            },
-                        };
-                        await axios
-                            .request(options)
-                            .then((response) => {
-                                this.productsInCart = response.data;
-                                this.productsInCartLen = this.productsInCart.length;
-                                console.log(response);
-                                this.checkOutStoreName = response.data[0].store_name;
-                                this.checkedPharmacy = true;
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                            });
-                    },
-
-                    // Minus Quantity
-                    async minusQuantity(cart_id) {
-                        const options = {
-                            method: "POST",
-                            url: "process_cart.php?minusQuantity",
-                            headers: {
-                                Accept: "application/json",
-                            },
-                            data: {
-                                cart_id: cart_id,
-                            },
-                        };
-                        await axios
-                            .request(options)
-                            .then((response) => {
-                                console.log(response);
-                                this.checkedPharmacy = true;
-                                this.showNotification = true;
-                                this.messageNotification = response.data.response;
-                                this.selectPharmacy(this.store_id);
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                            });
-                    },
-
-                    // Plus Quantity
-                    async plusQuantity(cart_id) {
-                        const options = {
-                            method: "POST",
-                            url: "process_cart.php?plusQuantity",
-                            headers: {
-                                Accept: "application/json",
-                            },
-                            data: {
-                                cart_id: cart_id,
-                            },
-                        };
-                        await axios
-                            .request(options)
-                            .then((response) => {
-                                console.log(response);
-                                this.showNotification = true;
-                                this.messageNotification = response.data.response;
-                                this.checkedPharmacy = true;
-                                this.selectPharmacy(this.store_id);
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                            });
-                    },
-
-                },
-                async created() {
-                    await this.getStoreInCart();
-                }
-            });
-        </script>
+                });
+            </script>
 </body>
 
 </html>
