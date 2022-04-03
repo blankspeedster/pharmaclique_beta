@@ -21,7 +21,7 @@ include("head.php");
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->
-            <!-- <div id="vueApp"> -->
+            <div id="vueApp">
                 <div id="content">
 
                     <!-- Topbar -->
@@ -264,7 +264,7 @@ include("head.php");
                     <!-- /.container-fluid -->
 
                 </div>
-            <!-- </div> -->
+            </div>
             <!-- End of Main Content -->
 
             <?php include("footer.php"); ?>
