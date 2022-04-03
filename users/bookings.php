@@ -91,7 +91,7 @@ $user_id = $_SESSION['user_id'];
                                                                 <button class="btn btn-sm btn-danger m-1" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">
                                                                     <i class="fas fa-ban"></i> Cancel Booking
                                                                 </button>
-                                                                <div class="dropdown-menu shadow-danger mb-1">
+                                                                <div class="dropdown-menu shadow-danger m-1">
                                                                     <span class="dropdown-item">Do you really wish to cancel this booking?</span>
                                                                     <a class="dropdown-item text-danger" href="#">Cancel</a>
                                                                     <a class="dropdown-item text-success" @click="cancelBooking(b.booking_id)">Confirm Cancellation</a>

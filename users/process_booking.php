@@ -109,4 +109,76 @@ if (isset($_GET['cancelBooking'])) {
     echo json_encode($response);
 }
 
+
+// Get Booking Information
+if (isset($_GET['getBookingInformation'])) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $booking_id = $data["booking_id"];
+
+    $getBooking = mysqli_query($mysqli, "SELECT * FROM doctor_bookings db
+    JOIN users u
+    ON db.doctor_id = u.id
+    WHERE db.id = '$booking_id' ");
+
+    $booking = $getBooking->fetch_assoc();
+
+    // while ($book = mysqli_fetch_assoc($getBooking)) {
+    //     $booking[] = $book;
+    // }
+
+    echo json_encode($booking);
+}
+
+//Upload Receipt Picture
+if(isset($_GET['uploadReceiptPicture'])){
+    $uploadDir = "../img/";
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    //Upload image
+    if ($_FILES['picture']) {
+        $pictureName = $_FILES["picture"]["name"];
+        $pictureName = preg_replace('/\s+/', '', $pictureName);
+        $pictureTmpName = $_FILES["picture"]["tmp_name"];
+        $pictureTmpName = preg_replace('/\s+/', '', $pictureTmpName);
+
+        $error = $_FILES["picture"]["error"];
+        if ($error > 0) {
+            $response = array(
+                "status" => "error",
+                "error" => true,
+                "message" => "Error uploading the file!"
+            );
+        } else {
+            $randomName = rand(1000, 100000000000) . "-" . $pictureName;
+            $randomName = strtolower($randomName);
+            $uploadName = $uploadDir . strtolower($randomName);
+            $uploadName = preg_replace('/\s+/', '-', $uploadName);
+
+            if (move_uploaded_file($pictureTmpName, $uploadName)) {
+
+                $response = array(
+                    "status" => "success",
+                    "error" => false,
+                    "message" => "File uploaded successfully",
+                    "url" => $uploadName
+                );
+            } else {
+                $response = array(
+                    "status" => "error",
+                    "error" => true,
+                    "message" => "Error uploading the file!"
+                );
+            }
+        }
+    }
+
+    $receipt_url = $randomName;
+    $book_id = $_GET["uploadReceiptPicture"];
+
+    $mysqli->query("UPDATE doctor_bookings SET receipt_url = '$receipt_url', receipt = '1' WHERE id = '$book_id' ") or die($mysqli->error);
+
+    $response[] = array("response" => "Receipt has been saved!");
+
+    echo json_encode($response);    
+}
 ?>

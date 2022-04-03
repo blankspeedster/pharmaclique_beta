@@ -3,26 +3,20 @@ require_once("process_booking.php");
 include("head.php");
 
 $user_id = $_SESSION['user_id'];
-
-$checkUser = $mysqli->query("SELECT * FROM doctor_profile WHERE doctor_id='$user_id' ");
-$userExist = false;
-$profile_id = 0;
-if (mysqli_num_rows($checkUser) > 0) {
-    $userExist = true;
-    $user = $checkUser->fetch_array();
-    $profile_id = $user['id'];
-    $hourly_rate = $user['hourly_rate'];
-    $profile_url = $user['profile_image'];
-    $specialization = $user['specialization'];
+$booking_id = 0;
+if (isset($_GET["id"])) {
+    $booking_id = $_GET["id"];
+    $getBookingInformation = $mysqli->query("SELECT * FROM doctor_bookings db
+    JOIN users u
+    ON db.doctor_id = u.id
+    WHERE db.id = '$booking_id' ") or die($mysqli->error());
+    $bookingInfo = $getBookingInformation->fetch_array();
+} else {
+    header("location: book_an_appointment.php");
 }
-$checkUser = $mysqli->query("SELECT * FROM users WHERE id='$user_id' ");
-$user = $checkUser->fetch_array();
-$first_name = $user["firstname"];
-$last_name = $user["lastname"];
-$email = $user["email"];
-$phone_number = $user["phone_number"];
+
 ?>
-<title>PharmaClique - Doctor Booking</title>
+<title>PharmaClique - Your Booking</title>
 
 <body id="page-top">
 
@@ -47,18 +41,6 @@ $phone_number = $user["phone_number"];
                 <div class="container-fluid">
                     <div id="vueApp">
 
-                        <!-- Notification here -->
-                        <?php
-                        if (isset($_SESSION['pharmacyError'])) { ?>
-                            <div class="alert alert-<?php echo $_SESSION['msg_type']; ?> alert-dismissible">
-                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                <?php
-                                echo $_SESSION['pharmacyError'];
-                                unset($_SESSION['pharmacyError']);
-                                ?>
-                            </div>
-                        <?php } ?>
-                        <!-- End Notification -->
 
 
                         <!-- Notification here -->
@@ -71,47 +53,35 @@ $phone_number = $user["phone_number"];
 
                         <!-- Page Heading -->
                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                            <h1 class="h3 mb-0 text-gray-800">Bookings</h1>
+                            <h1 class="h3 mb-0 text-gray-800">Booking</h1>
                         </div>
-                        <!-- List of bookings -->
+
+                        <!-- Chat Thread with the Doctor -->
                         <div class="row">
                             <div class="col-lg-12">
                                 <!-- Collapsable Card Example -->
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Accordion -->
                                     <a href="#collapseStore" class="d-block card-header py-3" data-toggle="" role="button" aria-expanded="true" aria-controls="collapseStore">
-                                        <h6 class="m-0 font-weight-bold text-primary">List of Bookings</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">Chat Thread with Dr. <?php echo $bookingInfo["firstname"] . " " . $bookingInfo["lastname"]; ?></h6>
                                     </a>
                                     <div class="card-body">
                                         <div class="row">
-                                            <div v-if="bookings.length === 0" class="col-xl-12 alert alert-warning">
+                                            <div class="col-xl-12 alert alert-warning">
                                                 No bookings found currently associated with your account.
                                             </div>
-                                            <div v-else class="col-xl-12 col-md-6 mb-4" v-for="b in bookings">
+                                            <div class="col-xl-12 col-md-6 mb-4">
                                                 <div class="card shadow row no-gutters align-items-center p-4">
                                                     <div class="col mr-2">
                                                         <div class="text font-weight-bold text-primary mb-1">
-                                                            <a :href="'booking.php?id='+b.booking_id">
-                                                                Booking ID: 00000{{b.booking_id}}<br>
-                                                                Doctor: {{b.firstname}} {{b.lastname}}
-                                                            </a>
+                                                            Sample
                                                         </div>
                                                         <div class="text font-weight-bold text-primary mb-1">
-                                                            Date: {{b.booking_date}}<br>
-                                                            Time: {{b.boking_date_time_from}} - {{b.boking_date_time_to}}
+                                                            asdf
                                                         </div>
                                                         <div class="text-xs font-weight-bold text-primary mb-1">
-                                                            <span v-if="b.booking_status === '0'" class="badge badge-warning badge-counter">Awaiting Doctor's Approval</span>
-                                                            <span v-if="b.booking_status === '1'" class="badge badge-success badge-counter">Approved</span>
                                                             <div class="mb-2">
-                                                                <!-- Cancel Booking -->
-                                                                <button class="btn btn-sm btn-danger m-1" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">Cancel Booking</button>
-                                                                <div class="dropdown-menu shadow-danger mb-1">
-                                                                    <span class="dropdown-item">Do you really wish to cancel this booking?</span>
-                                                                    <a class="dropdown-item text-info" href="#">Cancel</a>
-                                                                    <a class="dropdown-item text-success" @click="cancelBooking(b.booking_id)">Confirm Cancellation</a>
-                                                                </div>
-                                                                <a class="btn btn-sm btn-info m-1" style="float: right;" :href="'booking.php?id='+b.booking_id">Go to Booking</a>
+                                                                <a class="btn btn-sm btn-info m-1" style="float: right;">Go to Booking</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -122,40 +92,38 @@ $phone_number = $user["phone_number"];
                                 </div>
                             </div>
                         </div>
-                        
 
-                        <!-- List of cancelled bookings -->
+                        <!-- Upload picture -->
                         <div class="row">
                             <div class="col-lg-12">
                                 <!-- Collapsable Card Example -->
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Accordion -->
-                                    <a href="#collapseStore" class="d-block card-header py-3" data-toggle="" role="button" aria-expanded="true" aria-controls="collapseStore">
-                                        <h6 class="m-0 font-weight-bold text-primary">List of Cancelled Bookings</h6>
+                                    <a href="#collapseStore" class="d-block card-header py-3" role="button" aria-expanded="true" aria-controls="collapseStore">
+                                        <h6 class="m-0 font-weight-bold text-primary">Receipt foor this transaction (Upload / View Display Picture)</h6>
                                     </a>
                                     <div class="card-body">
                                         <div class="row">
-                                            <div v-if="cancelledBookings.length === 0" class="col-xl-12 alert alert-warning">
-                                                No cancelled bookings found currently associated with your account.
-                                            </div>
-                                            <div v-else class="col-xl-12 col-md-6 mb-4" v-for="b in cancelledBookings">
-                                                <div class="card shadow row no-gutters align-items-center p-4" style="background-color: rgb(156 156 159);">
-                                                    <div class="col mr-2">
-                                                        <div class="text font-weight-bold mb-1" style="color: black;">
-                                                            Doctor: {{b.firstname}} {{b.lastname}}
-                                                        </div>
-                                                        <div class="text font-weight-bold mb-1" style="color: black;">
-                                                            Date: {{b.booking_date}}
-                                                        </div>
-                                                        <div class="text font-weight-bold mb-1" style="color: black;">
-                                                            Time: {{b.boking_date_time_from}} - {{b.boking_date_time_to}}
+                                            <div class="col-xl-12 col-md-6 mb-4">
+                                                <form @submit.prevent="uploadReceiptPicture()">
+                                                    <div class="card shadow row no-gutters align-items-center p-4">
+                                                        <div class="col mr-2">
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800 mb-4">
+                                                                <input class="form-control" type="file" id="picture" ref="picture" accept=".jpg,.png,.jpeg" required>
+                                                            </div>
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800 text-center" >
+                                                                <img :src="'../img/'+bookings.receipt_url" style="max-height:100%; min-width: 80%; max-width: 80%; border-radius: 10px;">
+                                                            </div>
+                                                            <div class="text-xs font-weight-bold text-primary mb-1">
+                                                                <div class="mb-2">
+                                                                    <button type="submit" class="btn btn-sm btn-primary m-1" style="float: right;" :disabled="isUploading">{{uploadingMessage}}</button>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </form>
                                             </div>
                                         </div>
-
-
                                     </div>
                                 </div>
                             </div>
@@ -222,27 +190,28 @@ $phone_number = $user["phone_number"];
                         showNotification: false,
                         messageNotification: null,
                         editUserProfile: false,
+                        isUploading: false,
+                        uploadingMessage: "Upload Display Picture",
                         userId: <?php echo $user_id; ?>,
-
-                        //Doctors
-                        bookings: [],
-                        cancelledBookings: [],
-
+                        booking_id: <?php echo $booking_id; ?>,
+                        bookings: {
+                            receipt_url: "receipt.png",
+                        },
                         //UI
                         colorScheme: "success",
                     }
                 },
                 methods: {
-                    //Get confirmed bookings
-                    async getBookings() {
+                    // Get Booking Information
+                    async getBookingInformation() {
                         const options = {
                             method: "POST",
-                            url: "process_booking.php?getBookings",
+                            url: "process_booking.php?getBookingInformation=" + this.searchVal,
                             headers: {
                                 Accept: "application/json",
                             },
                             data: {
-                                user_id: this.userId
+                                booking_id: this.booking_id
                             }
                         };
                         await axios
@@ -256,57 +225,40 @@ $phone_number = $user["phone_number"];
                             });
                     },
 
-                    //Cancel Booking
-                    async cancelBooking(booking_id) {
+                    // Upload Display Picture
+                    async uploadReceiptPicture() {
+                        this.isUploading = true;
+                        this.uploadingMessage = "Uploading...";
+                        var pictureFile = document.querySelector("#picture");
+                        console.log(pictureFile.files[0]);
+                        const form = new FormData();
+                        form.append("picture", pictureFile.files[0]);
+
                         const options = {
                             method: "POST",
-                            url: "process_booking.php?cancelBooking",
+                            url: "process_booking.php?uploadReceiptPicture=" + <?php echo $booking_id; ?>,
                             headers: {
-                                Accept: "application/json",
+                                "Content-Type": "multipart/form-data",
                             },
-                            data: {
-                                booking_id: booking_id
-                            }
+                            data: form
                         };
-                        await axios
-                            .request(options)
-                            .then((response) => {
-                                console.log(response);
-                                this.getCancelledbookings();
-                                this.getBookings();
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                            });
-                    },
-                    //Get cancelled bookings
-                    async getCancelledbookings() {
-                        const options = {
-                            method: "POST",
-                            url: "process_booking.php?getCancelledbookings",
-                            headers: {
-                                Accept: "application/json",
-                            },
-                            data: {
-                                user_id: this.userId
-                            }
-                        };
-                        await axios
-                            .request(options)
-                            .then((response) => {
-                                console.log(response);
-                                this.cancelledBookings = response.data;
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                            });
-                    },
 
-
+                        await axios.request(options).then((response) => {
+                            this.showNotification = true;
+                            this.messageNotification = "Uploading Receipt Succesful!";
+                            this.isUploading = false;
+                            this.uploadingMessage = "Upload Receipt Picture";
+                            console.log(response);
+                        }).catch((error) => {
+                            this.showNotification = true;
+                            this.messageNotification = "There is an error processing your request.";
+                            console.error(error);
+                        });
+                        this.getBookingInformation();
+                    }
                 },
                 async created() {
-                    await this.getBookings();
-                    await this.getCancelledbookings();
+                    this.getBookingInformation();
                 },
             });
         </script>

@@ -14,7 +14,6 @@ if (mysqli_num_rows($checkUser) > 0) {
     $hourly_rate = $user['hourly_rate'];
     $profile_url = $user['profile_image'];
     $specialization = $user['specialization'];
-
 }
 $checkUser = $mysqli->query("SELECT * FROM users WHERE id='$user_id' ");
 $user = $checkUser->fetch_array();
@@ -152,7 +151,9 @@ $phone_number = $user["phone_number"];
                                                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                                     Hourly Rate in Peso (₱)</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <input :disabled="!editUserProfile" type="number" class="form-control" name="hourly_rate" value="<?php if($userExist){echo $hourly_rate; } ?>" required>
+                                                                    <input :disabled="!editUserProfile" type="number" class="form-control" name="hourly_rate" value="<?php if ($userExist) {
+                                                                                                                                                                            echo $hourly_rate;
+                                                                                                                                                                        } ?>" required>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -165,7 +166,9 @@ $phone_number = $user["phone_number"];
                                                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                                     Specialization</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <input :disabled="!editUserProfile" type="text" class="form-control" name="specialization" value="<?php if($userExist){echo $specialization; } ?>" required>
+                                                                    <input :disabled="!editUserProfile" type="text" class="form-control" name="specialization" value="<?php if ($userExist) {
+                                                                                                                                                                            echo $specialization;
+                                                                                                                                                                        } ?>" required>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -205,7 +208,9 @@ $phone_number = $user["phone_number"];
                             </div>
                         </div>
 
-                        <div class="row" style="display: <?php if(!$userExist){ echo "none"; } ?>">
+                        <div class="row" style="display: <?php if (!$userExist) {
+                                                                echo "none";
+                                                            } ?>">
                             <div class="col-lg-12">
                                 <!-- Collapsable Card Example -->
                                 <div class="card shadow mb-4">
@@ -223,7 +228,7 @@ $phone_number = $user["phone_number"];
                                                             <div class="col mr-2">
                                                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                                     Upload Display Picture
-                                                                    </div>
+                                                                </div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                                     <input class="form-control" type="file" id="picture" ref="picture" accept=".jpg,.png,.jpeg" required>
                                                                 </div>
@@ -243,9 +248,9 @@ $phone_number = $user["phone_number"];
                                                     </div>
 
                                                     <div class="col-xl-12 col-md-12 mb-4 mt-4">
-                                                            <button type="submit" style="float: right;" class="btn btn-info btn-sm m-1" :disabled="isUploading" >
-                                                                <i class="far fa-save"></i> {{uploadingMessage}}
-                                                            </button>
+                                                        <button type="submit" style="float: right;" class="btn btn-info btn-sm m-1" :disabled="isUploading">
+                                                            <i class="far fa-save"></i> {{uploadingMessage}}
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -318,7 +323,7 @@ $phone_number = $user["phone_number"];
                     }
                 },
                 methods: {
-                    async uploadProfilePicture(){
+                    async uploadProfilePicture() {
                         this.isUploading = true;
                         this.uploadingMessage = "Uploading...";
                         var pictureFile = document.querySelector("#picture");
@@ -339,7 +344,7 @@ $phone_number = $user["phone_number"];
                             this.showNotification = true;
                             this.messageNotification = "Profile update successful!";
                             this.isUploading = false;
-                        this.uploadingMessage = "Upload Profile Picture";
+                            this.uploadingMessage = "Upload Profile Picture";
                             console.log(response);
                         }).catch((error) => {
                             this.showNotification = true;
