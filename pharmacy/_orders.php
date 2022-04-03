@@ -1,17 +1,11 @@
 <?php
-require_once("process_pharmacy.php");
+require_once("process_order.php");
+$user_counts = $mysqli->query("SELECT COUNT(id) AS total_count FROM users") or die($mysqli->error());
+$user_count = $user_counts->fetch_array();
+$user_count = $user_count['total_count'];
 include("head.php");
-
-$user_id = $_SESSION['user_id'];
-$checkStore = $mysqli->query("SELECT * FROM pharmacy_store WHERE user_id='$user_id' ");
-$storeExist = false;
-$storeId = 0;
-if (mysqli_num_rows($checkStore) > 0) {
-    $storeExist = true;
-    $store = $checkStore->fetch_array();
-    $storeId = $store['id'];
-}
 ?>
+
 <title>PharmaClique - Orders</title>
 
 <body id="page-top">
@@ -27,15 +21,16 @@ if (mysqli_num_rows($checkStore) > 0) {
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->
-            <div id="content">
+            <div id="vueApp">
 
-                <!-- Topbar -->
-                <?php include("topbar.php"); ?>
-                <!-- End of Topbar -->
+                <div id="content">
 
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-                    <div id="vueApp">
+                    <!-- Topbar -->
+                    <?php include("topbar.php"); ?>
+                    <!-- End of Topbar -->
+
+                    <!-- Begin Page Content -->
+                    <div class="container-fluid">
 
                         <!-- Notification here -->
                         <div v-if="showNotification" class="alert alert-success alert-dismissible">
@@ -43,15 +38,14 @@ if (mysqli_num_rows($checkStore) > 0) {
                             {{ messageNotification }}
                         </div>
                         <!-- End Notification -->
-
-
+                        
                         <!-- Page Heading -->
                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
                             <h5 class="h5 mb-0 text-gray-800">Orders (Complete and Current)</h5>
                         </div>
 
-                         <!-- Pending Orders -->
-                         <div class="row">
+                        <!-- Pending Orders -->
+                        <div class="row">
                             <!-- Pending Orders -->
                             <div class="col-lg-12 mb-4">
                                 <div class="card shadow mb-4">
@@ -169,8 +163,8 @@ if (mysqli_num_rows($checkStore) > 0) {
                             </div>
                         </div>
 
-                      <!-- Cancelled Orders -->
-                      <div class="row">
+                        <!-- Cancelled Orders -->
+                        <div class="row">
                             <!-- Cancelled Orders -->
                             <div class="col-lg-12 mb-4">
                                 <div class="card shadow mb-4">
@@ -206,56 +200,33 @@ if (mysqli_num_rows($checkStore) > 0) {
                             </div>
                         </div>
 
-                        <!-- Do not delete -->
-                        <div class="row">
-                            <!-- Add Propducts - Collapsable -->
-                            <div class="col-lg-12" id="addEditProduct" style="display: none;">
-                                <div class="card shadow mb-4">
-                                    <!-- Card Header - Accordion -->
-                                    <!-- Card Content - Collapse -->
-                                    <div class="collapse show" id="collapseAddProduct">
-                                        <div class="card-body">
-                                            <!-- <form @submit.prevent="postProduct"> -->
-                                            <form>
-                                                <div class="row">
-
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
                     </div>
+                    <!-- /.container-fluid -->
+
                 </div>
-
             </div>
-            <!-- /.container-fluid -->
+            <!-- End of Main Content -->
 
-        </div>
-        <!-- End of Main Content -->
+            <?php include("footer.php"); ?>
 
-        <?php include("footer.php"); ?>
-        <!-- Start scripts here -->
+            <!-- Start scripts here -->
 
-        <!-- Bootstrap core JavaScript-->
-        <script src="../vendor/jquery/jquery.min.js"></script>
-        <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+            <!-- Bootstrap core JavaScript-->
+            <script src="../vendor/jquery/jquery.min.js"></script>
+            <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-        <!-- Core plugin JavaScript-->
-        <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+            <!-- Core plugin JavaScript-->
+            <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
-        <!-- Custom scripts for all pages-->
-        <script src="../js/sb-admin-2.min.js"></script>
+            <!-- Custom scripts for all pages-->
+            <script src="../js/sb-admin-2.min.js"></script>
 
-        <!-- Page level plugins -->
-        <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-        <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+            <!-- Page level plugins -->
+            <script src="../vendor/chart.js/Chart.min.js"></script>
 
-        <!-- Page level custom scripts -->
-        <script src="../js/demo/datatables-demo.js"></script>
+            <!-- Page level custom scripts -->
+            <script src="../js/demo/chart-area-demo.js"></script>
+            <script src="../js/demo/chart-pie-demo.js"></script>
 
             <!-- End scripts here -->
             <script>
