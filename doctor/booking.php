@@ -73,7 +73,7 @@ if (isset($_GET["id"])) {
                                                         <div v-for="c in chats">
 
                                                             <div v-if="c.user === 'user' " class="containerChat">
-                                                                <label class="text-xs font-weight-bold text-uppercase">Dr. <?php echo $bookingInfo["firstname"] . " " . $bookingInfo["lastname"]; ?></h6></label>
+                                                                <label class="text-xs font-weight-bold text-uppercase"><?php echo $bookingInfo["firstname"] . " " . $bookingInfo["lastname"]; ?></h6></label>
                                                                 <p>{{c.user_message}}</p>
                                                                 <span class="text-xs">{{c.updated_at}}</span>
                                                             </div>
@@ -107,41 +107,76 @@ if (isset($_GET["id"])) {
                             </div>
                         </div>
 
-                        <!-- Upload picture -->
+                        <!-- Receipt from the user -->
                         <div class="row">
-                            <div class="col-lg-12">
+                            <!-- show receipt -->
+                            <div class="col-lg-6">
                                 <!-- Collapsable Card Example -->
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Accordion -->
                                     <a href="#collapseStore" class="d-block card-header py-3" role="button" aria-expanded="true" aria-controls="collapseStore">
-                                        <h6 class="m-0 font-weight-bold text-primary">Receipt for this transaction (Upload / View Display Picture)</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">Receipt for this transaction</h6>
                                     </a>
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-xl-12 col-md-12 mb-4">
                                                 <!-- <form @submit.prevent="uploadReceiptPicture()"> -->
-                                                    <div class="card shadow row no-gutters align-items-center p-4">
-                                                        <div class="col mr-2">
-                                                            <div class="h5 mb-0 font-weight-bold text-gray-800 mb-4">
-                                                                <!-- <input class="form-control" type="file" id="picture" ref="picture" accept=".jpg,.png,.jpeg" required> -->
-                                                            </div>
-                                                            <div class="h5 mb-0 font-weight-bold text-gray-800 text-center">
-                                                                <img :src="'../img/'+bookings.receipt_url" style="max-height:100%; min-width: 80%; max-width: 80%; border-radius: 10px;">
-                                                            </div>
-                                                            <div class="text-xs font-weight-bold text-primary mb-1">
-                                                                <div class="mb-2">
-                                                                    <!-- <button type="submit" class="btn btn-sm btn-primary m-1" style="float: right;" :disabled="isUploading"><i class="far fa-save"></i> {{uploadingMessage}}</button> -->
-                                                                </div>
+                                                <div class="card shadow row no-gutters align-items-center p-4">
+                                                <span v-if="bookings.prescription == '0' ">The receipt below is just a template. You may ask the <b><?php echo $bookingInfo["firstname"] . " " . $bookingInfo["lastname"]; ?></b> to provide an e-prescription.</span>
+                                                    <div class="col mr-2">
+                                                        <div class="h5 mb-0 font-weight-bold text-gray-800 mb-4">
+                                                            <!-- <input class="form-control" type="file" id="picture" ref="picture" accept=".jpg,.png,.jpeg" required> -->
+                                                        </div>
+                                                        <div class="h5 mb-0 font-weight-bold text-gray-800 text-center">
+                                                            <img :src="'../img/'+bookings.receipt_url" style="max-height:100%; min-width: 80%; max-width: 80%; border-radius: 10px;">
+                                                        </div>
+                                                        <div class="text-xs font-weight-bold text-primary mb-1">
+                                                            <div class="mb-2">
+                                                                <!-- <button type="submit" class="btn btn-sm btn-primary m-1" style="float: right;" :disabled="isUploading"><i class="far fa-save"></i> {{uploadingMessage}}</button> -->
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
                                                 <!-- </form> -->
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-lg-6">
+                                <!-- upload prescription -->
+                                <div class="card shadow mb-4">
+                                    <!-- Card Header - Accordion -->
+                                    <a href="#collapseStore" class="d-block card-header py-3" role="button" aria-expanded="true" aria-controls="collapseStore">
+                                        <h6 class="m-0 font-weight-bold text-primary">Prescription (Upload / View Display Picture)</h6>
+                                    </a>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-xl-12 col-md-12 mb-4">
+                                                <form @submit.prevent="uploadPrescriptionPicture()">
+                                                    <div class="card shadow row no-gutters align-items-center p-4">
+                                                        <div class="col mr-2">
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800 mb-4">
+                                                                <input class="form-control" type="file" id="picture" ref="picture" accept=".jpg,.png,.jpeg" required>
+                                                            </div>
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800 text-center">
+                                                                <img :src="'../img/'+bookings.prescription_url" style="max-height:100%; min-width: 80%; max-width: 80%; border-radius: 10px;">
+                                                            </div>
+                                                            <div class="text-xs font-weight-bold text-primary mb-1">
+                                                                <div class="mb-2">
+                                                                    <button type="submit" class="btn btn-sm btn-primary m-1" style="float: right;" :disabled="isUploading"><i class="far fa-save"></i> {{uploadingMessage}}</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
 
                         <!-- Do not delete -->
                         <div class="row">
@@ -242,7 +277,7 @@ if (isset($_GET["id"])) {
                     },
 
                     // Upload Display Picture
-                    async uploadReceiptPicture() {
+                    async uploadPrescriptionPicture() {
                         this.isUploading = true;
                         this.uploadingMessage = "Uploading...";
                         var pictureFile = document.querySelector("#picture");
@@ -252,7 +287,7 @@ if (isset($_GET["id"])) {
 
                         const options = {
                             method: "POST",
-                            url: "process_booking.php?uploadReceiptPicture=" + <?php echo $booking_id; ?>,
+                            url: "process_booking.php?uploadPrescriptionPicture=" + <?php echo $booking_id; ?>,
                             headers: {
                                 "Content-Type": "multipart/form-data",
                             },
