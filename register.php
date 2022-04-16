@@ -68,9 +68,9 @@
                                         <select name="role" class="form-control" required>
                                             <option value="" disabled selected>Registration for:</option>
                                             <option value="1">Customer</option>
-                                            <option value="2">Rider</option>
+                                            <!-- <option value="2">Rider</option>
                                             <option value="3">Pharmacist</option>
-                                            <option value="5">Doctor</option>
+                                            <option value="5">Doctor</option> -->
                                         </select>
                                     </div>
                                 </div>
