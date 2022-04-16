@@ -80,6 +80,7 @@ include("head.php");
                                                                     </h3>
                                                                     <p class="product-text price">₱{{p.product_price}}</p>
                                                                     <p class="product-text genre">{{p.product_brand}}</p>
+                                                                    <p class="product-text genre"><a :href="'store.php?id='+p.store_id"><i>{{p.store_name}}</i></a></p>
                                                                     <a @click="addToCart(p.id, p.store_id, p.product_price)" style="float: right; color: black !important;" class="btn btn-sm btn-warning">Add to cart</a>
                                                                 </div>
                                                             </div>

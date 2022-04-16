@@ -19,10 +19,15 @@ if (isset($_GET['searchProducts'])) {
     $data = json_decode(file_get_contents('php://input'), true);
     $searchVal = $data["searchVal"];
     if($searchVal == null || $searchVal == ""){
-        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products LIMIT 20 ");
+        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products pp
+        JOIN pharmacy_store ps 
+        ON pp.store_id = ps.id
+        LIMIT 20 ");
     }
     else{
-        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE product_name LIKE '%$searchVal%' ");
+        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products pp
+        JOIN pharmacy_store ps 
+        ON pp.store_id = ps.id WHERE product_name LIKE '%$searchVal%' ");
     }
     $products = array();
     while ($product = mysqli_fetch_assoc($store_products)) {
@@ -37,10 +42,14 @@ if (isset($_GET['searchProductsWithinStore'])) {
     $searchVal = $data["searchVal"];
     $store_id = $data["store_id"];
     if($searchVal == null || $searchVal == ""){
-        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE store_id = '$store_id' ");
+        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products pp
+        JOIN pharmacy_store ps 
+        ON pp.store_id = ps.id WHERE store_id = '$store_id' ");
     }
     else{
-        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products WHERE product_name LIKE '%$searchVal%' AND store_id = '$store_id' ");
+        $store_products = mysqli_query($mysqli, "SELECT * FROM pharmacy_products pp
+        JOIN pharmacy_store ps 
+        ON pp.store_id = ps.id WHERE product_name LIKE '%$searchVal%' AND store_id = '$store_id' ");
     }
     $products = array();
     while ($product = mysqli_fetch_assoc($store_products)) {
