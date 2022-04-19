@@ -6,22 +6,22 @@ if (!isset($_SESSION['email'])) {
 }
 
 //Pharmacy
-if($_SESSION['role'] == 3){
+if ($_SESSION['role'] == 3) {
     header("Location: ./pharmacy/index.php");
 }
 
 //User
-if($_SESSION['role'] == 1){
+if ($_SESSION['role'] == 1) {
     header("Location: ./users/index.php");
 }
 
 //Rider
-if($_SESSION['role'] == 2){
+if ($_SESSION['role'] == 2) {
     header("Location: ./rider/index.php");
 }
 
 //Doctor
-if($_SESSION['role'] == 5){
+if ($_SESSION['role'] == 5) {
     header("Location: ./doctor/index.php");
 }
 
@@ -149,7 +149,7 @@ $role = $_SESSION['role'];
         <?php if ($role == "3") { ?>
             <li class="nav-item">
                 <a class="nav-link" href="pharmacy.php">
-                <i class="fas fa-clinic-medical"></i>
+                    <i class="fas fa-clinic-medical"></i>
                     <span>Pharmacy</span></a>
             </li>
         <?php } ?>
@@ -163,6 +163,11 @@ $role = $_SESSION['role'];
             </li>
         <?php } ?>
 
+        <li class="nav-item">
+            <a class="nav-link" href="transactions.php">
+                <i class="fas fa-table"></i>
+                <span>Transactions</span></a>
+        </li>
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
 
