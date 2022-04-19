@@ -65,6 +65,11 @@ $role = $_SESSION['role'];
                 <span>Profile</span></a>
         </li>
 
+        <!-- <li class="nav-item">
+            <a class="nav-link" href="transactions.php">
+                <i class="fas fa-table"></i>
+                <span>Transactions</span></a>
+        </li> -->
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">

@@ -100,6 +100,12 @@ $role = $_SESSION['role'];
             <i class="fas fa-calendar-check"></i>
                 <span>Bookings</span></a>
         </li>        
+
+        <li class="nav-item">
+            <a class="nav-link" href="transactions.php">
+                <i class="fas fa-table"></i>
+                <span>Transactions</span></a>
+        </li>
         
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">

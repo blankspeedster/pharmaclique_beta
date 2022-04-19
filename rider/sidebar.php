@@ -57,6 +57,12 @@ $role = $_SESSION['role'];
                 <span>Rides</span></a>
         </li>
 
+        <li class="nav-item">
+            <a class="nav-link" href="transactions.php">
+                <i class="fas fa-table"></i>
+                <span>Transactions</span></a>
+        </li>
+        
         <!-- Nav Item - Pharmacy -->
         <!-- <li class="nav-item">
             <a class="nav-link" href="rider_sample.php">
