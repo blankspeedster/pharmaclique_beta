@@ -118,6 +118,8 @@ if (isset($_GET['getBookingInformation'])) {
     $getBooking = mysqli_query($mysqli, "SELECT * FROM doctor_bookings db
     JOIN users u
     ON db.doctor_id = u.id
+    JOIN doctor_profile dp
+    ON dp.doctor_id = u.id
     WHERE db.id = '$booking_id' ");
 
     $booking = $getBooking->fetch_assoc();

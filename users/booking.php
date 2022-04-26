@@ -87,6 +87,7 @@ if (isset($_GET["id"])) {
                                                         </div>
 
                                                         <div class="text-xs font-weight-bold text-primary mb-1">
+                                                            
                                                             <form @submit.prevent="sendMessage()">
                                                                 <div class="mb-2">
                                                                     <textarea v-model="chatMessage" class="form-control" placeholder="Send message to doctor." style="min-height: 100px;" required></textarea>
@@ -97,6 +98,7 @@ if (isset($_GET["id"])) {
                                                                     </button>
                                                                 </div>
                                                             </form>
+                                                            To pay via QR. Please follow this <a target="_blank" :href="'../img/'+bookings.gcash_qr">link</a>
                                                         </div>
                                                     </div>
                                                 </div>

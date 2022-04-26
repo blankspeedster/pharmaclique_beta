@@ -98,3 +98,56 @@ if (isset($_GET['uploadProfilePicture'])) {
 
     echo json_encode($response);
 }
+
+//Update Profile Picture
+if (isset($_GET['uploadGCashQRCode'])) {
+    $uploadDir = "../img/";
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    //Upload image
+    if ($_FILES['picture']) {
+        $pictureName = $_FILES["picture"]["name"];
+        $pictureName = preg_replace('/\s+/', '', $pictureName);
+        $pictureTmpName = $_FILES["picture"]["tmp_name"];
+        $pictureTmpName = preg_replace('/\s+/', '', $pictureTmpName);
+
+        $error = $_FILES["picture"]["error"];
+        if ($error > 0) {
+            $response = array(
+                "status" => "error",
+                "error" => true,
+                "message" => "Error uploading the file!"
+            );
+        } else {
+            $randomName = rand(1000, 100000000000) . "-" . $pictureName;
+            $randomName = strtolower($randomName);
+            $uploadName = $uploadDir . strtolower($randomName);
+            $uploadName = preg_replace('/\s+/', '-', $uploadName);
+
+            if (move_uploaded_file($pictureTmpName, $uploadName)) {
+
+                $response = array(
+                    "status" => "success",
+                    "error" => false,
+                    "message" => "File uploaded successfully",
+                    "url" => $uploadName
+                );
+            } else {
+                $response = array(
+                    "status" => "error",
+                    "error" => true,
+                    "message" => "Error uploading the file!"
+                );
+            }
+        }
+    }
+
+    $qr_code_url = $randomName;
+    $profile_id = $_GET["uploadGCashQRCode"];
+
+    $mysqli->query("UPDATE doctor_profile SET gcash_qr = '$qr_code_url' WHERE id = '$profile_id' ") or die($mysqli->error);
+
+    $response[] = array("response" => "Display Picture has been saved!");
+
+    echo json_encode($response);
+}
