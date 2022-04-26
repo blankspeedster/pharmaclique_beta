@@ -212,7 +212,7 @@ if (isset($_GET["id"])) {
                         userId: <?php echo $user_id; ?>,
                         transaction_id: <?php echo $transaction_id; ?>,
                         transactions: {
-                            receipt_url: "receipt.png",
+                            prescription_url: "receipt.png",
                         },
                         chatMessage: null,
                         chats: null,

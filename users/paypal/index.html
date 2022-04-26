@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+      <input id="amount" type="number" placeholder="Amount to pay"></input>
+      <button id="btnSubmit">submit</button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
+    <script type="module">
+
+        import {accessToken} from './environment.js'
+        import {order} from './paypal.js'
+
+
+        document.addEventListener("DOMContentLoaded", function(){
+            axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`; 
+        });
+
+        window.document.getElementById('btnSubmit').onclick = function(){
+            
+            const amount = window.document.getElementById('amount').value;
+            
+            order(amount);
+
+        }
+    </script>
+  </body>
+</html>

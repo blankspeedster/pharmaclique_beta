@@ -91,27 +91,35 @@ $role = $_SESSION['role'];
 
         <li class="nav-item">
             <a class="nav-link" href="book_an_appointment.php">
-            <i class="fas fa-calendar-check"></i>
+                <i class="fas fa-calendar-check"></i>
                 <span>Book an appointment</span></a>
         </li>
 
         <li class="nav-item">
             <a class="nav-link" href="bookings.php">
-            <i class="fas fa-calendar-check"></i>
+                <i class="fas fa-calendar-check"></i>
                 <span>Bookings</span></a>
-        </li>        
+        </li>
 
         <li class="nav-item">
             <a class="nav-link" href="transactions.php">
                 <i class="fas fa-table"></i>
                 <span>Transactions</span></a>
         </li>
-        
+
         <li class="nav-item">
             <a class="nav-link" href="profile.php">
-            <i class="fas fa-address-card"></i>
+                <i class="fas fa-address-card"></i>
                 <span>Profile</span></a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="cashin.php">
+            <i class="fa fa-money-bill"></i>
+                <span>PharmaPay</span></a>
+        </li>
+
+
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">
             <button class="rounded-circle border-0" id="sidebarToggle"></button>

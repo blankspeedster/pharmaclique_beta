@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <p id="p-message">Processing payment, please wait...</p>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
+    <script type="module">
+      import { accessToken } from "../environment.js";
+
+      document.addEventListener("DOMContentLoaded", function () {
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${accessToken}`;
+
+        const captureLink = window.localStorage.getItem("paypal_capture_link");
+
+        console.log(captureLink);
+
+        axios.post(captureLink, {}).then((response) => {
+          pushNewBalance();
+          window.document.getElementById("p-message").innerHTML =
+            "Cash in has been successfully processed, you may now close this window";
+        });
+      });
+
+      function pushNewBalance(){
+        let amount = window.localStorage.getItem("cashInAmount");
+        let account_id = window.localStorage.getItem("account_id");
+        const options = {
+            method: "POST",
+            url: "../../process_cashin.php?paypalCashIn",
+            headers: {
+                Accept: "application/json",
+            },
+            data: {
+                amount: amount,
+                account_id: account_id
+            }
+        };
+        
+        axios
+            .request(options)
+            .then((response) => {
+                console.log(response);
+                this.bookings = response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+      }
+    </script>
+  </body>
+</html>

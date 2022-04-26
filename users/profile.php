@@ -153,7 +153,7 @@ $phone_number = $user["phone_number"];
                                                         <?php if (!$userExist) { ?>
                                                             <input type="text" name="user_id" value="<?php echo $user_id; ?>" style="visibility: hidden;">
                                                             <button type="submit" style="float: right;" class="btn btn-primary btn-sm m-1" :disabled="!editUserProfile" name="save_doctror_profile">
-                                                                <i class="far fa-save"></i> Save Doctor Profile
+                                                                <i class="far fa-save"></i> Save User Profile
                                                             </button>
                                                             <a v-if="!editUserProfile" style="float: right;" class="btn btn-success btn-sm m-1" @click="editUserProfile = true">
                                                                 <i class="far fa-edit"></i> Edit
