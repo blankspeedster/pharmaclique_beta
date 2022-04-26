@@ -107,6 +107,11 @@ $role = $_SESSION['role'];
                 <span>Transactions</span></a>
         </li>
         
+        <li class="nav-item">
+            <a class="nav-link" href="profile.php">
+            <i class="fas fa-address-card"></i>
+                <span>Profile</span></a>
+        </li>
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">
             <button class="rounded-circle border-0" id="sidebarToggle"></button>
