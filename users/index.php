@@ -84,7 +84,7 @@ include("head.php");
                                                                     <span v-if="p.product_type === '1'" class="badge badge-primary badge-counter">Physical buying</span>
                                                                     <span v-if="p.product_type === '2'" class="badge badge-secondary badge-counter">Prescription needed</span>
                                                                     <p class="product-text genre"><a :href="'store.php?id='+p.store_id"><i>{{p.store_name}}</i></a></p>
-                                                                    <a @click="addToCart(p.product_id, p.store_id, p.product_price)" style="float: right; color: black !important;" class="btn btn-sm btn-warning">Add to cart</a>
+                                                                    <a v-if="p.product_type != '1'" @click="addToCart(p.product_id, p.store_id, p.product_price)" style="float: right; color: black !important;" class="btn btn-sm btn-warning">Add to cart</a>
                                                                 </div>
                                                             </div>
                                                         </span>

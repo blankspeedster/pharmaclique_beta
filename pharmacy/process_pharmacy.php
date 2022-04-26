@@ -177,7 +177,7 @@ if (isset($_GET['updateProduct'])) {
         product_weight = '$product_weight',
         product_description = '$product_description',
         product_brand = '$product_brand',
-        product_type = '$product_type'
+        product_type = '$product_type',
         product_url = '$product_url'
         WHERE id = '$product_id' ") or die($mysqli->error);
     }

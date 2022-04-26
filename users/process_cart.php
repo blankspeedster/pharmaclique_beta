@@ -178,7 +178,6 @@ if(isset($_POST['checkout'])){
     header("location: place_order.php");
 }
 
-
 //Place Order
 if(isset($_GET['placeOrder'])){
     $data = json_decode(file_get_contents('php://input'), true);
@@ -186,6 +185,7 @@ if(isset($_GET['placeOrder'])){
     $long = $data["long"];
     $completeAddress = $data["completeAddress"];
     $deliveryCharge = $data["deliveryCharge"];
+    echo $mode_of_payment = $data["mode_of_payment"];
 
     $checkOutProducts = $_SESSION['currentProducts'];
     $user_id = 0;
@@ -202,8 +202,7 @@ if(isset($_GET['placeOrder'])){
 
     $subTotal = $subTotal + $deliveryCharge;
 
-    $mysqli->query(" INSERT INTO transaction (pharmacy_id, user_id, transaction_date, total_amount, amount_paid, user_long, user_lat, delivery_charge)
-    VALUES('$pharmacy_id', '$user_id', '$date', '$subTotal','$subTotal', '$long', '$lat', '$deliveryCharge') ") or die($mysqli->error);
+    $mysqli->query(" INSERT INTO transaction (pharmacy_id, user_id, transaction_date, total_amount, amount_paid, user_long, user_lat, delivery_charge, mode_of_payment) VALUES('$pharmacy_id', '$user_id', '$date', '$subTotal','$subTotal', '$long', '$lat', '$deliveryCharge', '$mode_of_payment') ") or die($mysqli->error);
 
     //Get Transaction ID and update the status id of the cart
     $transaction_id = $mysqli->insert_id;
@@ -213,5 +212,28 @@ if(isset($_GET['placeOrder'])){
 
     $jsonEncode = array("response" => "Place order completed!", "status"=>"1");
 
+    echo json_encode($jsonEncode);
+}
+
+//Balance is enough
+if(isset($_GET['check_balance'])){
+    $data = json_decode(file_get_contents('php://input'), true);
+    $currenTotal = $data["currentTotal"];
+
+    $user_id = $_SESSION['user_id'];
+
+    $getBalance =  $mysqli->query(" SELECT * FROM users WHERE id = '$user_id' ") or die($mysqli->error);
+    $newBalance = mysqli_fetch_array($getBalance);
+    $balance = $newBalance["balance"];
+
+    if($balance > $currenTotal){
+        $jsonEncode = array("response" => "Balance is sufficient", "status" => "1");
+        $currentBalance = $balance - $currenTotal;
+        $mysqli->query(" UPDATE users SET balance = '$currentBalance' WHERE id = '$user_id' ") or die($mysqli->error);
+    }
+    else{
+        $jsonEncode = array("response" => "Balance is not sufficient", "status" => "0", "balance" => $balance);
+    }
+    
     echo json_encode($jsonEncode);
 }

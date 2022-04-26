@@ -18,7 +18,6 @@ include("head.php");
 </style>
 
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -46,6 +45,7 @@ include("head.php");
                             <!-- <a href="#" class="close" aria-label="close" @click="showNotification = false">&times;</a> -->
                             {{ messageNotification }}
                         </div>
+
                         <!-- End Notification -->
                         <!-- Page Heading -->
                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -68,10 +68,15 @@ include("head.php");
                                             </div>
                                             <div class="col-lg-6">
                                                 Delivery Charge: <input type="number" step="0.1" class="form-control" v-model="deliveryCharge" readonly>
-                                            </div>                                            
+                                            </div>
                                         </div>
 
                                         <input type="text" class=" mt-4 form-control" v-model="completeAddress" placeholder="Please type your complete address here.">
+                                        <br>
+                                        <select class="form-control" v-model="mode_of_payment">
+                                            <option value="0">Cash on Delivery</option>
+                                            <option value="1">PharmaClique Pay</option>
+                                        </select>
                                         <br>
                                         <!-- Location in map -->
                                         <div class="card" style="height: 500px !important;">
@@ -88,6 +93,11 @@ include("head.php");
                                         </div>
                                     </div>
                                 </div>
+                                <div v-if="showBalanceNotEnough" class="alert alert-warning alert-dismissible">
+                                    <!-- <a href="#" class="close" aria-label="close" @click="showNotification = false">&times;</a> -->
+                                    Sorry, your balance is not sufficient for this mode of payment. Please cash in first. Your current balance is ₱ {{currentBalance}}
+                                </div>
+
                                 <span v-if="!orderPlacedSuccesful">
                                     <button v-if="!placingOrder" @click="placeOrder()" style="float: right;" class="m-1 btn btn-success btn-m">{{placeOrderMessage}}</button>
                                     <button v-else style="float: right;" class="m-1 btn btn-success btn-m" disabled>{{placeOrderMessage}}</button>
@@ -95,10 +105,10 @@ include("head.php");
                                 </span>
                                 <span v-if="orderPlacedSuccesful">
                                     <a href="orders.php">
-                                    <div class="alert alert-success alert-dismissible">
-                                        <!-- <a href="#" class="close" aria-label="close" @click="orderPlacedSuccesful = false">&times;</a> -->
-                                        {{ messagePlaceOrder }}
-                                    </div>
+                                        <div class="alert alert-success alert-dismissible">
+                                            <!-- <a href="#" class="close" aria-label="close" @click="orderPlacedSuccesful = false">&times;</a> -->
+                                            {{ messagePlaceOrder }}
+                                        </div>
                                     </a>
                                 </span>
                             </div>
@@ -144,6 +154,7 @@ include("head.php");
                             completeAddress: null,
                             subtotal: <?php echo $_SESSION['currentProductsSubtotal']; ?>,
                             deliveryCharge: 49.9,
+                            mode_of_payment: 1,
                             //address for lat and lang
                             lat: null,
                             long: null,
@@ -153,6 +164,9 @@ include("head.php");
                             placeOrderMessage: "Place Order",
                             orderPlacedSuccesful: false,
                             messagePlaceOrder: null,
+
+                            showBalanceNotEnough: false,
+                            currentBalance: 0,
                         }
                     },
                     methods: {
@@ -248,34 +262,135 @@ include("head.php");
 
                         //Place Order
                         async placeOrder() {
-                            this.placingOrder = true;
-                            this.placeOrderMessage = "Placing Order";
+
+                            if (this.mode_of_payment === 0) {
+                                console.log("Cash on Delivery yan.")
+                                this.placingOrder = true;
+                                this.placeOrderMessage = "Placing Order";
+                                const options = {
+                                    method: "POST",
+                                    url: "process_cart.php?placeOrder",
+                                    headers: {
+                                        Accept: "application/json",
+                                    },
+                                    data: {
+                                        lat: this.lat,
+                                        long: this.long,
+                                        mode_of_payment: this.mode_of_payment,
+                                        completeAddress: this.completeAddress,
+                                        deliveryCharge: this.deliveryCharge
+                                    },
+                                };
+                                await axios
+                                    .request(options)
+                                    .then((response) => {
+                                        console.log(response);
+                                        this.placingOrder = false;
+                                        this.placeOrderMessage = "Place Order";
+                                        this.orderPlacedSuccesful = true;
+                                        this.showNotification = false;
+                                        this.messagePlaceOrder = "Order Succesful. Pharmacy is currently reviewing your order. You may now this close window.";
+                                    })
+                                    .catch((error) => {
+                                        console.log(error);
+                                    });
+                            } else {
+                                console.log('not cash on delivery');
+                                let currentTotal = this.subtotal + this.deliveryCharge;
+                                let currentStatus = await this.checkBalance(currentTotal);
+                                console.log(currentStatus);
+                                if (currentStatus.data.status === "1") {
+                                    // this is balanance enough
+                                    this.placingOrder = true;
+                                    this.placeOrderMessage = "Placing Order";
+                                    const options = {
+                                        method: "POST",
+                                        url: "process_cart.php?placeOrder",
+                                        headers: {
+                                            Accept: "application/json",
+                                        },
+                                        data: {
+                                            lat: this.lat,
+                                            long: this.long,
+                                            completeAddress: this.completeAddress,
+                                            mode_of_payment: this.mode_of_payment,
+                                            deliveryCharge: this.deliveryCharge
+                                        },
+                                    };
+                                    await axios
+                                        .request(options)
+                                        .then((response) => {
+                                            console.log(response);
+                                            this.placingOrder = false;
+                                            this.placeOrderMessage = "Place Order";
+                                            this.orderPlacedSuccesful = true;
+                                            this.showNotification = false;
+                                            this.messagePlaceOrder = "Order Succesful. Pharmacy is currently reviewing your order. You may now this close window.";
+                                        })
+                                        .catch((error) => {
+                                            console.log(error);
+                                        });
+                                } else {
+                                    this.currentBalance = currentStatus.data.balance;
+                                    this.showBalanceNotEnough = true;
+                                }
+                            }
+
+                            // this.placingOrder = true;
+                            // this.placeOrderMessage = "Placing Order";
+                            // const options = {
+                            //     method: "POST",
+                            //     url: "process_cart.php?placeOrder",
+                            //     headers: {
+                            //         Accept: "application/json",
+                            //     },
+                            //     data: {
+                            //         lat: this.lat,
+                            //         long: this.long,
+                            //         completeAddress: this.completeAddress,
+                            //         deliveryCharge: this.deliveryCharge
+                            //     },
+                            // };
+                            // await axios
+                            //     .request(options)
+                            //     .then((response) => {
+                            //         console.log(response);
+                            //         this.placingOrder = false;
+                            //         this.placeOrderMessage = "Place Order";
+                            //         this.orderPlacedSuccesful = true;
+                            //         this.showNotification = false;
+                            //         this.messagePlaceOrder = "Order Succesful. Pharmacy is currently reviewing your order. You may now this close window.";
+                            //     })
+                            //     .catch((error) => {
+                            //         console.log(error);
+                            //     });
+
+
+
+                        },
+
+                        //Async check if you have balance
+                        async checkBalance(total) {
+                            let status;
                             const options = {
                                 method: "POST",
-                                url: "process_cart.php?placeOrder",
+                                url: "process_cart.php?check_balance",
                                 headers: {
                                     Accept: "application/json",
                                 },
                                 data: {
-                                    lat: this.lat,
-                                    long: this.long,
-                                    completeAddress: this.completeAddress,
-                                    deliveryCharge: this.deliveryCharge
+                                    currentTotal: total,
                                 },
                             };
                             await axios
                                 .request(options)
                                 .then((response) => {
-                                    console.log(response);
-                                    this.placingOrder = false;
-                                    this.placeOrderMessage = "Place Order";
-                                    this.orderPlacedSuccesful = true;
-                                    this.showNotification = false;
-                                    this.messagePlaceOrder = "Order Succesful. Pharmacy is currently reviewing your order. You may now this close window.";
+                                    status = response;
                                 })
                                 .catch((error) => {
                                     console.log(error);
                                 });
+                            return status;
                         }
 
                     },

@@ -96,7 +96,7 @@ $store = mysqli_fetch_array($checkStore)
                                                                     <p class="product-text genre">{{p.product_brand}}</p>                                                                    <span v-if="p.product_type === '0'" class="badge badge-success badge-counter">Prescription not needed</span>
                                                                     <span v-if="p.product_type === '1'" class="badge badge-primary badge-counter">Physical buying</span>
                                                                     <span v-if="p.product_type === '2'" class="badge badge-secondary badge-counter">Prescription needed</span>
-                                                                    <a @click="addToCart(p.product_id, p.store_id, p.product_price)" style="float: right; color: black !important;" class="btn btn-sm btn-warning">Add to cart</a>
+                                                                    <a v-if="p.product_type != '1'" @click="addToCart(p.product_id, p.store_id, p.product_price)" style="float: right; color: black !important;" class="btn btn-sm btn-warning">Add to cart</a>
                                                                 </div>
                                                             </div>
                                                         </span>
