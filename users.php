@@ -233,6 +233,7 @@ $session_user_id = $_SESSION['user_id'];
                                                 <th>Phone Number</th>
                                                 <th>Role</th>
                                                 <th>Validated</th>
+                                                <th>PWD</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -243,11 +244,18 @@ $session_user_id = $_SESSION['user_id'];
                                                 <th>Phone Number</th>
                                                 <th>Role</th>
                                                 <th>Validated</th>
+                                                <th>PWD</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
                                             <?php while ($user = mysqli_fetch_array($users)) {
+                                                $userId = $user["user_id"];
+                                                $checkPWD = $mysqli->query("SELECT * FROM pwd WHERE user_id = '$userId' ") or die($mysqli->error);
+                                                $isPWD = false;
+                                                if(mysqli_num_rows($checkPWD) > 0){
+                                                    $isPWD = true;
+                                                }
                                                 $approved = boolval($user["validated"]);
                                             ?>
                                                 <tr>
@@ -257,7 +265,25 @@ $session_user_id = $_SESSION['user_id'];
                                                     <td><?php echo ucfirst($user["code"]); ?></td>
                                                     <td><?php if ($approved) {
                                                         ?><span class="badge bg-success text-white">Validated</span><?php
-                                                                                                                } else { ?> <span class="badge bg-warning text-white">Pending</span> <?php } ?></td>
+                                                                                                                } else { ?> <span class="badge bg-warning text-white">Pending</span> <?php } ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php if($isPWD){
+                                                            $checkPWD = $mysqli->query("SELECT * FROM pwd WHERE user_id = '$userId' ") or die($mysqli->error);
+                                                            $getPWD = $checkPWD->fetch_array();
+                                                            if($getPWD["validated"] == '0'){ ?>
+                                                                <a target="_blank" href="img/<?php echo $getPWD['id_url']; ?>">ID</a>
+                                                                <br>
+                                                                <a href="process_users.php?validatePWD=<?php echo $userId; ?>" class="btn btn-success btn-sm mb-1"><i class="far fa-check-square"></i> Validate</a>
+                                                            <?php } else { ?>
+                                                                <a target="_blank" href="img/<?php echo $getPWD['id_url']; ?>">ID</a>
+                                                                <br>
+                                                                <?php 
+                                                                echo "<span class='badge bg-success text-white'>Validated</span>";
+                                                            }
+                                                            ?>
+                                                        <?php } ?>
+                                                    </td>
                                                     <td>
                                                         <!-- Edit-->
                                                         <a href="users.php?edit=<?php echo $user['user_id']; ?>" class="btn btn-info btn-sm mb-1"><i class="far fa-edit"></i> Edit</a>

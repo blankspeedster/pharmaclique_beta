@@ -20,8 +20,7 @@ $checkPwd = $mysqli->query("SELECT * FROM pwd WHERE user_id='$user_id' ");
 if (mysqli_num_rows($checkPwd) > 0) {
     $pwdExist = true;
     $pwd = $checkPwd->fetch_array();
-    $pwd_id = $pwd['id'];
-    $id_url = $pwd['profile_image'];
+    $id_url = $pwd['id_url'];
 }
 $checkUser = $mysqli->query("SELECT * FROM users WHERE id='$user_id' ");
 $user = $checkUser->fetch_array();

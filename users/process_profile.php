@@ -92,9 +92,14 @@ if (isset($_GET['uploadProfilePicture'])) {
     $id_url = $randomName;
     $user_id = $_GET["uploadProfilePicture"];
 
+    $checkPWD = $mysqli->query("SELECT * FROM pwd WHERE user_id = '$user_id' ") or die($mysqli->error);
 
-
-    $mysqli->query("INSERT INTO pwd (user_id, id_url) VALUES ('user_id','id_url') ") or die($mysqli->error);
+    if(mysqli_num_rows($checkPWD) > 0){
+        $mysqli->query("UPDATE pwd SET id_url = '$id_url' WHERE user_id = '$user_id' ") or die($mysqli->error);
+    }
+    else{
+        $mysqli->query("INSERT INTO pwd (user_id, id_url) VALUES ('$user_id','$id_url') ") or die($mysqli->error);
+    }
 
     $response[] = array("response" => "Display Picture has been saved!");
 

@@ -43,7 +43,7 @@
 
     if(isset($_GET['validate'])){
         $user_id = $_GET['validate'];
-        $mysqli->query("UPDATE users SET validated = '1' WHERE id = '$user_id' ") or die ($mysqli->error());
+        $mysqli->query("UPDATE users SET validated = '1' WHERE id = '$user_id' ") or die ($mysqli->error);
 
         $_SESSION['message'] = "User has been validated!";
         $_SESSION['msg_type'] = "success";
@@ -53,7 +53,7 @@
 
     if(isset($_GET['delete'])){
         $user_id = $_GET['delete'];
-        $mysqli->query("DELETE FROM users WHERE id='$user_id'") or die($mysqli->error());
+        $mysqli->query("DELETE FROM users WHERE id='$user_id'") or die($mysqli->error);
 
         $_SESSION['message'] = "Record has been deleted!";
         $_SESSION['msg_type'] = "danger";
@@ -62,8 +62,18 @@
 
     if(isset($_GET['edit'])){
         $user_id = $_GET['edit'];
-        $users = $mysqli->query("SELECT * FROM users u JOIN role r ON r.id = u.role WHERE u.id='$user_id'") or die ($mysqli->error());
+        $users = $mysqli->query("SELECT * FROM users u JOIN role r ON r.id = u.role WHERE u.id='$user_id'") or die ($mysqli->error);
         $edit_user = $users->fetch_array();
 
+    }
+
+    if(isset($_GET['validatePWD'])){
+        $user_id = $_GET['validatePWD'];
+
+        $mysqli->query(" UPDATE pwd SET validated = '1' WHERE user_id = '$user_id' ") or die ($mysqli->error);
+
+        $_SESSION['message'] = "User PWD status has been validated!";
+        $_SESSION['msg_type'] = "success";
+        header("location: users.php");
     }
 ?>

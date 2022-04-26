@@ -4,6 +4,20 @@ $user_counts = $mysqli->query("SELECT COUNT(id) AS total_count FROM users") or d
 $user_count = $user_counts->fetch_array();
 $user_count = $user_count['total_count'];
 include("head.php");
+
+// is PWD
+$isPWD = false;
+$user_id = $_SESSION['user_id'];
+$checkPWD = $mysqli->query("SELECT * FROM pwd WHERE user_id = '$user_id' AND validated = '1' ") or die($mysqli->error);
+
+if (mysqli_num_rows($checkPWD) > 0) {
+    $isPWD = true;
+    $discount = 0.1;
+    $currentSubtotal = $_SESSION['currentProductsSubtotal'];
+    $discount = $currentSubtotal * $discount;
+    $currentSubtotal = $currentSubtotal - $discount;
+    $_SESSION['currentProductsSubtotal'] = $currentSubtotal;
+}
 ?>
 
 <title>PharmaClique - Place Order</title>
@@ -63,6 +77,11 @@ include("head.php");
                                     </div>
                                     <div class="card-body">
                                         <div class="row" class="mb-4">
+                                            <?php if($isPWD){ ?>
+                                            <div class="col-lg-12 alert alert-primary">
+                                                You are a validated PWD. You are eligible for a 10% discount.
+                                            </div>
+                                            <?php } ?>
                                             <div class="col-lg-6">
                                                 Current Subtotal: <input type="text" class="form-control" v-model="subtotal" readonly>
                                             </div>
