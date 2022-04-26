@@ -58,6 +58,13 @@ if (mysqli_num_rows($checkStore) > 0) {
                         </div>
                         <!-- End Notification -->
 
+                        <!-- Alert here -->
+                        <a v-for="p in products">
+                        <div v-if="p.product_stock < 20" class="alert alert-danger alert-dismissible">
+                            {{ p.product_code }} is low in stock. Please replenish stock
+                        </div>
+                        </a>
+                        <!-- End Alert Here -->
 
                         <!-- Page Heading -->
                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -161,7 +168,9 @@ if (mysqli_num_rows($checkStore) > 0) {
                         <div class="row">
 
                             <!-- Add Propducts - Collapsable -->
-                            <div class="col-lg-12" id="addEditProduct" style="display: <?php if(!$storeExist){echo "none";} ?>;">
+                            <div class="col-lg-12" id="addEditProduct" style="display: <?php if (!$storeExist) {
+                                                                                            echo "none";
+                                                                                        } ?>;">
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Accordion -->
                                     <a href="#collapseAddProduct" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseAddProduct">
@@ -267,6 +276,23 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                         </div>
                                                     </div>
 
+                                                    <!-- Product Type -->
+                                                    <div class="col-xl-6 col-md-6 mb-4">
+                                                        <div class="row no-gutters align-items-center">
+                                                            <div class="col mr-2">
+                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                                    Type</div>
+                                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                    <select class="form-control" v-model="type" required> 
+                                                                        <option value="0">Prescription not needed</option>
+                                                                        <option value="1">Physical buying</option>
+                                                                        <option value="2">Prescription needed</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
 
 
                                                     <!-- Submit Product -->
@@ -317,7 +343,13 @@ if (mysqli_num_rows($checkStore) > 0) {
                                             <tr v-for="p in products">
                                                 <td>{{p.id}}</td>
                                                 <td>{{p.product_brand}}</td>
-                                                <td>{{p.product_code}}</td>
+                                                <td>
+                                                    {{p.product_code}}
+                                                    <br>
+                                                    <span v-if="p.product_type === '0'" class="badge badge-success badge-counter">Prescription not needed</span>
+                                                    <span v-if="p.product_type === '1'" class="badge badge-primary badge-counter">Physical buying</span>
+                                                    <span v-if="p.product_type === '2'" class="badge badge-secondary badge-counter">Prescription needed</span>
+                                                </td>
                                                 <td>{{p.product_name}}</td>
                                                 <td>{{p.product_description}}</td>
                                                 <td>{{p.product_price}}</td>
@@ -495,6 +527,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                         price: 0,
                         weight: 0,
                         brand: null,
+                        type: 0,
                         isEditProduct: false,
 
                         //Product list
@@ -528,6 +561,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                         form.append("price", this.price);
                         form.append("weight", this.weight);
                         form.append("brand", this.brand);
+                        form.append("type", this.type);
 
                         const options = {
                             method: "POST",
@@ -575,6 +609,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                         form.append("price", this.price);
                         form.append("weight", this.weight);
                         form.append("brand", this.brand);
+                        form.append("type", this.type);
 
                         const options = {
                             method: "POST",

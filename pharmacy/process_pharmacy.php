@@ -80,12 +80,13 @@ if (isset($_GET['createProduct'])) {
     $product_price = $mysqli->real_escape_string($_POST["price"]);
     $product_weight = $mysqli->real_escape_string($_POST["weight"]);
     $product_brand = $mysqli->real_escape_string($_POST["brand"]);
+    $product_type = $mysqli->real_escape_string($_POST["type"]);
     $product_url = $randomName;
     $store_id = $mysqli->real_escape_string($_GET['createProduct']);
 
 
 
-    $mysqli->query(" INSERT INTO pharmacy_products (store_id, product_code, product_name, product_description, product_url, product_stock, product_category_id, product_price, product_weight, product_brand) VALUES('$store_id','$product_code','$product_name','$product_description','$product_url','$product_stock','$product_category_id', '$product_price', '$product_weight', '$product_brand') ") or die($mysqli->error);
+    $mysqli->query(" INSERT INTO pharmacy_products (store_id, product_code, product_name, product_description, product_url, product_stock, product_category_id, product_price, product_weight, product_brand, product_type) VALUES('$store_id','$product_code','$product_name','$product_description','$product_url','$product_stock','$product_category_id', '$product_price', '$product_weight', '$product_brand', '$product_type') ") or die($mysqli->error);
 
     $response[] = array("response"=>"Product has been saved!", "product:" =>"Product created!");
 
@@ -147,6 +148,7 @@ if (isset($_GET['updateProduct'])) {
     $product_price = $mysqli->real_escape_string($_POST["price"]);
     $product_weight = $mysqli->real_escape_string($_POST["weight"]);
     $product_brand = $mysqli->real_escape_string($_POST["brand"]);
+    $product_type = $mysqli->real_escape_string($_POST["type"]);
     $product_url = $randomName;
     $product_id = $mysqli->real_escape_string($_GET['updateProduct']);
 
@@ -160,7 +162,8 @@ if (isset($_GET['updateProduct'])) {
         product_price = '$product_price',
         product_weight = '$product_weight',
         product_description = '$product_description',
-        product_brand = '$product_brand'
+        product_brand = '$product_brand',
+        product_type = '$product_type'
         WHERE id = '$product_id' ") or die($mysqli->error);
     }
     else{
@@ -174,6 +177,7 @@ if (isset($_GET['updateProduct'])) {
         product_weight = '$product_weight',
         product_description = '$product_description',
         product_brand = '$product_brand',
+        product_type = '$product_type'
         product_url = '$product_url'
         WHERE id = '$product_id' ") or die($mysqli->error);
     }
