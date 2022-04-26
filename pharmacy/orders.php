@@ -73,6 +73,10 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                             Name: <b>{{o.product_name}}</b>;
                                                             Qty: <b>{{o.count}}</b>
                                                             Subtotal: <b>₱{{o.subtotal}}</b>
+                                                            
+                                                            <span v-if="o.product_type === '0'" class="badge badge-success badge-counter ml-4 mb-1">Prescription not needed</span>
+                                                            <span v-if="o.product_type === '1'" class="badge badge-primary badge-counter ml-4 mb-1">Physical buying</span>
+                                                            <span v-if="o.product_type === '2'" class="badge badge-secondary badge-counter ml-4 mb-1">Prescription needed</span>
                                                         </div>
                                                     </div>
                                                 </span>
@@ -88,7 +92,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                 <div class="mb-2" v-if="orders[0].status != '-1' ">
                                                     <span v-if="orders[0].status === '0' " class="badge badge-warning m-1" style="float: left !important; color: black;">Status: Awaiting for your confirmation</span>
                                                     <span v-if="orders[0].status === '-1' " class="badge badge-success m-1" style="float: left !important;">Status: Waiting Rider for pickup</span>
-
+                                                    
                                                     <button @click="confirmOrder(orders[0].transaction_id)" class="btn btn-sm btn-success m-1" style="float: right;">Accept Order</button>
 
                                                     <button class="btn btn-sm btn-danger m-1" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">Reject Order</button>
@@ -97,6 +101,9 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                         <a class="dropdown-item text-success" href="#">Cancel</a>
                                                         <a @click="cancelOrder(orders[0].transaction_id)" class="dropdown-item text-danger">Confirm Rejection</a>
                                                     </div>
+
+                                                    <a :href="'transaction_chat.php?id='+orders[0].transaction_id" class="btn btn-sm btn-primary m-1 mr-4" style="float: right;">Go to transaction thread</a>
+
                                                 </div>
                                                 <!-- If accepted order -->
                                                 <div class="mb-2" v-if="orders[0].status === '-1' ">

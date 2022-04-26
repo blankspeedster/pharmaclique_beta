@@ -27,6 +27,9 @@
     <!-- icon-->
     <link rel="icon" href="../img/favicon.png" sizes="16x16">
 
+    <!-- Chats Specific -->
+    <link rel="stylesheet" href="../css/chats.css" />
+    
     <!-- LeafLet -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
     <script src="https://cdn.maptiler.com/mapbox-gl-js/v1.13.2/mapbox-gl.js"></script>

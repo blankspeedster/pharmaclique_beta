@@ -64,6 +64,9 @@ include("head.php");
                                                         </div>
                                                     </div>
                                                 </span>
+                                                <div>
+                                                    <a :href="'transaction_chat.php?id='+orders[0].transaction_id" class="btn btn-sm btn-primary m-1" style="float: right;">Go to transaction thread</a>
+                                                </div>
                                                 <div class="mb-2">
                                                     <span v-if="orders[0].status === '0' " class="badge badge-warning m-1" style="float: left !important; color: black;">Status: Pending</span>
                                                     <span v-if="orders[0].status === '-1' " class="badge badge-info m-1" style="float: left !important;">Status: Awaiting Rider Pick Up</span>
