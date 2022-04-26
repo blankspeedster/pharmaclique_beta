@@ -14,6 +14,7 @@ if (mysqli_num_rows($checkUser) > 0) {
 }
 
 // PWD Check if exist
+$id_url = 'pwd-id.jpg';
 $pwdExist = false;
 $checkPwd = $mysqli->query("SELECT * FROM pwd WHERE user_id='$user_id' ");
 if (mysqli_num_rows($checkPwd) > 0) {
@@ -29,7 +30,7 @@ $last_name = $user["lastname"];
 $email = $user["email"];
 $phone_number = $user["phone_number"];
 ?>
-<title>PharmaClique - Doctor Profile</title>
+<title>PharmaClique - User Profile</title>
 
 <body id="page-top">
 
@@ -214,7 +215,7 @@ $phone_number = $user["phone_number"];
                                                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                                     ID Picture</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <img src="../img/<?php echo $profile_url; ?>" style="max-height:100%; max-width: 100%; border-radius: 10px;">
+                                                                    <img src="../img/<?php echo $id_url; ?>" style="max-height:100%; max-width: 100%; border-radius: 10px;">
                                                                 </div>
                                                             </div>
                                                         </div>
