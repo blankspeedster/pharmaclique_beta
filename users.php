@@ -233,7 +233,7 @@ $session_user_id = $_SESSION['user_id'];
                                                 <th>Phone Number</th>
                                                 <th>Role</th>
                                                 <th>Validated</th>
-                                                <th>PWD</th>
+                                                <th>PWD / Senior</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -244,7 +244,7 @@ $session_user_id = $_SESSION['user_id'];
                                                 <th>Phone Number</th>
                                                 <th>Role</th>
                                                 <th>Validated</th>
-                                                <th>PWD</th>
+                                                <th>PWD / Senior</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </tfoot>

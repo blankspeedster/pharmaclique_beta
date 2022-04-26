@@ -12,7 +12,7 @@ $checkPWD = $mysqli->query("SELECT * FROM pwd WHERE user_id = '$user_id' AND val
 
 if (mysqli_num_rows($checkPWD) > 0) {
     $isPWD = true;
-    $discount = 0.1;
+    $discount = 0.2;
     $currentSubtotal = $_SESSION['currentProductsSubtotal'];
     $discount = $currentSubtotal * $discount;
     $currentSubtotal = $currentSubtotal - $discount;
@@ -79,7 +79,7 @@ if (mysqli_num_rows($checkPWD) > 0) {
                                         <div class="row" class="mb-4">
                                             <?php if($isPWD){ ?>
                                             <div class="col-lg-12 alert alert-primary">
-                                                You are a validated PWD. You are eligible for a 10% discount.
+                                                You are a validated PWD. You are eligible for a 20% discount.
                                             </div>
                                             <?php } ?>
                                             <div class="col-lg-6">
