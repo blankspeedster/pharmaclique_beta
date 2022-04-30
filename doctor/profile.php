@@ -15,6 +15,7 @@ if (mysqli_num_rows($checkUser) > 0) {
     $profile_url = $user['profile_image'];
     $gcash_qr= $user['gcash_qr'];
     $specialization = $user['specialization'];
+    $bank_details = $user["bank_details"];
 }
 $checkUser = $mysqli->query("SELECT * FROM users WHERE id='$user_id' ");
 $user = $checkUser->fetch_array();
@@ -175,6 +176,19 @@ $phone_number = $user["phone_number"];
                                                         </div>
                                                     </div>
 
+                                                    <!-- Bank Details -->
+                                                    <div class="col-xl-12 col-md-12 mb-4">
+                                                        <div class="row no-gutters align-items-center">
+                                                            <div class="col mr-2">
+                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                                    Bank Details for Payment</div>
+                                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                                    <textarea :disabled="!editUserProfile" type="text" class="form-control" name="bank_details" required><?php if ($userExist) { echo $bank_details; } ?></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                    
+
                                                     <div class="col-xl-12 col-md-12 mb-4 mt-4">
                                                         <?php if (!$userExist) { ?>
                                                             <input type="text" name="user_id" value="<?php echo $user_id; ?>" style="visibility: hidden;">
@@ -301,7 +315,9 @@ $phone_number = $user["phone_number"];
 
                                                     <div class="col-xl-12 col-md-12 mb-4 mt-4">
                                                         <button type="submit" style="float: right;" class="btn btn-info btn-sm m-1" :disabled="isUploading">
-                                                            <i class="far fa-save"></i> {{uploadingMessage}}
+                                                            <i class="far fa-save"></i>
+                                                            Upload QR Code
+                                                            <!-- {{uploadingMessage}} -->
                                                         </button>
                                                     </div>
                                                 </div>

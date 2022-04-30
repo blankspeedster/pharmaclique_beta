@@ -13,8 +13,9 @@ if (isset($_POST['save_doctror_profile'])) {
 
     $hourly_rate = $mysqli->real_escape_string($_POST['hourly_rate']);
     $specialization = $mysqli->real_escape_string($_POST['specialization']);
-
-    $mysqli->query(" INSERT INTO doctor_profile (doctor_id, hourly_rate, specialization) VALUES('$doctor_id', '$hourly_rate','$specialization') ") or die($mysqli->error);
+    $bank_details = $mysqli->real_escape_string($_POST['bank_details']);
+    
+    $mysqli->query(" INSERT INTO doctor_profile (doctor_id, hourly_rate, specialization, bank_details) VALUES('$doctor_id', '$hourly_rate','$specialization', '$bank_details') ") or die($mysqli->error);
     $mysqli->query(" UPDATE users SET firstname = '$first_name', lastname = '$last_name', email='$email', phone_number='$phone_number' WHERE id = '$doctor_id'  ") or die($mysqli->error);
 
 
@@ -36,8 +37,9 @@ if (isset($_POST['update_doctror_profile'])) {
 
     $hourly_rate = $mysqli->real_escape_string($_POST['hourly_rate']);
     $specialization = $mysqli->real_escape_string($_POST['specialization']);
+    $bank_details = $mysqli->real_escape_string($_POST['bank_details']);
 
-    $mysqli->query("UPDATE doctor_profile SET hourly_rate = '$hourly_rate', specialization = '$specialization' WHERE id = '$profile_id' ") or die($mysqli->error);
+    $mysqli->query("UPDATE doctor_profile SET hourly_rate = '$hourly_rate', specialization = '$specialization', bank_details = '$bank_details' WHERE id = '$profile_id' ") or die($mysqli->error);
     $mysqli->query("UPDATE users SET firstname = '$first_name', lastname = '$last_name', email='$email', phone_number='$phone_number' WHERE id = '$doctor_id'") or die($mysqli->error);
 
     $_SESSION['pharmacyError'] = "Doctor Profile has been updated!";
