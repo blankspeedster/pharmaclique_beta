@@ -63,7 +63,10 @@ if (mysqli_num_rows($checkStore) > 0) {
                                             <div class="col-lg-12 card shadow mb-4">
                                                 <div>
                                                     <label class="h6 mt-3"><b>{{orders[0].firstname}} {{orders[0].lastname}}</b></label>
-                                                    <label class="mt-3" style="float: right"><b>Total: </b>₱{{orders[0].total_amount}}</label>
+                                                    <!-- <label class="mt-3" style="float: right"><b>Total: </b>₱{{orders[0].total_amount}}</label> -->
+                                                    <span v-if="orders[0].mode_of_payment === '0'" class="badge badge-warning badge-counter ml-4 mb-1">Cash on Delivery</span>
+                                                    <span v-if="orders[0].mode_of_payment === '1'" class="badge badge-primary badge-counter ml-4 mb-1">Paid (PharmaPay) </span>
+                                                    <label class="mt-3" style="float: right"><b>Total: </b>₱{{Number(orders[0].total_amount - orders[0].delivery_charge).toLocaleString() }}</label>
                                                     <label class="mt-3 mr-2" style="float: right !important;"><b>Order ID: </b> {{orders[0].transaction_id}}</label>
                                                 </div>
                                                 <span v-for="o in orders">
@@ -146,7 +149,8 @@ if (mysqli_num_rows($checkStore) > 0) {
                                             <div class="col-lg-12 card shadow mb-4">
                                                 <div>
                                                     <label class="h5 mt-3">{{orders[0].store_name}}</label>
-                                                    <label class="mt-3" style="float: right">Total: <b>₱{{orders[0].total_amount}}</b></label>
+                                                    <!-- <label class="mt-3" style="float: right">Total: <b>₱{{orders[0].total_amount}}</b></label> -->
+                                                    <label class="mt-3" style="float: right"><b>Total: </b>₱{{Number(orders[0].total_amount - orders[0].delivery_charge).toLocaleString() }}</label>                                                    
                                                     <label class="mt-3 mr-2" style="float: right !important;"><b>Order ID: </b> {{orders[0].transaction_id}}</label>
                                                 </div>
                                                 <span v-for="o in orders">
@@ -155,7 +159,7 @@ if (mysqli_num_rows($checkStore) > 0) {
                                                             <img :src="'../assets/images/'+o.product_url" width="100px" />
                                                             Name: <b>{{o.product_name}}</b>;
                                                             Qty: <b>{{o.count}}</b>
-                                                            Subtotal: <b>₱{{o.subtotal}}</b>
+                                                            Subtotal: <b>₱{{o.subtotal - o.delivery_charge}}</b>
                                                         </div>
                                                     </div>
                                                 </span>
@@ -189,7 +193,8 @@ if (mysqli_num_rows($checkStore) > 0) {
                                             <div class="col-lg-12 card shadow mb-4">
                                                 <div>
                                                     <label class="h6 mt-3"><b>{{orders[0].firstname}} {{orders[0].lastname}}</b></label>
-                                                    <label class="mt-3" style="float: right">Total: <b>₱{{orders[0].total_amount}}</b></label>
+                                                    <!-- <label class="mt-3" style="float: right">Total: <b>₱{{ orders[0].total_amount - orders[0].delivery_charge }}</b></label> -->
+                                                    <label class="mt-3" style="float: right">Total: <b>₱{{ Number(orders[0].total_amount - orders[0].delivery_charge).toLocaleString() }}</b></label>
                                                     <label class="mt-3 mr-2" style="float: right !important;"><b>Order ID: </b> {{orders[0].transaction_id}}</label>
                                                 </div>
                                                 <span v-for="o in orders">

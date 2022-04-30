@@ -60,7 +60,7 @@ $booking_id = $booking["id"];
                             <div class="col-lg-12 mb-4">
                                 <div class="card shadow mb-4">
                                     <div class="card-header">
-                                        <h6 class="m-0 font-weight-bold text-primary">Here is the pending order for pickup</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">Here is the pending order for delivery</h6>
                                     </div>
                                     <div class="card-body">
                                         <span v-for="b in currentBooking">
@@ -69,7 +69,12 @@ $booking_id = $booking["id"];
                                                     <b>Store Name: </b>{{b.store_name}} <br>
                                                     <b>Address: </b> {{b.address}}<br>
                                                     <b>Customer Name: </b> {{b.firstname}} {{b.lastname}} <br>
-                                                    <b>Total Amount to be paid: </b> ₱{{b.total_amount - b.delivery_charge}} <br><br>
+                                                    <b v-if="b.mode_of_payment === '0'">Total Amount to be paid: </b>
+                                                    <b v-if="b.mode_of_payment === '1'">Paid: </b>
+                                                    ₱{{Number(b.total_amount).toLocaleString() }}
+                                                    <span v-if="b.mode_of_payment === '0'" class="badge badge-warning badge-counter ml-4 mb-1">Cash on Delivery</span>
+                                                    <span v-if="b.mode_of_payment === '1'" class="badge badge-primary badge-counter ml-4 mb-1">Paid (PharmaPay)</span>
+                                                    <br><br>
                                                     <b>Products:</b><br>
                                                     <span v-for="product in b.products">
                                                         {{product.product_name}} x {{product.count}};<br>

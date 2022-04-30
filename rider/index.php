@@ -61,16 +61,24 @@ $user_id = $_SESSION['user_id'];
                             <div class="col-lg-12 mb-4">
                                 <div class="card shadow mb-4">
                                     <div class="card-header">
-                                        <h6 class="m-0 font-weight-bold text-primary">Here are the pending orders for pickup</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">Here are the pending orders for pickup (Choose one with the following)</h6>
                                     </div>
                                     <div class="card-body">
+                                        <div v-if="pendingOrders.length === 0" class="alert alert-success alert-dismissible">
+                                            No current orders are available for pickup
+                                        </div>
                                         <span v-for="o in pendingOrders">
                                             <div class="row card shadow mb-2 mt-2 p-2">
                                                 <div class="col-lg-12">
                                                     <b>Store Name: </b>{{o.store_name}} <br>
                                                     <b>Address: </b> {{o.address}}<br>
                                                     <b>Customer Name: </b> {{o.firstname}} {{o.lastname}} <br>
-                                                    <b>Total Amount to be paid: </b> ₱{{o.total_amount - o.delivery_charge}} <br><br>
+                                                    <b v-if="o.mode_of_payment === '0'">Total Amount to be paid: </b>
+                                                    <b v-if="o.mode_of_payment === '1'">Paid: </b>
+                                                    ₱{{o.total_amount - o.delivery_charge}} 
+                                                    <span v-if="o.mode_of_payment === '0'" class="badge badge-warning badge-counter ml-4 mb-1">Cash on Delivery</span>
+                                                    <span v-if="o.mode_of_payment === '1'" class="badge badge-primary badge-counter ml-4 mb-1">Paid (PharmaPay)</span>
+                                                    <br><br>
                                                     Products:<br>
                                                     <span v-for="product in o.products">
                                                         {{product.product_name}} x {{product.count}}

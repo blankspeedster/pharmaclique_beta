@@ -173,7 +173,7 @@ if (mysqli_num_rows($checkPWD) > 0) {
                             completeAddress: null,
                             subtotal: <?php echo $_SESSION['currentProductsSubtotal']; ?>,
                             deliveryCharge: 49.9,
-                            mode_of_payment: 1,
+                            mode_of_payment: 0,
                             //address for lat and lang
                             lat: null,
                             long: null,

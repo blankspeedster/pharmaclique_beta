@@ -91,7 +91,7 @@ if (isset($_GET["id"])) {
                                                         <div class="text-xs font-weight-bold text-primary mb-1">
                                                             <form @submit.prevent="sendMessage()">
                                                                 <div class="mb-2">
-                                                                    <textarea v-model="chatMessage" class="form-control" placeholder="Send message to doctor." style="min-height: 100px;" required></textarea>
+                                                                    <textarea v-model="chatMessage" class="form-control" placeholder="Send message to pharmacist." style="min-height: 100px;" required></textarea>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <button class="btn btn-sm btn-info m-1" style="float: right;">
