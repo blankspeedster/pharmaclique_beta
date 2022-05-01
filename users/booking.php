@@ -98,7 +98,8 @@ if (isset($_GET["id"])) {
                                                                     </button>
                                                                 </div>
                                                             </form>
-                                                            To pay via QR. Please follow this <a target="_blank" :href="'../img/'+bookings.gcash_qr">link</a>
+                                                            To pay via QR. Please follow this <a target="_blank" :href="'../img/'+bookings.gcash_qr">link</a><br>
+                                                            Or pay using bank transfer: {{bookings.bank_details}}
                                                         </div>
                                                     </div>
                                                 </div>
