@@ -185,6 +185,7 @@ if(isset($_GET['placeOrder'])){
     $long = $data["long"];
     $completeAddress = $data["completeAddress"];
     $deliveryCharge = $data["deliveryCharge"];
+    $totalPaid = $data["totalPaid"];
     echo $mode_of_payment = $data["mode_of_payment"];
 
     $checkOutProducts = $_SESSION['currentProducts'];
@@ -200,7 +201,8 @@ if(isset($_GET['placeOrder'])){
         $user_id = $cart["user_id"];
     }
 
-    $subTotal = $subTotal + $deliveryCharge;
+    // $subTotal = $subTotal + $deliveryCharge;
+    $subTotal = $totalPaid;
 
     $mysqli->query(" INSERT INTO transaction (pharmacy_id, user_id, transaction_date, total_amount, amount_paid, user_long, user_lat, delivery_charge, mode_of_payment) VALUES('$pharmacy_id', '$user_id', '$date', '$subTotal','$subTotal', '$long', '$lat', '$deliveryCharge', '$mode_of_payment') ") or die($mysqli->error);
 

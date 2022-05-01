@@ -281,7 +281,7 @@ if (mysqli_num_rows($checkPWD) > 0) {
 
                         //Place Order
                         async placeOrder() {
-
+                            let total_paid = this.subtotal + this.deliveryCharge;
                             if (this.mode_of_payment === 0) {
                                 console.log("Cash on Delivery yan.")
                                 this.placingOrder = true;
@@ -297,7 +297,8 @@ if (mysqli_num_rows($checkPWD) > 0) {
                                         long: this.long,
                                         mode_of_payment: this.mode_of_payment,
                                         completeAddress: this.completeAddress,
-                                        deliveryCharge: this.deliveryCharge
+                                        deliveryCharge: this.deliveryCharge,
+                                        totalPaid: total_paid
                                     },
                                 };
                                 await axios
@@ -333,7 +334,8 @@ if (mysqli_num_rows($checkPWD) > 0) {
                                             long: this.long,
                                             completeAddress: this.completeAddress,
                                             mode_of_payment: this.mode_of_payment,
-                                            deliveryCharge: this.deliveryCharge
+                                            deliveryCharge: this.deliveryCharge,
+                                            totalPaid: total_paid
                                         },
                                     };
                                     await axios
