@@ -13,7 +13,13 @@ if (mysqli_num_rows($checkStore) > 0) {
 }
 ?>
 <title>PharmaClique - Orders</title>
-
+<style>
+img{
+    border-radius: 5px !important;
+    filter: drop-shadow(1px 1px 1px #222);
+    margin-right: 10px;
+}
+</style>
 <body id="page-top">
 
     <!-- Page Wrapper -->
