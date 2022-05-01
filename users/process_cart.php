@@ -204,7 +204,16 @@ if(isset($_GET['placeOrder'])){
     // $subTotal = $subTotal + $deliveryCharge;
     $subTotal = $totalPaid;
 
-    $mysqli->query(" INSERT INTO transaction (pharmacy_id, user_id, transaction_date, total_amount, amount_paid, user_long, user_lat, delivery_charge, mode_of_payment) VALUES('$pharmacy_id', '$user_id', '$date', '$subTotal','$subTotal', '$long', '$lat', '$deliveryCharge', '$mode_of_payment') ") or die($mysqli->error);
+    $is_pwd = 0;
+    // check if user is pwd
+    $checkPWD = $mysqli->query("SELECT * FROM pwd WHERE user_id = '$user_id' AND validated = '1' ") or die($mysqli->error);
+
+    if (mysqli_num_rows($checkPWD) > 0) {
+        $is_pwd = 1;
+    }
+    // end check if user is pwd
+
+    $mysqli->query(" INSERT INTO transaction (pharmacy_id, user_id, transaction_date, total_amount, amount_paid, user_long, user_lat, delivery_charge, mode_of_payment, is_pwd) VALUES('$pharmacy_id', '$user_id', '$date', '$subTotal','$subTotal', '$long', '$lat', '$deliveryCharge', '$mode_of_payment', '$is_pwd') ") or die($mysqli->error);
 
     //Get Transaction ID and update the status id of the cart
     $transaction_id = $mysqli->insert_id;

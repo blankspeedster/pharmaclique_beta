@@ -21,7 +21,7 @@ if (isset($_GET['getTransaction'])) {
         $transactionId = $order["transactionId"];
         $getProducts = mysqli_query($mysqli, "SELECT * FROM transaction t
         JOIN cart c ON c.transaction_id = t.id JOIN pharmacy_products pp ON pp.id = c.product_id WHERE t.id='$transactionId' ");
-        while($product = mysqli_fetch_assoc($getProducts)){
+        while ($product = mysqli_fetch_assoc($getProducts)) {
             $orders[$counter]["products"][] = $product;
         }
         $counter++;
@@ -39,11 +39,31 @@ if (isset($_GET['acceptBooking'])) {
     $long = $data["long"];
     $customer_lat = $data["customer_lat"];
     $customer_long = $data["customer_long"];
+    $mode_of_payment = $data["mode_of_payment"];
+    
+
+
+    //Update balance of the rider
+    if ($mode_of_payment == '1') {
+        //check delivery charge
+        $getDeliveryCharge = mysqli_query($mysqli, "SELECT * FROM transaction WHERE id = '$transaction_id' ");
+        $newDeliveryCharge = mysqli_fetch_array($getDeliveryCharge);
+        $currentDeliveryCharge = $newDeliveryCharge["delivery_charge"];
+
+        $user_id = $_SESSION['user_id'];
+        $getBalance = mysqli_query($mysqli, "SELECT * FROM users WHERE id = '$user_id' ");
+        $newBalance = mysqli_fetch_array($getBalance);
+        $currentBalance = $newBalance["balance"];
+        $updatedBalance = $currentBalance + $currentDeliveryCharge;
+        mysqli_query($mysqli, "UPDATE users SET balance = '$updatedBalance' WHERE id = '$user_id' ");
+    }
+    //End update balance of the rider
+
 
     $mysqli->query(" INSERT INTO rider_transaction (rider_id, transaction_id, customer_lat, customer_long, updated_at) VALUES('$user_id', '$transaction_id', '$customer_lat', '$customer_long', '$date') ") or die($mysqli->error);
     $mysqli->query(" INSERT INTO rider_logs (rider_id, rider_lat, rider_long, transaction_id, updated_at) VALUES('$user_id', '$lat', '$long','$transaction_id', '$date') ") or die($mysqli->error);
 
-    $response[] = array("response"=>"Product has been updated!");
+    $response[] = array("response" => "Product has been updated!");
 
     echo json_encode($response);
 }
@@ -68,7 +88,7 @@ if (isset($_GET['getCurrentBooking'])) {
         $transactionId = $order["transactionId"];
         $getProducts = mysqli_query($mysqli, "SELECT * FROM transaction t
         JOIN cart c ON c.transaction_id = t.id JOIN pharmacy_products pp ON pp.id = c.product_id WHERE t.id='$transactionId' ");
-        while($product = mysqli_fetch_assoc($getProducts)){
+        while ($product = mysqli_fetch_assoc($getProducts)) {
             $orders[$counter]["products"][] = $product;
         }
         $counter++;

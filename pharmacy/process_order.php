@@ -123,6 +123,8 @@ if (isset($_GET['cancelOrder'])) {
 if (isset($_GET['confirmOrder'])) {
     $data = json_decode(file_get_contents('php://input'), true);
     $transaction_id = $data["transaction_id"];
+    $pharmacy_amount_paid = $data["pharmacy_amount_paid"];
+    $mode_of_payment = $data["mode_of_payment"];
 
     mysqli_query($mysqli, "UPDATE transaction SET status = '-1' WHERE id = '$transaction_id' ");
     
@@ -138,6 +140,17 @@ if (isset($_GET['confirmOrder'])) {
             mysqli_query($mysqli, "UPDATE pharmacy_products SET product_stock = '$newQty' WHERE id = '$productId' ");
         }
     }
+
+    //Update balance of the pharmacy
+    if($mode_of_payment == '1'){
+        $user_id = $_SESSION['user_id'];
+        $getBalance = mysqli_query($mysqli, "SELECT * FROM users WHERE id = '$user_id' ");
+        $newBalance = mysqli_fetch_array($getBalance);
+        $currentBalance = $newBalance["balance"];
+        $updatedBalance = $currentBalance + $pharmacy_amount_paid;
+        mysqli_query($mysqli, "UPDATE users SET balance = '$updatedBalance' WHERE id = '$user_id' ");
+    }
+    //End update balance of the pharmacy
 
     $response[] = array("response"=>"Order has been confirmed. Awaiting Driver.");
     echo json_encode($response);

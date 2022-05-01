@@ -81,7 +81,11 @@ img{
                                                             <img :src="'../assets/images/'+o.product_url" width="100px" />
                                                             Name: <b>{{o.product_name}}</b>;
                                                             Qty: <b>{{o.count}}</b>
-                                                            Subtotal: <b>₱{{o.subtotal}}</b>
+                                                            Subtotal:
+                                                            <b v-if="o.is_pwd === '1'">₱{{o.subtotal * 0.8}}</b>
+                                                            <b v-if="o.is_pwd === '0'">₱{{o.subtotal}}</b>
+
+                                                            <i style="font-size: 10px;" v-if="o.is_pwd === '1'">with PWD Discount</i>
                                                             
                                                             <span v-if="o.product_type === '0'" class="badge badge-success badge-counter ml-4 mb-1">Prescription not needed</span>
                                                             <span v-if="o.product_type === '1'" class="badge badge-primary badge-counter ml-4 mb-1">Physical buying</span>
@@ -102,7 +106,7 @@ img{
                                                     <span v-if="orders[0].status === '0' " class="badge badge-warning m-1" style="float: left !important; color: black;">Status: Awaiting for your confirmation</span>
                                                     <span v-if="orders[0].status === '-1' " class="badge badge-success m-1" style="float: left !important;">Status: Waiting Rider for pickup</span>
                                                     
-                                                    <button @click="confirmOrder(orders[0].transaction_id)" class="btn btn-sm btn-success m-1" style="float: right;">Accept Order</button>
+                                                    <button @click="confirmOrder(orders[0].transaction_id, orders[0].amount_paid, orders[0].delivery_charge, orders[0].mode_of_payment)" class="btn btn-sm btn-success m-1" style="float: right;">Accept Order</button>
 
                                                     <button class="btn btn-sm btn-danger m-1" data-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="float: right;">Reject Order</button>
                                                     <div class="dropdown-menu shadow-danger mb-1">
@@ -165,7 +169,11 @@ img{
                                                             <img :src="'../assets/images/'+o.product_url" width="100px" />
                                                             Name: <b>{{o.product_name}}</b>;
                                                             Qty: <b>{{o.count}}</b>
-                                                            Subtotal: <b>₱{{o.subtotal - o.delivery_charge}}</b>
+                                                            Subtotal:
+                                                            <b v-if="o.is_pwd === '1'">₱{{o.subtotal * 0.8}}</b>
+                                                            <b v-if="o.is_pwd === '0'">₱{{o.subtotal}}</b>
+                                                            
+                                                            <i style="font-size: 10px;" v-if="o.is_pwd === '1'">with PWD Discount</i>
                                                         </div>
                                                     </div>
                                                 </span>
@@ -209,7 +217,12 @@ img{
                                                             <img :src="'../assets/images/'+o.product_url" width="100px" />
                                                             Name: <b>{{o.product_name}}</b>;
                                                             Qty: <b>{{o.count}}</b>
-                                                            Subtotal: <b>₱{{o.subtotal}}</b>
+                                                            Subtotal:
+
+                                                            <b v-if="o.is_pwd === '1'">₱{{o.subtotal * 0.8}}</b>
+                                                            <b v-if="o.is_pwd === '0'">₱{{o.subtotal}}</b>
+                                                            
+                                                            <i style="font-size: 10px;" v-if="o.is_pwd === '1'">with PWD Discount</i>
                                                         </div>
                                                     </div>
                                                 </span>
@@ -390,7 +403,9 @@ img{
                         },
 
                         //Confirm Order
-                        async confirmOrder(order_id) {
+                        async confirmOrder(order_id, amount_paid, delivery_charge, modeOfPayment) {
+                            let pharmacyAmountPaid = amount_paid - delivery_charge;
+                            
                             const options = {
                                 method: "POST",
                                 url: "process_order.php?confirmOrder",
@@ -398,7 +413,9 @@ img{
                                     Accept: "application/json",
                                 },
                                 data: {
-                                    transaction_id: order_id
+                                    transaction_id: order_id,
+                                    pharmacy_amount_paid: pharmacyAmountPaid,
+                                    mode_of_payment: modeOfPayment
                                 }
                             };
                             await axios

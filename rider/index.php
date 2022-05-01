@@ -85,7 +85,7 @@ $user_id = $_SESSION['user_id'];
                                                     </span>
                                                 </div>
                                                 <div class="mb-2">
-                                                    <button @click="acceptBooking(o.transactionId, o.customer_long, o.customer_lat)" class="btn btn-sm btn-success m-1" style="float: right;">Accept Booking</button>
+                                                    <button @click="acceptBooking(o.transactionId, o.customer_long, o.customer_lat, o.mode_of_payment)" class="btn btn-sm btn-success m-1" style="float: right;">Accept Booking</button>
                                                 </div>
                                         </span>
                                     </div>
@@ -255,7 +255,7 @@ $user_id = $_SESSION['user_id'];
                     },
 
                     //Accept Transaction
-                    async acceptBooking(transactionId, customer_lat, customer_long) {
+                    async acceptBooking(transactionId, customer_lat, customer_long, modeOfPayment) {
                         let userId = <?php echo $_SESSION["user_id"]; ?>;
                         const options = {
                             method: "POST",
@@ -269,7 +269,8 @@ $user_id = $_SESSION['user_id'];
                                 long: this.long,
                                 lat: this.lat,
                                 customer_lat: customer_lat,
-                                customer_long: customer_long
+                                customer_long: customer_long,
+                                mode_of_payment: modeOfPayment
                             }
                         };
                         await axios

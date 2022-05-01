@@ -139,6 +139,13 @@ $role = $_SESSION['role'];
                 <span>Orders</span></a>
         </li>
 
+        <!-- Nav Item - PharmaPay -->
+        <li class="nav-item">
+            <a class="nav-link" href="cashin.php">
+            <i class="fa fa-money-bill"></i>
+                <span>PharmaPay</span></a>
+        </li>
+
         <!-- Nav Item - Settings -->
         <li class="nav-item">
             <a class="nav-link" href="pharmacy_settings.php">
