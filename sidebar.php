@@ -164,7 +164,7 @@ $role = $_SESSION['role'];
         <?php } ?>
 
         <li class="nav-item">
-            <a class="nav-link" href="transactions.php">
+            <a class="nav-link" href="report.php">
                 <i class="fas fa-table"></i>
                 <span>Transactions</span></a>
         </li>
