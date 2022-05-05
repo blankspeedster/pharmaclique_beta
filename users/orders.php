@@ -134,6 +134,8 @@ img{
                                                 <div class="mb-2">
                                                     <span v-if="orders[0].status === '0' " class="badge badge-warning m-1" style="float: left !important; color: black;">Status: Pending</span>
                                                     <span v-if="orders[0].status === '1' " class="badge badge-primary m-1" style="float: left !important;">Status: Completed</span>
+
+                                                    <a :href="'print_transaction.php?id='+orders[0].transaction_id" class="btn btn-sm btn-warning" style="float: right; color: black;">Print Receipt</a>
                                                 </div>
                                             </div>
                                         </span>

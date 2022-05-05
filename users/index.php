@@ -11,6 +11,15 @@ include("head.php");
         bottom: 0;
         left: 0;
     }
+
+    @media only screen and (max-width: 600px) {
+        .for-desktop{
+            display: none;
+        }
+        .for-mobile{
+            display: block;
+        }
+    }
 </style>
 
 <body id="page-top">
@@ -46,8 +55,61 @@ include("head.php");
                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
                             <h1 class="h3 mb-0 text-gray-800">Home</h1>
                         </div>
+
+                        <div class="row for-desktop">
+                            <!-- Search Medicine -->
+                            <div class="col-lg-12 mb-2">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header">
+                                        <h6 class="m-0 font-weight-bold text-primary">Search Medicine</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <form method="post" @submit.prevent="searchMedicine()">
+                                            <div class="row">
+                                                <div class="col-lg-8 mb-4">
+                                                    <input class="form-control" type="text" id="search" placeholder="Search Medicine" style="width: 100%;" v-model="searchValue" />
+                                                </div>
+                                                <div class="col-lg-4 mb-4">
+                                                    <button id="searchbutton" class="btn btn-success" type="submit" style="width: 100%;">
+                                                        <i class="fas fa-search"></i> Search
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div class="col-lg-12">
+                                            <div class="products">
+                                                <span v-for="p in products">
+                                                    <div class="product">
+                                                        <div class="product-img">
+                                                            <img :src="'../assets/images/'+p.product_url">
+
+                                                        </div>
+                                                        <div class="product-content">
+                                                            <h3>
+                                                                {{p.product_name}}
+                                                                <small>{{p.product_description}}</small>
+                                                            </h3>
+                                                            <p class="product-text price">₱{{p.product_price}}</p>
+                                                            <p class="product-text genre">{{p.product_brand}}</p>
+                                                            <p class="product-text genre">{{p.product_stock}} pcs available</p>
+                                                            <span v-if="p.product_type === '0'" class="badge badge-success badge-counter">Prescription not needed</span>
+                                                            <span v-if="p.product_type === '1'" class="badge badge-primary badge-counter">Physical buying</span>
+                                                            <span v-if="p.product_type === '2'" class="badge badge-secondary badge-counter">Prescription needed</span>
+                                                            <p class="product-text genre"><a :href="'store.php?id='+p.store_id"><i>{{p.store_name}}</i></a></p>
+                                                            <a v-if="p.product_type != '1'" @click="addToCart(p.product_id, p.store_id, p.product_price)" style="float: right; color: black !important;" class="btn btn-sm btn-warning">Add to cart</a>
+                                                        </div>
+                                                    </div>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
                         <!-- List of bookings -->
-                        <div class="row">
+
+                        <div class="row for-mobile">
                             <!-- Search Medicine -->
                             <div class="col-lg-12 mb-2">
                                 <div class="card shadow mb-4">
